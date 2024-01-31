@@ -330,7 +330,7 @@ class BaseService {
                         filter,
                         "$packageName.SERVICE",
                         null,
-                        Context.RECEIVER_EXPORTED
+                        Context.RECEIVER_NOT_EXPORTED
                     )
                 } else {
                     registerReceiver(
