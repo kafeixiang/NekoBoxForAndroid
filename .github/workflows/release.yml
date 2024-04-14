@@ -41,7 +41,7 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: ./run lib core
   build:
- name: Build OSS APK
+   name: Build OSS APK
     runs-on: ubuntu-latest
     needs:
       - libcore
