@@ -74,6 +74,19 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                 versionName += " DEBUG"
             }
 
+            return MaterialAboutList.Builder()
+                .addCard(MaterialAboutCard.Builder()
+                    .outline(false)
+                    .addItem(MaterialAboutActionItem.Builder()
+                        .icon(R.drawable.ic_baseline_update_24)
+                        .text(R.string.app_version)
+                        .subText(versionName)
+                        .setOnClickAction {
+                            requireContext().launchCustomTab(
+                                "https://github.com/MatsuriDayo/NekoBoxForAndroid/releases"
+                            )
+                        }
+                        .build())
                     .addItem(MaterialAboutActionItem.Builder()
                         .icon(R.drawable.ic_baseline_layers_24)
                         .text(getString(R.string.version_x, "sing-box"))
@@ -131,6 +144,30 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                         }
                     }
                     .build())
+                .addCard(MaterialAboutCard.Builder()
+                    .outline(false)
+                    .title(R.string.project)
+                    .addItem(MaterialAboutActionItem.Builder()
+                        .icon(R.drawable.ic_baseline_sanitizer_24)
+                        .text(R.string.github)
+                        .setOnClickAction {
+                            requireContext().launchCustomTab(
+                                "https://github.com/MatsuriDayo/NekoBoxForAndroid"
+
+                            )
+                        }
+                        .build())
+                    .addItem(MaterialAboutActionItem.Builder()
+                        .icon(R.drawable.ic_qu_shadowsocks_foreground)
+                        .text(R.string.telegram)
+                        .setOnClickAction {
+                            requireContext().launchCustomTab(
+                                "https://t.me/MatsuriDayo"
+                            )
+                        }
+                        .build())
+                    .build())
+                .build()
 
         }
 
