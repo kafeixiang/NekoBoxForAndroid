@@ -74,19 +74,6 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                 versionName += " DEBUG"
             }
 
-            return MaterialAboutList.Builder()
-                .addCard(MaterialAboutCard.Builder()
-                    .outline(false)
-                    .addItem(MaterialAboutActionItem.Builder()
-                        .icon(R.drawable.ic_baseline_update_24)
-                        .text(R.string.app_version)
-                        .subText(versionName)
-                        .setOnClickAction {
-                            requireContext().launchCustomTab(
-                                "https://github.com/MatsuriDayo/NekoBoxForAndroid/releases"
-                            )
-                        }
-                        .build())
                     .addItem(MaterialAboutActionItem.Builder()
                         .icon(R.drawable.ic_baseline_layers_24)
                         .text(getString(R.string.version_x, "sing-box"))
