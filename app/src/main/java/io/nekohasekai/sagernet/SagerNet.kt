@@ -32,8 +32,12 @@ import moe.matsuri.nb4a.utils.cleanWebview
 import java.io.File
 import androidx.work.Configuration as WorkConfiguration
 
-class SagerNet : Application(),
+class SagerNet() : Application(),
     WorkConfiguration.Provider {
+
+    override val workManagerConfiguration = WorkConfiguration.Builder()
+        .setDefaultProcessName("${BuildConfig.APPLICATION_ID}:bg")
+        .build()
 
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
@@ -102,12 +106,6 @@ class SagerNet : Application(),
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         updateNotificationChannels()
-    }
-
-    override fun getWorkManagerConfiguration(): WorkConfiguration {
-        return WorkConfiguration.Builder()
-            .setDefaultProcessName("${BuildConfig.APPLICATION_ID}:bg")
-            .build()
     }
 
     override fun onTrimMemory(level: Int) {
