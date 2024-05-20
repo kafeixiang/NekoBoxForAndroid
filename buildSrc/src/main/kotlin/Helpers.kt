@@ -80,7 +80,7 @@ fun Project.requireTargetAbi(): String {
     var targetAbi = ""
     if (gradle.startParameter.taskNames.isNotEmpty()) {
         if (gradle.startParameter.taskNames.size == 1) {
-            val targetTask = gradle.startParameter.taskNames[0].toLowerCase(Locale.ROOT).trim()
+            val targetTask = gradle.startParameter.taskNames[0].lowercase(Locale.ROOT).trim()
             when {
                 targetTask.contains("arm64") -> targetAbi = "arm64-v8a"
                 targetTask.contains("arm") -> targetAbi = "armeabi-v7a"
@@ -94,11 +94,10 @@ fun Project.requireTargetAbi(): String {
 
 fun Project.setupCommon() {
     android.apply {
-        buildToolsVersion = "30.0.3"
-        compileSdk = 33
+        compileSdk = 34
         defaultConfig {
             minSdk = 21
-            targetSdk = 33
+            targetSdk = 34
         }
         buildTypes {
             getByName("release") {
@@ -106,11 +105,11 @@ fun Project.setupCommon() {
             }
         }
         compileOptions {
-            sourceCompatibility = JavaVersion.VERSION_1_8
-            targetCompatibility = JavaVersion.VERSION_1_8
+            sourceCompatibility = JavaVersion.VERSION_17
+            targetCompatibility = JavaVersion.VERSION_17
         }
         (android as ExtensionAware).extensions.getByName<KotlinJvmOptions>("kotlinOptions").apply {
-            jvmTarget = JavaVersion.VERSION_1_8.toString()
+            jvmTarget = JavaVersion.VERSION_17.toString()
         }
         lint {
             showAll = true
@@ -120,7 +119,7 @@ fun Project.setupCommon() {
             textOutput = project.file("build/lint.txt")
             htmlOutput = project.file("build/lint.html")
         }
-        packagingOptions {
+        packaging {
             resources.excludes.addAll(
                 listOf(
                     "**/*.kotlin_*",
@@ -137,7 +136,7 @@ fun Project.setupCommon() {
                 )
             )
         }
-        packagingOptions {
+        packaging {
             jniLibs.useLegacyPackaging = true
         }
         (this as? AbstractAppExtension)?.apply {
@@ -230,9 +229,11 @@ fun Project.setupApp() {
         splits.abi {
             isEnable = true
             isUniversalApk = false
+            reset()
             if (targetAbi.isNotBlank()) {
-                reset()
                 include(targetAbi)
+            } else {
+                include("arm64-v8a", "armeabi-v7a", "x86_64", "x86")
             }
         }
 
