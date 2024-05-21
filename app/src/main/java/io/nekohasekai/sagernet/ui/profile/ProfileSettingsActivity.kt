@@ -12,6 +12,7 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.activity.result.component1
 import androidx.activity.result.component2
 import androidx.activity.result.contract.ActivityResultContracts
@@ -128,6 +129,10 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
 
         }
 
+        onBackPressedDispatcher.addCallback {
+            if (DataStore.dirty) UnsavedChangesDialogFragment().apply { key() }
+                .show(supportFragmentManager, null) else finish()
+        }
     }
 
     open suspend fun saveAndExit() {
@@ -173,11 +178,6 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = child.onOptionsItemSelected(item)
-
-    override fun onBackPressed() {
-        if (DataStore.dirty) UnsavedChangesDialogFragment().apply { key() }
-            .show(supportFragmentManager, null) else super.onBackPressed()
-    }
 
     override fun onSupportNavigateUp(): Boolean {
         if (!super.onSupportNavigateUp()) finish()

@@ -5,6 +5,7 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.addCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.addTextChangedListener
 import com.blacksquircle.ui.editorkit.insert
@@ -97,6 +98,11 @@ class ConfigEditActivity : ThemedActivity() {
         extendedKeyboard.setHasFixedSize(true)
         extendedKeyboard.submitList("{},:_\"".map { it.toString() })
         extendedKeyboard.setBackgroundColor(getColorAttr(R.attr.primaryOrTextPrimary))
+
+        onBackPressedDispatcher.addCallback {
+            if (dirty) UnsavedChangesDialogFragment().apply { key() }
+                .show(supportFragmentManager, null) else finish()
+        }
     }
 
     fun formatText(): String? {
@@ -118,11 +124,6 @@ class ConfigEditActivity : ThemedActivity() {
             DataStore.profileCacheStore.putString(key, it)
             finish()
         }
-    }
-
-    override fun onBackPressed() {
-        if (dirty) UnsavedChangesDialogFragment().apply { key() }
-            .show(supportFragmentManager, null) else super.onBackPressed()
     }
 
     override fun onSupportNavigateUp(): Boolean {
