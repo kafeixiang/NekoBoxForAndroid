@@ -3,7 +3,7 @@
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    id("kotlin-kapt")
+    id("com.google.devtools.ksp") version "2.0.20-1.0.25"
     id("kotlin-parcelize")
 }
 
@@ -18,8 +18,8 @@ android {
     kotlinOptions {
         jvmTarget = "21"
     }
-    kapt.arguments {
-        arg("room.incremental", true)
+    ksp {
+        arg("room.incremental", "true")
         arg("room.schemaLocation", "$projectDir/schemas")
     }
     bundle {
@@ -77,10 +77,10 @@ dependencies {
     }
 
     implementation("androidx.room:room-runtime:2.6.1")
-    kapt("androidx.room:room-compiler:2.6.1")
+    ksp("androidx.room:room-compiler:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
     implementation("com.github.MatrixDev.Roomigrant:RoomigrantLib:0.3.4")
-    kapt("com.github.MatrixDev.Roomigrant:RoomigrantCompiler:0.3.4")
+    ksp("com.github.MatrixDev.Roomigrant:RoomigrantCompiler:0.3.4")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.2")
 }
