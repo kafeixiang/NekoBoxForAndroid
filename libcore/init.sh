@@ -1,11 +1,8 @@
 #!/bin/bash
 
-chmod -R 777 .build 2>/dev/null
-rm -rf .build 2>/dev/null
-
 # Install gomobile
 if [ ! -f "$GOPATH/bin/gomobile" ]; then
-    git clone https://github.com/MatsuriDayo/gomobile.git
+    git clone --depth 1 https://github.com/SagerNet/gomobile.git
     pushd gomobile/cmd
     pushd gomobile
     go install -v
