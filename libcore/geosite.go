@@ -1,11 +1,12 @@
 package libcore
 
 import (
+	"os"
+
 	"github.com/sagernet/sing-box/common/geosite"
 	"github.com/sagernet/sing-box/common/srs"
 	C "github.com/sagernet/sing-box/constant"
 	"github.com/sagernet/sing-box/option"
-	"os"
 
 	"log"
 )
@@ -49,7 +50,7 @@ func (g *Geosite) ConvertGeosite(code string, outputPath string) {
 	headlessRule.DomainKeyword = defaultRule.DomainKeyword
 	headlessRule.DomainRegex = defaultRule.DomainRegex
 	var plainRuleSet option.PlainRuleSetCompat
-	plainRuleSet.Version = C.RuleSetVersion1
+	plainRuleSet.Version = C.RuleSetVersion2
 	plainRuleSet.Options.Rules = []option.HeadlessRule{
 		{
 			Type:           C.RuleTypeDefault,
@@ -58,7 +59,11 @@ func (g *Geosite) ConvertGeosite(code string, outputPath string) {
 	}
 
 	outputFile, err := os.Create(outputPath)
-	err = srs.Write(outputFile, plainRuleSet.Upgrade())
+	if err != nil {
+		log.Println("failed to create output file:", err)
+		return
+	}
+	err = srs.Write(outputFile, plainRuleSet.Options, true)
 	if err != nil {
 		log.Println("failed to write geosite file:", err)
 		return

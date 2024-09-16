@@ -1,14 +1,15 @@
 package libcore
 
 import (
-	"github.com/oschwald/maxminddb-golang"
-	"github.com/sagernet/sing-box/common/srs"
-	C "github.com/sagernet/sing-box/constant"
-	"github.com/sagernet/sing-box/option"
 	"log"
 	"net"
 	"os"
 	"strings"
+
+	"github.com/oschwald/maxminddb-golang"
+	"github.com/sagernet/sing-box/common/srs"
+	C "github.com/sagernet/sing-box/constant"
+	"github.com/sagernet/sing-box/option"
 )
 
 type Geoip struct {
@@ -57,7 +58,7 @@ func (g *Geoip) ConvertGeoip(countryCode, outputPath string) {
 		headlessRule.IPCIDR = append(headlessRule.IPCIDR, cidr.String())
 	}
 	var plainRuleSet option.PlainRuleSetCompat
-	plainRuleSet.Version = C.RuleSetVersion1
+	plainRuleSet.Version = C.RuleSetVersion2
 	plainRuleSet.Options.Rules = []option.HeadlessRule{
 		{
 			Type:           C.RuleTypeDefault,
@@ -66,7 +67,11 @@ func (g *Geoip) ConvertGeoip(countryCode, outputPath string) {
 	}
 
 	outputFile, err := os.Create(outputPath)
-	err = srs.Write(outputFile, plainRuleSet.Upgrade())
+	if err != nil {
+		log.Println("failed to create output file:", err)
+		return
+	}
+	err = srs.Write(outputFile, plainRuleSet.Options, true)
 	if err != nil {
 		log.Println("failed to write geosite file:", err)
 		return
