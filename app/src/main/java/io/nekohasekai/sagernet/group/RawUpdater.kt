@@ -10,6 +10,8 @@ import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean
 import io.nekohasekai.sagernet.fmt.hysteria.parseHysteria1Json
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.parseShadowsocks
+import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
+import io.nekohasekai.sagernet.fmt.shadowsocksr.parseShadowsocksR
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
 import io.nekohasekai.sagernet.fmt.trojan_go.parseTrojanGo
@@ -283,6 +285,24 @@ object RawUpdater : GroupUpdater() {
                                 plugin = ssPlugin.joinToString(";")
                                 name = proxy["name"]?.toString()
                             })
+                        }
+
+                        "ssr" -> {
+                            val entity = ShadowsocksRBean()
+                            for (opt in proxy) {
+                                when (opt.key) {
+                                    "name" -> entity.name = opt.value?.toString()
+                                    "server" -> entity.serverAddress = opt.value as String
+                                    "port" -> entity.serverPort = opt.value.toString().toInt()
+                                    "cipher" -> entity.method = clashCipher(opt.value as String)
+                                    "password" -> entity.password = opt.value?.toString()
+                                    "obfs" -> entity.obfs = opt.value as String
+                                    "protocol" -> entity.protocol = opt.value as String
+                                    "obfs-param" -> entity.obfsParam = opt.value?.toString()
+                                    "protocol-param" -> entity.protocolParam = opt.value?.toString()
+                                }
+                            }
+                            proxies.add(entity)
                         }
 
                         "vmess", "vless" -> {
@@ -706,6 +726,10 @@ object RawUpdater : GroupUpdater() {
                     return listOf(json.parseHysteria1Json())
                 }
 
+                json.has("protocol_param") -> {
+                    return listOf(json.parseShadowsocksR())
+                }
+                
                 json.has("method") -> {
                     return listOf(json.parseShadowsocks())
                 }
