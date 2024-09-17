@@ -62,11 +62,9 @@ class ServiceNotification(
                     ), service.getString(
                         R.string.speed, Formatter.formatFileSize(service, stats.rxRateProxy)
                     ), service.getString(
-                        R.string.speed,
-                        Formatter.formatFileSize(service, stats.txRateDirect)
+                        R.string.speed, Formatter.formatFileSize(service, stats.txRateDirect)
                     ), service.getString(
-                        R.string.speed,
-                        Formatter.formatFileSize(service, stats.rxRateDirect)
+                        R.string.speed, Formatter.formatFileSize(service, stats.rxRateDirect)
                     )
                 )
                 it.setStyle(NotificationCompat.BigTextStyle().bigText(speedDetail))
@@ -100,7 +98,6 @@ class ServiceNotification(
     }
 
     suspend fun postNotificationWakeLockStatus(acquired: Boolean) {
-        updateActions()
         useBuilder {
             it.priority =
                 if (acquired) NotificationCompat.PRIORITY_HIGH else NotificationCompat.PRIORITY_LOW
@@ -111,14 +108,36 @@ class ServiceNotification(
     private val showDirectSpeed = DataStore.showDirectSpeed
 
     private val builder = NotificationCompat.Builder(service as Context, channel)
-        .setWhen(0)
+        .setShowWhen(false)
+        .setOngoing(true)
         .setTicker(service.getString(R.string.forward_success))
         .setContentTitle(title)
         .setOnlyAlertOnce(true)
         .setContentIntent(SagerNet.configureIntent(service))
         .setSmallIcon(R.drawable.ic_service_active)
         .setCategory(NotificationCompat.CATEGORY_SERVICE)
-        .setPriority(if (visible) NotificationCompat.PRIORITY_LOW else NotificationCompat.PRIORITY_MIN)
+        .addAction(
+            NotificationCompat.Action.Builder(
+                0, service.getText(R.string.stop), PendingIntent.getBroadcast(
+                    service, 0, Intent(Action.CLOSE).setPackage(service.packageName), flags
+                )
+            ).setShowsUserInterface(false).build()
+        )
+        .addAction(
+            NotificationCompat.Action.Builder(
+                0, service.getString(R.string.action_switch), PendingIntent.getActivity(
+                    service, 0, Intent(service, SwitchActivity::class.java), flags
+                )
+            ).setShowsUserInterface(false).build()
+        )
+        .addAction(
+            NotificationCompat.Action.Builder(
+                0, service.getString(R.string.reset_connections),
+                PendingIntent.getBroadcast(
+                    service, 0, Intent(Action.RESET_UPSTREAM_CONNECTIONS), flags
+                )
+            ).setShowsUserInterface(false).build()
+        )
 
     private val buildLock = Mutex()
 
@@ -141,37 +160,7 @@ class ServiceNotification(
         })
 
         runOnMainDispatcher {
-            updateActions()
             show()
-        }
-    }
-
-    private suspend fun updateActions() {
-        service as Context
-        useBuilder {
-            it.clearActions()
-
-            val closeAction = NotificationCompat.Action.Builder(
-                0, service.getText(R.string.stop), PendingIntent.getBroadcast(
-                    service, 0, Intent(Action.CLOSE).setPackage(service.packageName), flags
-                )
-            ).setShowsUserInterface(false).build()
-            it.addAction(closeAction)
-
-            val switchAction = NotificationCompat.Action.Builder(
-                0, service.getString(R.string.action_switch), PendingIntent.getActivity(
-                    service, 0, Intent(service, SwitchActivity::class.java), flags
-                )
-            ).setShowsUserInterface(false).build()
-            it.addAction(switchAction)
-
-            val resetUpstreamAction = NotificationCompat.Action.Builder(
-                0, service.getString(R.string.reset_connections),
-                PendingIntent.getBroadcast(
-                    service, 0, Intent(Action.RESET_UPSTREAM_CONNECTIONS), flags
-                )
-            ).setShowsUserInterface(false).build()
-            it.addAction(resetUpstreamAction)
         }
     }
 
@@ -185,9 +174,8 @@ class ServiceNotification(
     private suspend fun show() =
         useBuilder { (service as Service).startForeground(notificationId, it.build()) }
 
-    private suspend fun update() = useBuilder {
-        NotificationManagerCompat.from(service as Service).notify(notificationId, it.build())
-    }
+    private suspend fun update() = 
+        useBuilder {NotificationManagerCompat.from(service as Service).notify(notificationId, it.build())}
 
     fun destroy() {
         listenPostSpeed = false
