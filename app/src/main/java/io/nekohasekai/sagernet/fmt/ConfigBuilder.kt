@@ -13,6 +13,8 @@ import io.nekohasekai.sagernet.fmt.hysteria.buildSingBoxOutboundHysteriaBean
 import io.nekohasekai.sagernet.fmt.internal.ChainBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.buildSingBoxOutboundShadowsocksBean
+import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
+import io.nekohasekai.sagernet.fmt.shadowsocksr.buildSingBoxOutboundShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.socks.buildSingBoxOutboundSocksBean
 import io.nekohasekai.sagernet.fmt.ssh.SSHBean
@@ -369,6 +371,9 @@ fun buildConfig(
 
                         is ShadowsocksBean ->
                             buildSingBoxOutboundShadowsocksBean(bean).asMap()
+
+                        is ShadowsocksRBean ->
+                            buildSingBoxOutboundShadowsocksRBean(bean).asMap()
 
                         is WireGuardBean ->
                             buildSingBoxOutboundWireguardBean(bean).asMap()
