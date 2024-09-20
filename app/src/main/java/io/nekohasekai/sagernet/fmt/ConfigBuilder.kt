@@ -9,22 +9,14 @@ import io.nekohasekai.sagernet.database.ProxyEntity.Companion.TYPE_CONFIG
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.fmt.ConfigBuildResult.IndexEntity
 import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean
-import io.nekohasekai.sagernet.fmt.hysteria.buildSingBoxOutboundHysteriaBean
 import io.nekohasekai.sagernet.fmt.internal.ChainBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
-import io.nekohasekai.sagernet.fmt.shadowsocks.buildSingBoxOutboundShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
-import io.nekohasekai.sagernet.fmt.shadowsocksr.buildSingBoxOutboundShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
-import io.nekohasekai.sagernet.fmt.socks.buildSingBoxOutboundSocksBean
 import io.nekohasekai.sagernet.fmt.ssh.SSHBean
-import io.nekohasekai.sagernet.fmt.ssh.buildSingBoxOutboundSSHBean
 import io.nekohasekai.sagernet.fmt.tuic.TuicBean
-import io.nekohasekai.sagernet.fmt.tuic.buildSingBoxOutboundTuicBean
 import io.nekohasekai.sagernet.fmt.v2ray.StandardV2RayBean
-import io.nekohasekai.sagernet.fmt.v2ray.buildSingBoxOutboundStandardV2RayBean
 import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
-import io.nekohasekai.sagernet.fmt.wireguard.buildSingBoxOutboundWireguardBean
 import io.nekohasekai.sagernet.ktx.isIpAddress
 import io.nekohasekai.sagernet.ktx.mkPort
 import io.nekohasekai.sagernet.utils.PackageCache
@@ -38,6 +30,8 @@ import moe.matsuri.nb4a.utils.JavaUtil.gson
 import moe.matsuri.nb4a.utils.Util
 import moe.matsuri.nb4a.utils.listByLineOrComma
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import org.json.JSONArray
+import org.json.JSONObject
 
 const val TAG_MIXED = "mixed-in"
 
@@ -72,13 +66,32 @@ fun buildConfig(
         if (bean.type == 0) {
             return ConfigBuildResult(
                 bean.config,
-                listOf(),
+                emptyList(),
                 proxy.id, //
                 mapOf(TAG_PROXY to listOf(proxy)), //
                 mapOf(proxy.id to TAG_PROXY), //
                 -1L
             )
         }
+    }
+
+    if (!forTest && !DataStore.customGlobalConfig.isNullOrBlank()) {
+        val jsonObject = JSONObject(DataStore.customGlobalConfig).apply {
+            (optJSONArray("outbounds") ?: JSONArray().also { put("outbounds", it) }).put(
+                JSONObject(proxy.buildSingBoxOutbound(proxy.requireBean())).apply {
+                    put("tag", "proxy")
+                }
+            )
+        }
+
+        return ConfigBuildResult(
+            jsonObject.toString(4),
+            emptyList(),
+            proxy.id, //
+            mapOf(TAG_PROXY to listOf(proxy)), //
+            mapOf(proxy.id to TAG_PROXY), //
+            -1L
+        )
     }
 
     val trafficMap = HashMap<String, List<ProxyEntity>>()
@@ -350,40 +363,7 @@ fun buildConfig(
                         server_port = localPort
                     }.asMap()
                 } else { // internal outbound
-                    currentOutbound = when (bean) {
-                        is ConfigBean ->
-                            gson.fromJson(bean.config, currentOutbound.javaClass)
-
-                        is ShadowTLSBean -> // before StandardV2RayBean
-                            buildSingBoxOutboundShadowTLSBean(bean).asMap()
-
-                        is StandardV2RayBean -> // http/trojan/vmess/vless
-                            buildSingBoxOutboundStandardV2RayBean(bean).asMap()
-
-                        is HysteriaBean ->
-                            buildSingBoxOutboundHysteriaBean(bean)
-
-                        is TuicBean ->
-                            buildSingBoxOutboundTuicBean(bean).asMap()
-
-                        is SOCKSBean ->
-                            buildSingBoxOutboundSocksBean(bean).asMap()
-
-                        is ShadowsocksBean ->
-                            buildSingBoxOutboundShadowsocksBean(bean).asMap()
-
-                        is ShadowsocksRBean ->
-                            buildSingBoxOutboundShadowsocksRBean(bean).asMap()
-
-                        is WireGuardBean ->
-                            buildSingBoxOutboundWireguardBean(bean).asMap()
-
-                        is SSHBean ->
-                            buildSingBoxOutboundSSHBean(bean).asMap()
-
-                        else -> throw IllegalStateException("can't reach")
-                    }
-
+                    currentOutbound = proxyEntity.buildSingBoxOutbound(bean)
                     currentOutbound.apply {
                         // TODO nb4a keepAliveInterval?
 //                        val keepAliveInterval = DataStore.tcpKeepAliveInterval

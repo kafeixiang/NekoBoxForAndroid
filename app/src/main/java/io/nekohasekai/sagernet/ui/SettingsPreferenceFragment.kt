@@ -15,6 +15,7 @@ import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.ktx.*
+import io.nekohasekai.sagernet.ui.profile.ConfigEditActivity
 import io.nekohasekai.sagernet.utils.Theme
 import io.nekohasekai.sagernet.widget.AppListPreference
 import moe.matsuri.nb4a.Protocols
@@ -120,6 +121,16 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
                 }
                 .setNegativeButton(android.R.string.cancel, null)
                 .show()
+            true
+        }
+
+        val customGlobalConfig = findPreference<Preference>(Key.CUSTOM_GLOBAL_CONFIG)!!
+        customGlobalConfig.setOnPreferenceClickListener {
+            startActivity(
+                Intent(requireContext(), ConfigEditActivity::class.java).apply {
+                    putExtra("key", Key.CUSTOM_GLOBAL_CONFIG)
+                }
+            )
             true
         }
 

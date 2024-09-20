@@ -200,6 +200,7 @@
     <string name="deprecated">已废弃</string>
     <string name="show_direct_speed">显示直连速度</string>
     <string name="show_direct_speed_sum">在通知中也显示不经过代理的流量速度</string>
+    <string name="merge_custom_config">当前出站使用完整自定义配置</string>
     <string name="select_profile">选择配置</string>
     <string name="proxy_chain">链式代理</string>
     <string name="chain_settings">链设置</string>
@@ -459,6 +460,7 @@
     <string name="enable_clash_api_summary">在 127.0.0.1:9090 提供 clash api 和 yacd 仪表板</string>
     <string name="xtls_flow">Flow（VLESS 子协议）</string>
     <string name="log_level">日志级别</string>
+    <string name="custom_global_config">自定义全局配置</string>
     <string name="ads">推广</string>
     <string name="need_restart">重新启动应用程序以应用更改</string>
     <string name="use_selector">启用 selector （免重载切换节点）</string>

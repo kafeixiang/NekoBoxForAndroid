@@ -7,30 +7,21 @@ import com.esotericsoftware.kryo.io.ByteBufferInput
 import com.esotericsoftware.kryo.io.ByteBufferOutput
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.fmt.*
-import io.nekohasekai.sagernet.fmt.http.HttpBean
-import io.nekohasekai.sagernet.fmt.http.toUri
-import io.nekohasekai.sagernet.fmt.hysteria.*
-import io.nekohasekai.sagernet.fmt.internal.ChainBean
-import io.nekohasekai.sagernet.fmt.mieru.MieruBean
-import io.nekohasekai.sagernet.fmt.mieru.buildMieruConfig
-import io.nekohasekai.sagernet.fmt.naive.NaiveBean
-import io.nekohasekai.sagernet.fmt.naive.buildNaiveConfig
-import io.nekohasekai.sagernet.fmt.naive.toUri
+import io.nekohasekai.sagernet.fmt.http.*
+import io.nekohasekai.sagernet.fmt.socks.*
 import io.nekohasekai.sagernet.fmt.shadowsocks.*
-import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
-import io.nekohasekai.sagernet.fmt.shadowsocksr.toUri
-import moe.matsuri.nb4a.proxy.shadowtls.ShadowTLSBean
-import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
-import io.nekohasekai.sagernet.fmt.socks.toUri
-import io.nekohasekai.sagernet.fmt.ssh.SSHBean
-import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
-import io.nekohasekai.sagernet.fmt.trojan_go.TrojanGoBean
-import io.nekohasekai.sagernet.fmt.trojan_go.buildTrojanGoConfig
-import io.nekohasekai.sagernet.fmt.trojan_go.toUri
-import io.nekohasekai.sagernet.fmt.tuic.TuicBean
-import io.nekohasekai.sagernet.fmt.tuic.toUri
+import io.nekohasekai.sagernet.fmt.shadowsocksr.*
 import io.nekohasekai.sagernet.fmt.v2ray.*
-import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
+import io.nekohasekai.sagernet.fmt.tuic.*
+import io.nekohasekai.sagernet.fmt.hysteria.*
+import io.nekohasekai.sagernet.fmt.wireguard.*
+import io.nekohasekai.sagernet.fmt.ssh.*
+import moe.matsuri.nb4a.proxy.shadowtls.*
+import io.nekohasekai.sagernet.fmt.mieru.*
+import io.nekohasekai.sagernet.fmt.naive.*
+import io.nekohasekai.sagernet.fmt.trojan.*
+import io.nekohasekai.sagernet.fmt.trojan_go.*
+import io.nekohasekai.sagernet.fmt.internal.ChainBean
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.applyDefaultValues
 import io.nekohasekai.sagernet.ui.profile.*
@@ -39,6 +30,7 @@ import moe.matsuri.nb4a.proxy.config.ConfigBean
 import moe.matsuri.nb4a.proxy.config.ConfigSettingActivity
 import moe.matsuri.nb4a.proxy.neko.*
 import moe.matsuri.nb4a.proxy.shadowtls.ShadowTLSSettingsActivity
+import moe.matsuri.nb4a.utils.JavaUtil.gson
 
 @Entity(
     tableName = "proxy_entities", indices = [Index("groupId", name = "groupId")]
@@ -228,6 +220,42 @@ data class ProxyEntity(
             TYPE_CONFIG -> configBean
             else -> error("Undefined type $type")
         } ?: error("Null ${displayType()} profile")
+    }
+
+    fun buildSingBoxOutbound(bean: AbstractBean): MutableMap<String, Any> {
+        return when (bean) {
+            is ConfigBean ->
+                gson.fromJson<MutableMap<String, Any>>(bean.config, MutableMap::class.java)
+
+            is ShadowTLSBean -> // before StandardV2RayBean
+                buildSingBoxOutboundShadowTLSBean(bean).asMap()
+
+            is StandardV2RayBean -> // http/trojan/vmess/vless
+                buildSingBoxOutboundStandardV2RayBean(bean).asMap()
+
+            is HysteriaBean ->
+                buildSingBoxOutboundHysteriaBean(bean)
+
+            is TuicBean ->
+                buildSingBoxOutboundTuicBean(bean).asMap()
+
+            is SOCKSBean ->
+                buildSingBoxOutboundSocksBean(bean).asMap()
+
+            is ShadowsocksBean ->
+                buildSingBoxOutboundShadowsocksBean(bean).asMap()
+
+            is ShadowsocksRBean ->
+                buildSingBoxOutboundShadowsocksRBean(bean).asMap()
+
+            is WireGuardBean ->
+                buildSingBoxOutboundWireguardBean(bean).asMap()
+
+            is SSHBean ->
+                buildSingBoxOutboundSSHBean(bean).asMap()
+
+            else -> throw IllegalStateException("can't reach")
+        }
     }
 
     fun haveLink(): Boolean {
