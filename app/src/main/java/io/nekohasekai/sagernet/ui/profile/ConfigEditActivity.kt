@@ -63,7 +63,7 @@ class ConfigEditActivity : ThemedActivity() {
         binding.editor.apply {
             language = JsonLanguage()
             setHorizontallyScrolling(true)
-            setTextContent(DataStore.profileCacheStore.getString(key)!!)
+            setTextContent(DataStore.profileCacheStore.getString(key) ?: DataStore.configurationStore.getString(key) ?: "")
             addTextChangedListener {
                 if (!dirty) {
                     dirty = true
@@ -121,7 +121,11 @@ class ConfigEditActivity : ThemedActivity() {
 
     fun saveAndExit() {
         formatText()?.let {
-            DataStore.profileCacheStore.putString(key, it)
+            if (DataStore.profileCacheStore.getString(key) != null) {
+                DataStore.profileCacheStore.putString(key, it)
+            } else {
+                DataStore.configurationStore.putString(key, it)
+            }
             finish()
         }
     }
