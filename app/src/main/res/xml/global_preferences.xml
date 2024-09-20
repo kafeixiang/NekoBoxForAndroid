@@ -88,6 +88,11 @@
             app:key="logLevel"
             app:title="@string/log_level"
             app:useSimpleSummaryProvider="true" />
+        <Preference
+            app:key="customGlobalConfig"
+            app:title="@string/custom_global_config"
+            app:summary="@string/merge_custom_config"
+            app:icon="@android:drawable/ic_menu_manage" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/cag_route">
