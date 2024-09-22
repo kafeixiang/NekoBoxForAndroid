@@ -182,6 +182,10 @@ fun Project.setupAppCommon() {
                     storePassword = keystorePwd
                     keyAlias = alias
                     keyPassword = pwd
+                    enableV1Signing = true
+                    enableV2Signing = true
+                    enableV3Signing = true
+                    enableV4Signing = true
                 }
             }
         } else if (requireFlavor().contains("(Oss|Expert|Play)Release".toRegex())) {
