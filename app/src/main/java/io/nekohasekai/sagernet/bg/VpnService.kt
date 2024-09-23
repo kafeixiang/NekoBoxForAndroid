@@ -26,11 +26,14 @@ class VpnService : BaseVpnService(),
 
     companion object {
 
-        const val PRIVATE_VLAN4_CLIENT = "172.19.0.1"
-        const val PRIVATE_VLAN4_ROUTER = "172.19.0.2"
-        const val FAKEDNS_VLAN4_CLIENT = "198.18.0.0"
+        const val PRIVATE_VLAN4_CLIENT = "172.18.0.1"
+        const val PRIVATE_VLAN4_ROUTER = "172.18.0.2"
+        
         const val PRIVATE_VLAN6_CLIENT = "fdfe:dcba:9876::1"
         const val PRIVATE_VLAN6_ROUTER = "fdfe:dcba:9876::2"
+
+        const val FAKEDNS_VLAN4_CLIENT = "198.18.0.0"
+        const val FAKEDNS_VLAN6_CLIENT = "fc00::"
 
     }
 
@@ -102,11 +105,12 @@ class VpnService : BaseVpnService(),
 
         // address
         builder.addAddress(PRIVATE_VLAN4_CLIENT, 30)
+        builder.addDnsServer(PRIVATE_VLAN4_ROUTER)
         if (ipv6Mode != IPv6Mode.DISABLE) {
             builder.addAddress(PRIVATE_VLAN6_CLIENT, 126)
+            builder.addDnsServer(PRIVATE_VLAN6_ROUTER)
         }
-        builder.addDnsServer(PRIVATE_VLAN4_ROUTER)
-
+        
         // route
         if (DataStore.bypassLan) {
             resources.getStringArray(R.array.bypass_private_route).forEach {
@@ -114,10 +118,16 @@ class VpnService : BaseVpnService(),
                 builder.addRoute(subnet.address.hostAddress!!, subnet.prefixSize)
             }
             builder.addRoute(PRIVATE_VLAN4_ROUTER, 32)
-            builder.addRoute(FAKEDNS_VLAN4_CLIENT, 15)
             // https://issuetracker.google.com/issues/149636790
             if (ipv6Mode != IPv6Mode.DISABLE) {
                 builder.addRoute("2000::", 3)
+                builder.addRoute(PRIVATE_VLAN6_ROUTER, 128)
+            }
+            if (DataStore.enableFakeDns) {
+                builder.addRoute(FAKEDNS_VLAN4_CLIENT, 15)
+                if (ipv6Mode != IPv6Mode.DISABLE) {
+                    builder.addRoute(FAKEDNS_VLAN6_CLIENT, 18)
+                }
             }
         } else {
             builder.addRoute("0.0.0.0", 0)
