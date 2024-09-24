@@ -1,15 +1,9 @@
 import com.android.build.api.dsl.ApplicationExtension
-import com.android.build.api.dsl.LibraryExtension
 import com.android.build.api.dsl.Lint
 import com.android.build.gradle.AbstractAppExtension
-import com.android.build.gradle.AppExtension
-import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
-import org.gradle.api.JavaVersion
 import org.gradle.api.Project
-import org.gradle.api.plugins.ExtensionAware
 import org.gradle.kotlin.dsl.getByName
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import java.security.MessageDigest
 import java.util.*
 import kotlin.system.exitProcess
@@ -103,13 +97,6 @@ fun Project.setupCommon() {
             getByName("release") {
                 isMinifyEnabled = true
             }
-        }
-        compileOptions {
-            sourceCompatibility = JavaVersion.VERSION_17
-            targetCompatibility = JavaVersion.VERSION_17
-        }
-        (android as ExtensionAware).extensions.getByName<KotlinJvmOptions>("kotlinOptions").apply {
-            jvmTarget = JavaVersion.VERSION_17.toString()
         }
         lint {
             showAll = true
