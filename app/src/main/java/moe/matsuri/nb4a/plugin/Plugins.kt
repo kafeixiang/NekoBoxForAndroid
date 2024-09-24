@@ -22,9 +22,8 @@ object Plugins {
     const val METADATA_KEY_EXECUTABLE_PATH = "io.nekohasekai.sagernet.plugin.executable_path"
 
     fun isExeOrPlugin(pkg: PackageInfo): Boolean {
-        if (pkg.providers == null || pkg.providers.isEmpty()) return false
-        val provider = pkg.providers[0] ?: return false
-        val auth = provider.authority ?: return false
+        if (pkg.providers.isNullOrEmpty()) return false
+        val auth = pkg.providers!![0].authority ?: return false
         return auth.startsWith(AUTHORITIES_PREFIX_SEKAI_EXE)
                 || auth.startsWith(AUTHORITIES_PREFIX_NEKO_EXE)
                 || auth.startsWith(AUTHORITIES_PREFIX_NEKO_PLUGIN)
@@ -92,8 +91,8 @@ object Plugins {
         PackageCache.awaitLoadSync()
         val pkgs = PackageCache.installedPluginPackages
             .map { it.value }
-            .filter { it.providers[0].loadString(METADATA_KEY_ID) == pluginId }
-        return pkgs.map { it.providers[0] }
+            .filter { it.providers!![0].loadString(METADATA_KEY_ID) == pluginId }
+        return pkgs.map { it.providers!![0] }
     }
 
     private fun buildUri(id: String, auth: String) = Uri.Builder()
