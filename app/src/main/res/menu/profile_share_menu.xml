@@ -22,19 +22,18 @@
             <item
                 android:id="@+id/action_universal_clipboard"
                 android:title="SN Link" />
+            <item
+                android:id="@+id/action_config_export_clipboard"
+                android:title="sing-box config" />
         </menu>
     </item>
     <item
         android:id="@+id/action_group_configuration"
-
-        android:title="@string/menu_configuration">
+        android:title="@string/action_export_file">
         <menu>
             <item
-                android:id="@+id/action_config_export_clipboard"
-                android:title="@string/action_export_clipboard" />
-            <item
                 android:id="@+id/action_config_export_file"
-                android:title="@string/action_export_file" />
+                android:title="sing-box config" />
         </menu>
     </item>
 </menu>
