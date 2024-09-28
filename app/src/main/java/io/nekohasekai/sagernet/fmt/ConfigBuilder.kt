@@ -17,7 +17,6 @@ import io.nekohasekai.sagernet.fmt.ssh.SSHBean
 import io.nekohasekai.sagernet.fmt.tuic.TuicBean
 import io.nekohasekai.sagernet.fmt.v2ray.StandardV2RayBean
 import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
-import io.nekohasekai.sagernet.ktx.isIpAddress
 import io.nekohasekai.sagernet.ktx.mkPort
 import io.nekohasekai.sagernet.utils.PackageCache
 import moe.matsuri.nb4a.*
@@ -29,7 +28,6 @@ import moe.matsuri.nb4a.proxy.shadowtls.buildSingBoxOutboundShadowTLSBean
 import moe.matsuri.nb4a.utils.JavaUtil.gson
 import moe.matsuri.nb4a.utils.Util
 import moe.matsuri.nb4a.utils.listByLineOrComma
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -148,7 +146,6 @@ fun buildConfig(
         }.toHashSet().toList()).associateBy { it.id }
     val buildSelector = !forTest && group?.isSelector == true && !forExport
     val userDNSRuleList = mutableListOf<DNSRule_DefaultOptions>()
-    val domainListDNSDirectForce = mutableListOf<String>()
     val bypassDNSBeans = hashSetOf<AbstractBean>()
     val isVPN = DataStore.serviceMode == Key.MODE_VPN
     val bind = if (!forTest && DataStore.allowAccess) "0.0.0.0" else LOCALHOST
@@ -398,13 +395,6 @@ fun buildConfig(
                     } catch (_: Exception) {
                     }
 
-                    // domain_strategy
-                    pastEntity?.requireBean()?.apply {
-                        // don't loopback
-                        if (defaultServerDomainStrategy != "" && !serverAddress.isIpAddress()) {
-                            domainListDNSDirectForce.add("full:$serverAddress")
-                        }
-                    }
                     currentOutbound["domain_strategy"] =
                         if (forTest) "" else defaultServerDomainStrategy
 
@@ -645,22 +635,6 @@ fun buildConfig(
                     serverAddr = toString()
                 }
             }
-
-            if (!serverAddr.isIpAddress()) {
-                domainListDNSDirectForce.add("full:${serverAddr}")
-            }
-        }
-
-        remoteDns.forEach {
-            var address = it
-            if (address.contains("://")) {
-                address = address.substringAfter("://")
-            }
-            "https://$address".toHttpUrlOrNull()?.apply {
-                if (!host.isIpAddress()) {
-                    domainListDNSDirectForce.add("full:$host")
-                }
-            }
         }
 
         // remote dns obj
@@ -750,13 +724,11 @@ fun buildConfig(
                     disable_cache = true
                 })
             }
-            // force bypass (always top DNS rule)
-            if (domainListDNSDirectForce.isNotEmpty()) {
-                dns.rules.add(0, DNSRule_DefaultOptions().apply {
-                    makeSingBoxRule(domainListDNSDirectForce.toHashSet().toList())
+            // any outbound dns
+            dns.rules.add(0, DNSRule_DefaultOptions().apply {
+                    outbound = listOf("any")
                     server = "dns-direct"
-                })
-            }
+            })
         }
     }.let {
         ConfigBuildResult(
