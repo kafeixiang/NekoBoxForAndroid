@@ -2,12 +2,18 @@ name: Release Build
 on:
   workflow_dispatch:
     inputs:
-      publish:
-        description: 'Publish: If want ignore, enter "y"'
+      tag:
+        description: 'Release Tag'
+        required: true
+      upload:
+        description: 'Upload: If want ignore'
         required: false
-  push:
-    tags:
-      - "v*"
+      publish:
+        description: 'Publish: If want ignore'
+        required: false
+      play:
+        description: 'Play: If want ignore'
+        required: false
 jobs:
   libcore:
     name: Native Build (LibCore)
@@ -15,8 +21,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          submodules: recursive
       - name: Golang Status
         run: find buildScript libcore/*.sh | xargs cat | sha1sum > golang_status
       - name: Libcore Status
@@ -28,39 +32,15 @@ jobs:
           path: |
             app/libs/libcore.aar
           key: ${{ hashFiles('.github/workflows/*', 'golang_status', 'libcore_status') }}
-      - name: Golang Version
-        if: steps.cache.outputs.cache-hit != 'true'
-        id: version
-        run: |
-          source buildScript/init/version.sh
-          echo go_version=$GO_VERSION >> $GITHUB_OUTPUT
       - name: Install Golang
         if: steps.cache.outputs.cache-hit != 'true'
         uses: actions/setup-go@v5
         with:
-          go-version: ${{ steps.version.outputs.go_version }}
-          cache-dependency-path: libcore/go.sum
-      - uses: actions/setup-java@v4
-        if: steps.cache.outputs.cache-hit != 'true'
-        with:
-          java-version: "17"
-          distribution: "temurin"
-      - name: Patch Go
-        if: steps.cache.outputs.cache-hit != 'true'
-        # https://github.com/golang/go/commit/3560cf0afb3c29300a6c88ccd98256949ca7a6f6
-        run: |
-          cd "$(go env GOROOT)"
-          curl "https://go-review.googlesource.com/changes/go~600296/revisions/1/patch" | base64 -d | patch --verbose -p 1
+          go-version: ^1.21
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
-        run: |
-          ./run lib core
-      - name: Upload libcore
-        uses: actions/upload-artifact@v4
-        with:
-          path: app/libs/libcore.aar
-          name: "libcore"
-  build:
+        run: ./run lib core
+          build:
     name: Build FOSS APK
     runs-on: ubuntu-latest
     needs:
