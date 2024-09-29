@@ -41,75 +41,36 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: ./run lib core
   build:
-    name: Build FOSS APK
+    name: Build OSS APK
     runs-on: ubuntu-latest
     needs:
       - libcore
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: LibCore Cache
+        uses: actions/cache@v4
         with:
-          submodules: recursive
-      - name: LibCore Artifact
-        uses: actions/download-artifact@v4
-        with:
-          path: app/libs/libcore.aar
-      - uses: actions/setup-java@v4
-        with:
-          java-version: "17"
-          distribution: "temurin"
+          path: |
+            app/libs/libcore.aar
+          key: ${{ hashFiles('.github/workflows/*', 'golang_status', 'libcore_status') }}
       - name: Gradle cache
         uses: actions/cache@v4
         with:
           path: ~/.gradle
-          key: gradle-foss-${{ hashFiles('**/*.gradle.kts') }}
-      - name: Golang Version
-        if: steps.cache.outputs.cache-hit != 'true'
-        id: version
-        run: |
-          source buildScript/init/version.sh
-          echo go_version=$GO_VERSION >> $GITHUB_OUTPUT
-      - name: Install Golang
-        if: steps.cache.outputs.cache-hit != 'true'
-        uses: actions/setup-go@v5
-        with:
-          go-version: ${{ steps.version.outputs.go_version }}
-          cache-dependency-path: libcore/go.sum
+          key: gradle-oss-${{ hashFiles('**/*.gradle.kts') }}
       - name: Gradle Build
         env:
           BUILD_PLUGIN: none
         run: |
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
-          # export LOCAL_PROPERTIES="${{ secrets.LOCAL_PROPERTIES }}"
+          echo "ndk.dir=${ANDROID_HOME}/ndk/25.0.8775105" >> local.properties
           ./run init action gradle
-          ./gradlew clean app:assembleFossRelease
-
+          ./gradlew app:assembleOssRelease
           APK=$(find app/build/outputs/apk -name '*arm64-v8a*.apk')
           APK=$(dirname $APK)
-          rm $APK/output-metadata.json
           echo "APK=$APK" >> $GITHUB_ENV
       - uses: actions/upload-artifact@v4
         with:
           name: APKs
           path: ${{ env.APK }}
-  publish:
-    name: Publish Release
-    if: github.event.inputs.publish != 'y'
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-      - name: Donwload Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: APKs
-          path: artifacts/
-      - name: Release
-        run: |
-          curl -Lo - https://github.com/tcnksm/ghr/releases/download/v0.16.2/ghr_v0.16.2_linux_amd64.tar.gz | tar xzv
-          mv ghr*linux_amd64/ghr .
-          ./ghr -delete -prerelease -t "${{ github.token }}" -n "${{ github.ref }}" "${{ github
-          .ref }}" ./artifacts/
