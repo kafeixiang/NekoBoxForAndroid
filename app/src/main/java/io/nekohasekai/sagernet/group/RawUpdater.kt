@@ -248,6 +248,8 @@ object RawUpdater : GroupUpdater() {
                                 password = proxy["password"]?.toString()
                                 setTLS(proxy["tls"]?.toString() == "true")
                                 sni = proxy["sni"]?.toString()
+                                allowInsecure = (proxy["skip-cert-verify"]?.toString() == "true") ||
+                                                (security == "tls" && sni.isNullOrEmpty())
                                 name = proxy["name"]?.toString()
                             })
                         }
