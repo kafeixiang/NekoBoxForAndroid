@@ -35,7 +35,6 @@ const val TAG_MIXED = "mixed-in"
 
 const val TAG_PROXY = "proxy"
 const val TAG_DIRECT = "direct"
-const val TAG_BYPASS = "bypass"
 const val TAG_BLOCK = "block"
 
 const val TAG_DNS_IN = "dns-in"
@@ -575,7 +574,7 @@ fun buildConfig(
 
                 outbound = when (val outId = rule.outbound) {
                     0L -> TAG_PROXY
-                    -1L -> TAG_BYPASS
+                    -1L -> TAG_DIRECT
                     -2L -> TAG_BLOCK
                     else -> if (outId == proxy.id) TAG_PROXY else tagMap[outId] ?: ""
                 }
@@ -595,8 +594,8 @@ fun buildConfig(
             }
         }
 
-        for (freedom in arrayOf(TAG_DIRECT, TAG_BYPASS)) outbounds.add(Outbound().apply {
-            tag = freedom
+        outbounds.add(Outbound().apply {
+            tag = TAG_DIRECT
             type = "direct"
         }.asMap())
 
@@ -693,7 +692,7 @@ fun buildConfig(
             }) // TODO new mode use system dns?
             if (DataStore.bypassLanInCore) {
                 route.rules.add(Rule_DefaultOptions().apply {
-                    outbound = TAG_BYPASS
+                    outbound = TAG_DIRECT
                     ip_is_private = true
                 })
             }
