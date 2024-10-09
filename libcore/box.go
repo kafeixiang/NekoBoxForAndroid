@@ -21,6 +21,7 @@ import (
 	"github.com/sagernet/sing-box/constant"
 	"github.com/sagernet/sing-box/option"
 	"github.com/sagernet/sing-box/outbound"
+	"github.com/sagernet/sing/service"
 	"github.com/sagernet/sing/service/pause"
 )
 
@@ -81,9 +82,7 @@ func NewSingBoxInstance(config string) (b *BoxInstance, err error) {
 
 	// create box
 	ctx, cancel := context.WithCancel(context.Background())
-	sleepManager := pause.ManagerFromContext(ctx)
-	//sleepManager := pause.NewDefaultManager(ctx)
-	ctx = pause.ContextWithManager(ctx, sleepManager)
+	ctx = service.ContextWithDefaultRegistry(ctx)
 	instance, err := box.New(box.Options{
 		Options:           options,
 		Context:           ctx,
@@ -97,7 +96,7 @@ func NewSingBoxInstance(config string) (b *BoxInstance, err error) {
 	b = &BoxInstance{
 		Box:          instance,
 		cancel:       cancel,
-		pauseManager: sleepManager,
+		pauseManager: service.FromContext[pause.Manager](ctx),
 	}
 
 	b.SetLogWritter(neko_log.LogWriter)
@@ -143,8 +142,7 @@ func (b *BoxInstance) Close() (err error) {
 	}
 
 	// close box
-	b.Close()
-	// close box.Box
+	b.cancel()
 	b.Box.Close()
 
 	return nil
@@ -162,10 +160,6 @@ func (b *BoxInstance) Wake() {
 func (b *BoxInstance) SetAsMain() {
 	mainInstance = b
 	goServeProtect(true)
-}
-
-func (b *BoxInstance) SetConnectionPoolEnabled(enable bool) {
-	// TODO api
 }
 
 func (b *BoxInstance) SetV2rayStats(outbounds string) {
