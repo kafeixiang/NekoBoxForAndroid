@@ -11,7 +11,6 @@ import (
 	"runtime/debug"
 	"strings"
 
-	"github.com/matsuridayo/libneko/neko_log"
 	"github.com/matsuridayo/libneko/protect_server"
 	"github.com/matsuridayo/libneko/speedtest"
 	"github.com/sagernet/sing-box/boxapi"
@@ -83,10 +82,12 @@ func NewSingBoxInstance(config string) (b *BoxInstance, err error) {
 	// create box
 	ctx, cancel := context.WithCancel(context.Background())
 	ctx = service.ContextWithDefaultRegistry(ctx)
+	platformWrapper := &boxPlatformInterfaceWrapper{useProcFS: intfBox.UseProcFS()}
 	instance, err := box.New(box.Options{
 		Options:           options,
 		Context:           ctx,
-		PlatformInterface: boxPlatformInterfaceInstance,
+		PlatformInterface: platformWrapper,
+		PlatformLogWriter: platformWrapper,
 	})
 	if err != nil {
 		cancel()
@@ -98,13 +99,6 @@ func NewSingBoxInstance(config string) (b *BoxInstance, err error) {
 		cancel:       cancel,
 		pauseManager: service.FromContext[pause.Manager](ctx),
 	}
-
-	b.SetLogWritter(neko_log.LogWriter)
-
-	// fuck your sing-box platformFormatter
-	pf := instance.GetLogPlatformFormatter()
-	pf.DisableColors = true
-	pf.DisableLineBreak = false
 
 	// selector
 	if proxy, ok := b.Router().Outbound("proxy"); ok {

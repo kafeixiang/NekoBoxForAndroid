@@ -39,7 +39,6 @@ func InitCore(process, cachePath, internalAssets, externalAssets string,
 	neko_common.RunMode = neko_common.RunMode_NekoBoxForAndroid
 	intfNB4A = if1
 	intfBox = if2
-	useProcfs = intfBox.UseProcFS()
 
 	// Working dir
 	tmp := filepath.Join(cachePath, "../no_backup")
