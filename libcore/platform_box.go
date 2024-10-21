@@ -6,14 +6,15 @@ import (
 	"errors"
 	"fmt"
 	"libcore/procfs"
-	"log"
 	"net/netip"
+	"runtime"
 	"strings"
 	"syscall"
 
+	"github.com/matsuridayo/libneko/neko_log"
 	"github.com/sagernet/sing-box/adapter"
 	"github.com/sagernet/sing-box/common/process"
-	"github.com/sagernet/sing-box/experimental/libbox/platform"
+	"github.com/sagernet/sing-box/log"
 	"github.com/sagernet/sing-box/option"
 	tun "github.com/sagernet/sing-tun"
 	"github.com/sagernet/sing/common/control"
@@ -22,9 +23,10 @@ import (
 	N "github.com/sagernet/sing/common/network"
 )
 
-var boxPlatformInterfaceInstance platform.Interface = &boxPlatformInterfaceWrapper{}
-
-type boxPlatformInterfaceWrapper struct{}
+type boxPlatformInterfaceWrapper struct {
+	useProcFS bool
+	router    adapter.Router
+}
 
 func (w *boxPlatformInterfaceWrapper) ReadWIFIState() adapter.WIFIState {
 	state := strings.Split(intfBox.WIFIState(), ",")
@@ -35,6 +37,7 @@ func (w *boxPlatformInterfaceWrapper) ReadWIFIState() adapter.WIFIState {
 }
 
 func (w *boxPlatformInterfaceWrapper) Initialize(ctx context.Context, router adapter.Router) error {
+	w.router = router
 	return nil
 }
 
@@ -70,7 +73,7 @@ func (w *boxPlatformInterfaceWrapper) OpenTun(options *tun.Options, platformOpti
 		return nil, fmt.Errorf("syscall.Dup: %v", err)
 	}
 	//
-	options.FileDescriptor = int(tunFd)
+	options.FileDescriptor = tunFd
 	return tun.New(*options)
 }
 
@@ -111,7 +114,7 @@ func (w *boxPlatformInterfaceWrapper) ClearDNSCache() {
 
 func (w *boxPlatformInterfaceWrapper) FindProcessInfo(ctx context.Context, network string, source netip.AddrPort, destination netip.AddrPort) (*process.Info, error) {
 	var uid int32
-	if useProcfs {
+	if w.useProcFS {
 		uid = procfs.ResolveSocketByProcSearch(network, source, destination)
 		if uid == -1 {
 			return nil, E.New("procfs: not found")
@@ -138,12 +141,13 @@ func (w *boxPlatformInterfaceWrapper) FindProcessInfo(ctx context.Context, netwo
 
 // io.Writer
 
-var disableSingBoxLog = false
+func (w *boxPlatformInterfaceWrapper) DisableColors() bool {
+	return runtime.GOOS != "android"
+}
 
-func (w *boxPlatformInterfaceWrapper) Write(p []byte) (n int, err error) {
-	// use neko_log
-	if !disableSingBoxLog {
-		log.Print(string(p))
+func (w *boxPlatformInterfaceWrapper) WriteMessage(level log.Level, message string) {
+	if !strings.HasSuffix(message, "\n") {
+		message += "\n"
 	}
-	return len(p), nil
+	neko_log.LogWriter.Write([]byte(message))
 }
