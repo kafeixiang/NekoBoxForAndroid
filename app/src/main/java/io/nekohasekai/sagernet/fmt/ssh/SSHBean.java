@@ -22,6 +22,7 @@ public class SSHBean extends AbstractBean {
     public String privateKey;
     public String privateKeyPassphrase;
     public String publicKey;
+    public String publicKeyAlgorithms;
 
     @Override
     public void initializeDefaultValues() {
@@ -35,6 +36,7 @@ public class SSHBean extends AbstractBean {
         if (privateKey == null) privateKey = "";
         if (privateKeyPassphrase == null) privateKeyPassphrase = "";
         if (publicKey == null) publicKey = "";
+        if (publicKeyAlgorithms == null) publicKeyAlgorithms = "";
     }
 
     @Override
