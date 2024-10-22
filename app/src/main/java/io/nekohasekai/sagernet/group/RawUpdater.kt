@@ -13,6 +13,7 @@ import io.nekohasekai.sagernet.fmt.shadowsocks.parseShadowsocks
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.shadowsocksr.parseShadowsocksR
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
+import io.nekohasekai.sagernet.fmt.ssh.SSHBean
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
 import io.nekohasekai.sagernet.fmt.trojan_go.parseTrojanGo
 import io.nekohasekai.sagernet.fmt.tuic.TuicBean
@@ -624,6 +625,42 @@ object RawUpdater : GroupUpdater() {
                                 }
                             }
                             proxies.add(bean)
+                        }
+
+                        "wireguard" -> {
+                            proxies.add(WireGuardBean().apply {
+                                for (opt in proxy) {
+                                    when (opt.key) {
+                                        "name" -> name = opt.value?.toString()
+                                        "server" -> serverAddress = opt.value as String
+                                        "port" -> serverPort = opt.value.toString().toInt()
+                                        "ip", "ipv6" -> localAddress = opt.value as String
+                                        "private-key" -> privateKey = opt.value as String
+                                        "public-key" -> peerPublicKey = opt.value as String
+                                        "pre-shared-key" -> peerPreSharedKey = opt.value?.toString()
+                                        "reserved" -> reserved = opt.value?.toString()
+                                        "mtu" -> mtu = opt.value?.toString()?.toInt()
+                                    }
+                                }
+                            })
+                        }
+
+                        "ssh" -> {
+                            proxies.add(SSHBean().apply {
+                                for (opt in proxy) {
+                                    when (opt.key) {
+                                        "name" -> name = opt.value?.toString()
+                                        "server" -> serverAddress = opt.value as String
+                                        "port" -> serverPort = opt.value.toString().toInt()
+                                        "username" -> username = opt.value as String
+                                        "password" -> password = opt.value?.toString()
+                                        "private-key" -> privateKey = opt.value?.toString()
+                                        "private-key-passphrase" -> privateKeyPassphrase = opt.value?.toString()
+                                        "host-key" -> publicKey = opt.value?.toString()
+                                        "host-key-algorithms" -> publicKeyAlgorithms = opt.value?.toString()
+                                    }
+                                }
+                            })
                         }
                     }
                 }
