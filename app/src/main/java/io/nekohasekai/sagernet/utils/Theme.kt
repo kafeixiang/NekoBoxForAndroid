@@ -71,7 +71,7 @@ object Theme {
             BROWN -> R.style.Theme_SagerNet_Brown
             GREY -> R.style.Theme_SagerNet_Grey
             BLUE_GREY -> R.style.Theme_SagerNet_BlueGrey
-            BLACK -> R.style.Theme_SagerNet_Black
+            BLACK -> if (usingNightMode()) R.style.Theme_SagerNet_Black else R.style.Theme_SagerNet_LightBlack
             PINK_SSR -> R.style.Theme_SagerNet_Pink_SSR
             else -> getTheme(defaultTheme())
         }
@@ -98,7 +98,7 @@ object Theme {
             BROWN -> R.style.Theme_SagerNet_Dialog_Brown
             GREY -> R.style.Theme_SagerNet_Dialog_Grey
             BLUE_GREY -> R.style.Theme_SagerNet_Dialog_BlueGrey
-            BLACK -> R.style.Theme_SagerNet_Dialog_Black
+            BLACK -> if (usingNightMode()) R.style.Theme_SagerNet_Dialog_Black else R.style.Theme_SagerNet_Dialog_LightBlack
             PINK_SSR -> R.style.Theme_SagerNet_Dialog_Pink_SSR
             else -> getDialogTheme(defaultTheme())
         }
