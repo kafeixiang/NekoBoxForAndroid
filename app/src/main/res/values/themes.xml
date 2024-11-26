@@ -474,7 +474,6 @@
         <item name="tabIndicatorColor">@color/black</item>
         <item name="tabRippleColor">@android:color/transparent</item>
 
-        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
         <item name="itemShapeFillColor">#E0E0E0</item>
 
         <item name="colorMaterial100">@color/fab_color_progress</item>
