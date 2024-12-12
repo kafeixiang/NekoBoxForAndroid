@@ -80,7 +80,7 @@ func NewSingBoxInstance(config string) (b *BoxInstance, err error) {
 		return nil, fmt.Errorf("decode config: %v", err)
 	}
 
-	// create box
+	// create box context
 	ctx, cancel := context.WithCancel(context.Background())
 	ctx = service.ContextWithDefaultRegistry(ctx)
 	platformWrapper := &boxPlatformInterfaceWrapper{useProcFS: intfBox.UseProcFS()}

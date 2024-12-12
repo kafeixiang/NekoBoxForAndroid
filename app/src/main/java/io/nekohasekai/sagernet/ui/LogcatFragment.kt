@@ -37,6 +37,22 @@ class LogcatFragment : ToolbarFragment(R.layout.layout_logcat),
         // TODO new logcat
     }
 
+    private fun getColorForLine(line: String): ForegroundColorSpan {
+        var color = ForegroundColorSpan(Color.GRAY)
+        when {
+            line.contains("INFO[") || line.contains(" [Info]") -> {
+                color = ForegroundColorSpan((0xFF86C166).toInt())
+            }
+            line.contains("ERROR[") || line.contains(" [Error]") -> {
+                color = ForegroundColorSpan(Color.RED)
+            }
+            line.contains("WARN[") || line.contains(" [Warning]") -> {
+                color = ForegroundColorSpan(Color.RED)
+            }
+        }
+        return color
+    }
+
     private fun reloadSession() {
         binding.textview.text = ColorUtils.ansiEscapeToSpannable(
             requireContext(), String(SendLog.getNekoLog(50 * 1024))

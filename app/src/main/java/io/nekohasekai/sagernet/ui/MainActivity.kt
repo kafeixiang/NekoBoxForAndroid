@@ -327,7 +327,6 @@ class MainActivity : ThemedActivity(),
             R.id.nav_logcat -> displayFragment(LogcatFragment())
 
             R.id.nav_about -> displayFragment(AboutFragment())
-            
             else -> return false
         }
         navigation.menu.findItem(id).isChecked = true

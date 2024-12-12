@@ -18,6 +18,7 @@ import io.nekohasekai.sagernet.databinding.LayoutAssetsBinding
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.widget.UndoSnackbarManager
 import libcore.Libcore
+import moe.matsuri.nb4a.utils.Util
 import org.json.JSONObject
 import java.io.File
 import java.io.FileWriter
@@ -284,7 +285,7 @@ class AssetsActivity : ThemedActivity() {
                 setURL("https://api.github.com/repos/$repo/releases/latest")
             }.execute()
 
-            val release = JSONObject(response.contentString)
+            val release = JSONObject(Util.getStringBox(response.contentString))
             val tagName = release.optString("tag_name")
 
             if (tagName == localVersion) {

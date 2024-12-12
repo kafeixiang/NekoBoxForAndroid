@@ -15,7 +15,6 @@ pushd ..
 if [ ! -d "sing-box" ]; then
   git clone https://github.com/Restia-Ashbell/sing-box
 fi
-
 ####
 
 popd

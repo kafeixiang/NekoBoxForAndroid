@@ -3,12 +3,13 @@ module libcore
 go 1.22.0
 
 require (
-	github.com/matsuridayo/libneko v0.0.0-20240702024904-1c47a3af7199
 	github.com/miekg/dns v1.1.62
 	github.com/sagernet/sing v0.5.0-rc.2
 	github.com/sagernet/sing-box v1.0.0 // replaced
 	github.com/sagernet/sing-dns v0.3.0-rc.2
 	github.com/sagernet/sing-tun v0.4.0-rc.4
+=======
+	github.com/matsuridayo/libneko v1.0.0 // replaced
 	github.com/ulikunitz/xz v0.5.11
 )
 
@@ -101,7 +102,7 @@ require (
 
 replace github.com/sagernet/sing-box => ../../sing-box
 
-// replace github.com/sagernet/sing-quic => ../../sing-quic
+replace github.com/sagernet/sing-quic => ../../sing-quic
 
 // replace github.com/sagernet/sing => ../../sing
 

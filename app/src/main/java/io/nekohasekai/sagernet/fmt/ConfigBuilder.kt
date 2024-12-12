@@ -1,7 +1,11 @@
 package io.nekohasekai.sagernet.fmt
 
 import android.widget.Toast
-import io.nekohasekai.sagernet.*
+import io.nekohasekai.sagernet.IPv6Mode
+import io.nekohasekai.sagernet.Key
+import io.nekohasekai.sagernet.R
+import io.nekohasekai.sagernet.SagerNet
+import io.nekohasekai.sagernet.TunImplementation
 import io.nekohasekai.sagernet.bg.VpnService
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
@@ -17,10 +21,33 @@ import io.nekohasekai.sagernet.fmt.ssh.SSHBean
 import io.nekohasekai.sagernet.fmt.tuic.TuicBean
 import io.nekohasekai.sagernet.fmt.v2ray.StandardV2RayBean
 import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
+import io.nekohasekai.sagernet.fmt.wireguard.buildSingBoxOutboundWireguardBean
 import io.nekohasekai.sagernet.ktx.mkPort
 import io.nekohasekai.sagernet.utils.PackageCache
-import moe.matsuri.nb4a.*
-import moe.matsuri.nb4a.SingBoxOptions.*
+import moe.matsuri.nb4a.Protocols
+import moe.matsuri.nb4a.SingBoxOptions.CacheFile
+import moe.matsuri.nb4a.SingBoxOptions.ClashAPIOptions
+import moe.matsuri.nb4a.SingBoxOptions.DNSFakeIPOptions
+import moe.matsuri.nb4a.SingBoxOptions.DNSOptions
+import moe.matsuri.nb4a.SingBoxOptions.DNSRule_DefaultOptions
+import moe.matsuri.nb4a.SingBoxOptions.DNSServerOptions
+import moe.matsuri.nb4a.SingBoxOptions.ExperimentalOptions
+import moe.matsuri.nb4a.SingBoxOptions.Inbound_DirectOptions
+import moe.matsuri.nb4a.SingBoxOptions.Inbound_MixedOptions
+import moe.matsuri.nb4a.SingBoxOptions.Inbound_TunOptions
+import moe.matsuri.nb4a.SingBoxOptions.LogOptions
+import moe.matsuri.nb4a.SingBoxOptions.MultiplexOptions
+import moe.matsuri.nb4a.SingBoxOptions.MyOptions
+import moe.matsuri.nb4a.SingBoxOptions.Outbound
+import moe.matsuri.nb4a.SingBoxOptions.Outbound_SelectorOptions
+import moe.matsuri.nb4a.SingBoxOptions.Outbound_SocksOptions
+import moe.matsuri.nb4a.SingBoxOptions.RouteOptions
+import moe.matsuri.nb4a.SingBoxOptions.RuleSet
+import moe.matsuri.nb4a.SingBoxOptions.Rule_DefaultOptions
+import moe.matsuri.nb4a.SingBoxOptionsUtil
+import moe.matsuri.nb4a.checkEmpty
+import moe.matsuri.nb4a.generateRuleSet
+import moe.matsuri.nb4a.makeSingBoxRule
 import moe.matsuri.nb4a.plugin.Plugins
 import moe.matsuri.nb4a.proxy.config.ConfigBean
 import moe.matsuri.nb4a.proxy.shadowtls.ShadowTLSBean
@@ -41,7 +68,6 @@ const val TAG_DNS_IN = "dns-in"
 const val TAG_DNS_OUT = "dns-out"
 
 const val LOCALHOST = "127.0.0.1"
-const val LOCAL_DNS_SERVER = "local"
 
 class ConfigBuildResult(
     var config: String,
@@ -394,12 +420,18 @@ fun buildConfig(
                     } catch (_: Exception) {
                     }
 
+
+                    // domain_strategy
+
                     currentOutbound["domain_strategy"] =
                         if (forTest) "" else defaultServerDomainStrategy
 
                     // custom JSON merge
                     if (bean.customOutboundJson.isNotBlank()) {
-                        Util.mergeJSON(bean.customOutboundJson, currentOutbound)
+                        Util.mergeJSON(
+                            bean.customOutboundJson,
+                            currentOutbound as MutableMap<String, Any?>
+                        )
                     }
                 }
 
@@ -657,7 +689,7 @@ fun buildConfig(
             })
         }
         dns.servers.add(DNSServerOptions().apply {
-            address = LOCAL_DNS_SERVER
+            address = "local"
             tag = "dns-local"
             detour = TAG_DIRECT
         })
@@ -674,14 +706,8 @@ fun buildConfig(
         }
 
         if (forTest) {
-            // Always use system DNS for urlTest
-            dns.servers = listOf(
-                DNSServerOptions().apply {
-                    address = LOCAL_DNS_SERVER
-                    tag = "dns-local"
-                    detour = TAG_DIRECT
-                }
-            )
+            // Always use direct DNS for urlTest
+            dns.servers.removeAt(0)
             dns.rules = listOf()
         } else {
             // built-in DNS rules
@@ -692,7 +718,7 @@ fun buildConfig(
             route.rules.add(0, Rule_DefaultOptions().apply {
                 port = listOf(53)
                 outbound = TAG_DNS_OUT
-            }) // TODO new mode use system dns?
+            })
             if (DataStore.bypassLanInCore) {
                 route.rules.add(Rule_DefaultOptions().apply {
                     outbound = TAG_DIRECT
@@ -723,6 +749,7 @@ fun buildConfig(
                     disable_cache = true
                 })
             }
+            
             // any outbound dns
             dns.rules.add(0, DNSRule_DefaultOptions().apply {
                     outbound = listOf("any")
