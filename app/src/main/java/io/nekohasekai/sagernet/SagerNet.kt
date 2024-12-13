@@ -32,8 +32,12 @@ import moe.matsuri.nb4a.utils.cleanWebview
 import java.io.File
 import androidx.work.Configuration as WorkConfiguration
 
-class SagerNet : Application(),
+class SagerNet() : Application(),
     WorkConfiguration.Provider {
+
+    override val workManagerConfiguration = WorkConfiguration.Builder()
+        .setDefaultProcessName("${BuildConfig.APPLICATION_ID}:bg")
+        .build()
 
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
@@ -104,12 +108,6 @@ class SagerNet : Application(),
         updateNotificationChannels()
     }
 
-    override fun getWorkManagerConfiguration(): WorkConfiguration {
-        return WorkConfiguration.Builder()
-            .setDefaultProcessName("${BuildConfig.APPLICATION_ID}:bg")
-            .build()
-    }
-
     override fun onTrimMemory(level: Int) {
         super.onTrimMemory(level)
 
@@ -165,8 +163,7 @@ class SagerNet : Application(),
                         NotificationChannel(
                             "service-vpn",
                             application.getText(R.string.service_vpn),
-                            if (Build.VERSION.SDK_INT >= 28) NotificationManager.IMPORTANCE_MIN
-                            else NotificationManager.IMPORTANCE_LOW
+                            NotificationManager.IMPORTANCE_LOW
                         ),   // #1355
                         NotificationChannel(
                             "service-proxy",

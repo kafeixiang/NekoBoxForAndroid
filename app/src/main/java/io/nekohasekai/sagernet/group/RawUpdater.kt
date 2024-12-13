@@ -10,7 +10,10 @@ import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean
 import io.nekohasekai.sagernet.fmt.hysteria.parseHysteria1Json
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.parseShadowsocks
+import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
+import io.nekohasekai.sagernet.fmt.shadowsocksr.parseShadowsocksR
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
+import io.nekohasekai.sagernet.fmt.ssh.SSHBean
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
 import io.nekohasekai.sagernet.fmt.trojan_go.parseTrojanGo
 import io.nekohasekai.sagernet.fmt.tuic.TuicBean
@@ -248,6 +251,8 @@ object RawUpdater : GroupUpdater() {
                                 password = proxy["password"]?.toString()
                                 setTLS(proxy["tls"]?.toString() == "true")
                                 sni = proxy["sni"]?.toString()
+                                allowInsecure = (proxy["skip-cert-verify"]?.toString() == "true") ||
+                                                (security == "tls" && sni.isNullOrEmpty())
                                 name = proxy["name"]?.toString()
                             })
                         }
@@ -285,6 +290,24 @@ object RawUpdater : GroupUpdater() {
                                 plugin = ssPlugin.joinToString(";")
                                 name = proxy["name"]?.toString()
                             })
+                        }
+
+                        "ssr" -> {
+                            val entity = ShadowsocksRBean()
+                            for (opt in proxy) {
+                                when (opt.key) {
+                                    "name" -> entity.name = opt.value?.toString()
+                                    "server" -> entity.serverAddress = opt.value as String
+                                    "port" -> entity.serverPort = opt.value.toString().toInt()
+                                    "cipher" -> entity.method = clashCipher(opt.value as String)
+                                    "password" -> entity.password = opt.value?.toString()
+                                    "obfs" -> entity.obfs = opt.value as String
+                                    "protocol" -> entity.protocol = opt.value as String
+                                    "obfs-param" -> entity.obfsParam = opt.value?.toString()
+                                    "protocol-param" -> entity.protocolParam = opt.value?.toString()
+                                }
+                            }
+                            proxies.add(entity)
                         }
 
                         "vmess", "vless" -> {
@@ -621,6 +644,42 @@ object RawUpdater : GroupUpdater() {
                             }
                             proxies.add(bean)
                         }
+
+                        "wireguard" -> {
+                            proxies.add(WireGuardBean().apply {
+                                for (opt in proxy) {
+                                    when (opt.key) {
+                                        "name" -> name = opt.value?.toString()
+                                        "server" -> serverAddress = opt.value as String
+                                        "port" -> serverPort = opt.value.toString().toInt()
+                                        "ip", "ipv6" -> localAddress = opt.value as String
+                                        "private-key" -> privateKey = opt.value as String
+                                        "public-key" -> peerPublicKey = opt.value as String
+                                        "pre-shared-key" -> peerPreSharedKey = opt.value?.toString()
+                                        "reserved" -> reserved = opt.value?.toString()
+                                        "mtu" -> mtu = opt.value?.toString()?.toInt()
+                                    }
+                                }
+                            })
+                        }
+
+                        "ssh" -> {
+                            proxies.add(SSHBean().apply {
+                                for (opt in proxy) {
+                                    when (opt.key) {
+                                        "name" -> name = opt.value?.toString()
+                                        "server" -> serverAddress = opt.value as String
+                                        "port" -> serverPort = opt.value.toString().toInt()
+                                        "username" -> username = opt.value as String
+                                        "password" -> password = opt.value?.toString()
+                                        "private-key" -> privateKey = opt.value?.toString()
+                                        "private-key-passphrase" -> privateKeyPassphrase = opt.value?.toString()
+                                        "host-key" -> publicKey = opt.value?.toString()
+                                        "host-key-algorithms" -> publicKeyAlgorithms = opt.value?.toString()
+                                    }
+                                }
+                            })
+                        }
                     }
                 }
 
@@ -724,6 +783,10 @@ object RawUpdater : GroupUpdater() {
                     return listOf(json.parseHysteria1Json())
                 }
 
+                json.has("protocol_param") -> {
+                    return listOf(json.parseShadowsocksR())
+                }
+                
                 json.has("method") -> {
                     return listOf(json.parseShadowsocks())
                 }

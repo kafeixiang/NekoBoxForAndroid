@@ -10,6 +10,9 @@ fun ShadowsocksBean.fixPluginName() {
     if (plugin.startsWith("simple-obfs")) {
         plugin = plugin.replaceFirst("simple-obfs", "obfs-local")
     }
+    if (plugin.startsWith("none")) {
+        plugin = ""
+    }
 }
 
 fun parseShadowsocks(url: String): ShadowsocksBean {

@@ -344,6 +344,10 @@ class ConfigurationFragment @JvmOverloads constructor(
                 startActivity(Intent(requireActivity(), ShadowsocksSettingsActivity::class.java))
             }
 
+            R.id.action_new_ssr -> {
+                startActivity(Intent(requireActivity(), ShadowsocksRSettingsActivity::class.java))
+            }
+
             R.id.action_new_vmess -> {
                 startActivity(Intent(requireActivity(), VMessSettingsActivity::class.java))
             }
@@ -1688,7 +1692,7 @@ class ConfigurationFragment @JvmOverloads constructor(
     }
 
     private val exportConfig =
-        registerForActivityResult(ActivityResultContracts.CreateDocument()) { data ->
+        registerForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { data ->
             if (data != null) {
                 runOnDefaultDispatcher {
                     try {

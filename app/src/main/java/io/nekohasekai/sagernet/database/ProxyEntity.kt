@@ -7,28 +7,21 @@ import com.esotericsoftware.kryo.io.ByteBufferInput
 import com.esotericsoftware.kryo.io.ByteBufferOutput
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.fmt.*
-import io.nekohasekai.sagernet.fmt.http.HttpBean
-import io.nekohasekai.sagernet.fmt.http.toUri
-import io.nekohasekai.sagernet.fmt.hysteria.*
-import io.nekohasekai.sagernet.fmt.internal.ChainBean
-import io.nekohasekai.sagernet.fmt.mieru.MieruBean
-import io.nekohasekai.sagernet.fmt.mieru.buildMieruConfig
-import io.nekohasekai.sagernet.fmt.naive.NaiveBean
-import io.nekohasekai.sagernet.fmt.naive.buildNaiveConfig
-import io.nekohasekai.sagernet.fmt.naive.toUri
+import io.nekohasekai.sagernet.fmt.http.*
+import io.nekohasekai.sagernet.fmt.socks.*
 import io.nekohasekai.sagernet.fmt.shadowsocks.*
-import moe.matsuri.nb4a.proxy.shadowtls.ShadowTLSBean
-import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
-import io.nekohasekai.sagernet.fmt.socks.toUri
-import io.nekohasekai.sagernet.fmt.ssh.SSHBean
-import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
-import io.nekohasekai.sagernet.fmt.trojan_go.TrojanGoBean
-import io.nekohasekai.sagernet.fmt.trojan_go.buildTrojanGoConfig
-import io.nekohasekai.sagernet.fmt.trojan_go.toUri
-import io.nekohasekai.sagernet.fmt.tuic.TuicBean
-import io.nekohasekai.sagernet.fmt.tuic.toUri
+import io.nekohasekai.sagernet.fmt.shadowsocksr.*
 import io.nekohasekai.sagernet.fmt.v2ray.*
-import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
+import io.nekohasekai.sagernet.fmt.tuic.*
+import io.nekohasekai.sagernet.fmt.hysteria.*
+import io.nekohasekai.sagernet.fmt.wireguard.*
+import io.nekohasekai.sagernet.fmt.ssh.*
+import moe.matsuri.nb4a.proxy.shadowtls.*
+import io.nekohasekai.sagernet.fmt.mieru.*
+import io.nekohasekai.sagernet.fmt.naive.*
+import io.nekohasekai.sagernet.fmt.trojan.*
+import io.nekohasekai.sagernet.fmt.trojan_go.*
+import io.nekohasekai.sagernet.fmt.internal.ChainBean
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.applyDefaultValues
 import io.nekohasekai.sagernet.ui.profile.*
@@ -37,6 +30,7 @@ import moe.matsuri.nb4a.proxy.config.ConfigBean
 import moe.matsuri.nb4a.proxy.config.ConfigSettingActivity
 import moe.matsuri.nb4a.proxy.neko.*
 import moe.matsuri.nb4a.proxy.shadowtls.ShadowTLSSettingsActivity
+import moe.matsuri.nb4a.utils.JavaUtil.gson
 
 @Entity(
     tableName = "proxy_entities", indices = [Index("groupId", name = "groupId")]
@@ -55,6 +49,7 @@ data class ProxyEntity(
     var socksBean: SOCKSBean? = null,
     var httpBean: HttpBean? = null,
     var ssBean: ShadowsocksBean? = null,
+    var ssrBean: ShadowsocksRBean? = null,
     var vmessBean: VMessBean? = null,
     var trojanBean: TrojanBean? = null,
     var trojanGoBean: TrojanGoBean? = null,
@@ -74,6 +69,7 @@ data class ProxyEntity(
         const val TYPE_SOCKS = 0
         const val TYPE_HTTP = 1
         const val TYPE_SS = 2
+        const val TYPE_SSR = 3
         const val TYPE_VMESS = 4
         const val TYPE_TROJAN = 6
 
@@ -162,6 +158,7 @@ data class ProxyEntity(
             TYPE_SOCKS -> socksBean = KryoConverters.socksDeserialize(byteArray)
             TYPE_HTTP -> httpBean = KryoConverters.httpDeserialize(byteArray)
             TYPE_SS -> ssBean = KryoConverters.shadowsocksDeserialize(byteArray)
+            TYPE_SSR -> ssrBean = KryoConverters.shadowsocksrDeserialize(byteArray)
             TYPE_VMESS -> vmessBean = KryoConverters.vmessDeserialize(byteArray)
             TYPE_TROJAN -> trojanBean = KryoConverters.trojanDeserialize(byteArray)
             TYPE_TROJAN_GO -> trojanGoBean = KryoConverters.trojanGoDeserialize(byteArray)
@@ -182,6 +179,7 @@ data class ProxyEntity(
         TYPE_SOCKS -> socksBean!!.protocolName()
         TYPE_HTTP -> if (httpBean!!.isTLS()) "HTTPS" else "HTTP"
         TYPE_SS -> "Shadowsocks"
+        TYPE_SSR -> "ShadowsocksR"
         TYPE_VMESS -> if (vmessBean!!.isVLESS) "VLESS" else "VMess"
         TYPE_TROJAN -> "Trojan"
         TYPE_TROJAN_GO -> "Trojan-Go"
@@ -206,6 +204,7 @@ data class ProxyEntity(
             TYPE_SOCKS -> socksBean
             TYPE_HTTP -> httpBean
             TYPE_SS -> ssBean
+            TYPE_SSR -> ssrBean
             TYPE_VMESS -> vmessBean
             TYPE_TROJAN -> trojanBean
             TYPE_TROJAN_GO -> trojanGoBean
@@ -221,6 +220,42 @@ data class ProxyEntity(
             TYPE_CONFIG -> configBean
             else -> error("Undefined type $type")
         } ?: error("Null ${displayType()} profile")
+    }
+
+    fun buildSingBoxOutbound(bean: AbstractBean): MutableMap<String, Any> {
+        return when (bean) {
+            is ConfigBean ->
+                gson.fromJson<MutableMap<String, Any>>(bean.config, MutableMap::class.java)
+
+            is ShadowTLSBean -> // before StandardV2RayBean
+                buildSingBoxOutboundShadowTLSBean(bean).asMap()
+
+            is StandardV2RayBean -> // http/trojan/vmess/vless
+                buildSingBoxOutboundStandardV2RayBean(bean).asMap()
+
+            is HysteriaBean ->
+                buildSingBoxOutboundHysteriaBean(bean)
+
+            is TuicBean ->
+                buildSingBoxOutboundTuicBean(bean).asMap()
+
+            is SOCKSBean ->
+                buildSingBoxOutboundSocksBean(bean).asMap()
+
+            is ShadowsocksBean ->
+                buildSingBoxOutboundShadowsocksBean(bean).asMap()
+
+            is ShadowsocksRBean ->
+                buildSingBoxOutboundShadowsocksRBean(bean).asMap()
+
+            is WireGuardBean ->
+                buildSingBoxOutboundWireguardBean(bean).asMap()
+
+            is SSHBean ->
+                buildSingBoxOutboundSSHBean(bean).asMap()
+
+            else -> throw IllegalStateException("can't reach")
+        }
     }
 
     fun haveLink(): Boolean {
@@ -246,6 +281,7 @@ data class ProxyEntity(
             is SOCKSBean -> toUri()
             is HttpBean -> toUri()
             is ShadowsocksBean -> toUri()
+            is ShadowsocksRBean -> toUri()
             is VMessBean -> toUriVMessVLESSTrojan(false)
             is TrojanBean -> toUriVMessVLESSTrojan(true)
             is TrojanGoBean -> toUri()
@@ -359,6 +395,11 @@ data class ProxyEntity(
                 ssBean = bean
             }
 
+            is ShadowsocksRBean -> {
+                type = TYPE_SSR
+                ssrBean = bean
+            }
+
             is VMessBean -> {
                 type = TYPE_VMESS
                 vmessBean = bean
@@ -435,6 +476,7 @@ data class ProxyEntity(
                 TYPE_SOCKS -> SocksSettingsActivity::class.java
                 TYPE_HTTP -> HttpSettingsActivity::class.java
                 TYPE_SS -> ShadowsocksSettingsActivity::class.java
+                TYPE_SSR -> ShadowsocksRSettingsActivity::class.java
                 TYPE_VMESS -> VMessSettingsActivity::class.java
                 TYPE_TROJAN -> TrojanSettingsActivity::class.java
                 TYPE_TROJAN_GO -> TrojanGoSettingsActivity::class.java
