@@ -1,13 +1,3 @@
-Skip to content
-Navigation Menu
-
-Code
-Pull requests
-2
-CI
-Add files via upload #7
-Workflow file for this run
-.github/workflows/CI.yml at 977ef5a
 name: CI
 on:
   push:
@@ -82,4 +72,3 @@ jobs:
         with:
           name: APKs
           path: ${{ env.APK }}
-Add files via upload · kafeixiang/NekoBoxForAndroid@977ef5a 
