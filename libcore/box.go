@@ -18,6 +18,7 @@ import (
 	box "github.com/sagernet/sing-box"
 	"github.com/sagernet/sing-box/common/conntrack"
 	"github.com/sagernet/sing-box/constant"
+	_ "github.com/sagernet/sing-box/include"
 	"github.com/sagernet/sing-box/option"
 	"github.com/sagernet/sing-box/outbound"
 	"github.com/sagernet/sing/common"
@@ -183,9 +184,9 @@ func UrlTest(i *BoxInstance, link string, timeout int32) (latency int32, err err
 	defer device.DeferPanicToError("box.UrlTest", func(err_ error) { err = err_ })
 	if i == nil {
 		// test current
-		return speedtest.UrlTest(boxapi.CreateProxyHttpClient(mainInstance.Box), link, timeout, speedtest.UrlTestStandard_RTT)
+		return speedtest.UrlTest(boxapi.CreateProxyHttpClient(mainInstance.Box), link, timeout, speedtest.UrlTestStandard_Handshake)
 	}
-	return speedtest.UrlTest(boxapi.CreateProxyHttpClient(i.Box), link, timeout, speedtest.UrlTestStandard_RTT)
+	return speedtest.UrlTest(boxapi.CreateProxyHttpClient(i.Box), link, timeout, speedtest.UrlTestStandard_Handshake)
 }
 
 var protectCloser io.Closer

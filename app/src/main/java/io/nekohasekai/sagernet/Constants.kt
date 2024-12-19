@@ -1,6 +1,6 @@
 package io.nekohasekai.sagernet
 
-const val CONNECTION_TEST_URL = "http://cp.cloudflare.com/"
+const val CONNECTION_TEST_URL = "https://www.gstatic.com/generate_204"
 
 object Key {
 
@@ -49,7 +49,13 @@ object Key {
     const val LOG_LEVEL = "logLevel"
     const val LOG_BUF_SIZE = "logBufSize"
     const val MTU = "mtu"
+
+    const val RULES_GEOSITE_URL = "rulesGeositeUrl"
+    const val RULES_GEOIP_URL = "rulesGeoipUrl"
+
     const val ALWAYS_SHOW_ADDRESS = "alwaysShowAddress"
+
+    const val CUSTOM_GLOBAL_CONFIG = "customGlobalConfig"
 
     // Protocol Settings
     const val MUX_TYPE = "muxType"
@@ -82,6 +88,9 @@ object Key {
 
     const val SERVER_PROTOCOL = "serverProtocol"
     const val SERVER_OBFS = "serverObfs"
+
+    const val SERVER_PROTOCOL_PARAM = "serverProtocolParam"
+    const val SERVER_OBFS_PARAM = "serverObfsParam"
 
     const val SERVER_NETWORK = "serverNetwork"
     const val SERVER_HOST = "serverHost"

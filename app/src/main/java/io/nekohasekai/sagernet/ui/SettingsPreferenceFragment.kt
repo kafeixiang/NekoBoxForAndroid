@@ -15,6 +15,7 @@ import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.ktx.*
+import io.nekohasekai.sagernet.ui.profile.ConfigEditActivity
 import io.nekohasekai.sagernet.utils.Theme
 import io.nekohasekai.sagernet.widget.AppListPreference
 import moe.matsuri.nb4a.Protocols
@@ -123,6 +124,16 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
             true
         }
 
+        val customGlobalConfig = findPreference<Preference>(Key.CUSTOM_GLOBAL_CONFIG)!!
+        customGlobalConfig.setOnPreferenceClickListener {
+            startActivity(
+                Intent(requireContext(), ConfigEditActivity::class.java).apply {
+                    putExtra("key", Key.CUSTOM_GLOBAL_CONFIG)
+                }
+            )
+            true
+        }
+
         val muxProtocols = findPreference<MultiSelectListPreference>(Key.MUX_PROTOCOLS)!!
 
         muxProtocols.apply {
@@ -168,6 +179,18 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         enableClashAPI.setOnPreferenceChangeListener { _, newValue ->
             (activity as MainActivity?)?.refreshNavMenu(newValue as Boolean)
             needReload()
+            true
+        }
+
+        val rulesProvider = findPreference<SimpleMenuPreference>(Key.RULES_PROVIDER)!!
+        val rulesGeositeUrl = findPreference<EditTextPreference>(Key.RULES_GEOSITE_URL)!!
+        val rulesGeoipUrl = findPreference<EditTextPreference>(Key.RULES_GEOIP_URL)!!
+        rulesGeositeUrl.isVisible = DataStore.rulesProvider == 4
+        rulesGeoipUrl.isVisible = DataStore.rulesProvider == 4
+        rulesProvider.setOnPreferenceChangeListener { _, newValue ->
+            val provider = (newValue as String).toInt()
+            rulesGeositeUrl.isVisible = provider == 4
+            rulesGeoipUrl.isVisible = provider == 4
             true
         }
 

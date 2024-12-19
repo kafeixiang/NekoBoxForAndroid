@@ -6,9 +6,6 @@ import com.esotericsoftware.kryo.KryoException;
 import com.esotericsoftware.kryo.io.ByteBufferInput;
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-
 import io.nekohasekai.sagernet.database.SubscriptionBean;
 import io.nekohasekai.sagernet.fmt.http.HttpBean;
 import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean;
@@ -16,7 +13,7 @@ import io.nekohasekai.sagernet.fmt.internal.ChainBean;
 import io.nekohasekai.sagernet.fmt.mieru.MieruBean;
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean;
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean;
-import moe.matsuri.nb4a.proxy.shadowtls.ShadowTLSBean;
+import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean;
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean;
 import io.nekohasekai.sagernet.fmt.ssh.SSHBean;
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean;
@@ -26,9 +23,14 @@ import io.nekohasekai.sagernet.fmt.v2ray.VMessBean;
 import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean;
 import io.nekohasekai.sagernet.ktx.KryosKt;
 import io.nekohasekai.sagernet.ktx.Logs;
+
 import moe.matsuri.nb4a.proxy.config.ConfigBean;
 import moe.matsuri.nb4a.proxy.neko.NekoBean;
+import moe.matsuri.nb4a.proxy.shadowtls.ShadowTLSBean;
 import moe.matsuri.nb4a.utils.JavaUtil;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 
 public class KryoConverters {
 
@@ -74,6 +76,12 @@ public class KryoConverters {
     public static ShadowsocksBean shadowsocksDeserialize(byte[] bytes) {
         if (JavaUtil.isEmpty(bytes)) return null;
         return deserialize(new ShadowsocksBean(), bytes);
+    }
+
+    @TypeConverter
+    public static ShadowsocksRBean shadowsocksrDeserialize(byte[] bytes) {
+        if (JavaUtil.isEmpty(bytes)) return null;
+        return deserialize(new ShadowsocksRBean(), bytes);
     }
 
     @TypeConverter
@@ -159,5 +167,4 @@ public class KryoConverters {
         if (JavaUtil.isEmpty(bytes)) return null;
         return deserialize(new SubscriptionBean(), bytes);
     }
-
 }

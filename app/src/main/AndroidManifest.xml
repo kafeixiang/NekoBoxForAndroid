@@ -50,7 +50,6 @@
         android:autoRevokePermissions="allowed"
         android:banner="@mipmap/ic_launcher"
         android:dataExtractionRules="@xml/backup_rules"
-        android:extractNativeLibs="true"
         android:fullBackupContent="@xml/backup_descriptor"
         android:fullBackupOnly="true"
         android:hardwareAccelerated="true"
@@ -154,6 +153,9 @@
             android:configChanges="uiMode" />
         <activity
             android:name="io.nekohasekai.sagernet.ui.profile.ShadowsocksSettingsActivity"
+            android:configChanges="uiMode" />
+        <activity
+            android:name="io.nekohasekai.sagernet.ui.profile.ShadowsocksRSettingsActivity"
             android:configChanges="uiMode" />
         <activity
             android:name="io.nekohasekai.sagernet.ui.profile.VMessSettingsActivity"

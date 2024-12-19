@@ -17,7 +17,9 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -37,6 +39,7 @@ import io.nekohasekai.sagernet.widget.ListListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import moe.matsuri.nb4a.plugin.NekoPluginManager
 import moe.matsuri.nb4a.plugin.Plugins
@@ -141,7 +144,7 @@ class AppListActivity : ThemedActivity() {
         suspend fun reload() {
             apps = getCachedApps().map { (packageName, packageInfo) ->
                 coroutineContext[Job]!!.ensureActive()
-                ProxiedApp(packageManager, packageInfo.applicationInfo, packageName)
+                ProxiedApp(packageManager, packageInfo.applicationInfo!!, packageName)
             }.sortedWith(compareBy({ !isProxiedApp(it) }, { it.name.toString() }))
         }
 
@@ -201,7 +204,7 @@ class AppListActivity : ThemedActivity() {
         proxiedUids.clear()
         val apps = getCachedApps()
         for (line in str.lineSequence()) proxiedUids[(apps[line]
-            ?: continue).applicationInfo.uid] = true
+            ?: continue).applicationInfo!!.uid] = true
     }
 
     private fun isProxiedApp(app: ProxiedApp) = proxiedUids[app.uid]
@@ -209,12 +212,14 @@ class AppListActivity : ThemedActivity() {
     @UiThread
     private fun loadApps() {
         loader?.cancel()
-        loader = lifecycleScope.launchWhenCreated {
-            loading.crossFadeFrom(binding.list)
-            val adapter = binding.list.adapter as AppsAdapter
-            withContext(Dispatchers.IO) { adapter.reload() }
-            adapter.filter.filter(binding.search.text?.toString() ?: "")
-            binding.list.crossFadeFrom(loading)
+        loader = lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                loading.crossFadeFrom(binding.list)
+                val adapter = binding.list.adapter as AppsAdapter
+                withContext(Dispatchers.IO) { adapter.reload() }
+                adapter.filter.filter(binding.search.text?.toString() ?: "")
+                binding.list.crossFadeFrom(loading)
+            }
         }
     }
 

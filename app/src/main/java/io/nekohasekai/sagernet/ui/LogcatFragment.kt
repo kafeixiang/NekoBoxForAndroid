@@ -1,12 +1,8 @@
 package io.nekohasekai.sagernet.ui
 
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.text.SpannableString
-import android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-import android.text.style.ForegroundColorSpan
 import android.view.MenuItem
 import android.view.View
 import android.widget.ScrollView
@@ -14,6 +10,7 @@ import androidx.appcompat.widget.Toolbar
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.databinding.LayoutLogcatBinding
 import io.nekohasekai.sagernet.ktx.*
+import io.nekohasekai.sfa.utils.ColorUtils
 import libcore.Libcore
 import moe.matsuri.nb4a.utils.SendLog
 
@@ -57,18 +54,9 @@ class LogcatFragment : ToolbarFragment(R.layout.layout_logcat),
     }
 
     private fun reloadSession() {
-        val span = SpannableString(
-            String(SendLog.getNekoLog(50 * 1024))
-        )
-        var offset = 0
-        for (line in span.lines()) {
-            val color = getColorForLine(line)
-            span.setSpan(
-                color, offset, offset + line.length, SPAN_EXCLUSIVE_EXCLUSIVE
+        binding.textview.text = ColorUtils.ansiEscapeToSpannable(
+            requireContext(), String(SendLog.getNekoLog(50 * 1024))
             )
-            offset += line.length + 1
-        }
-        binding.textview.text = span
 
         binding.scroolview.post {
             binding.scroolview.fullScroll(ScrollView.FOCUS_DOWN)
@@ -106,5 +94,4 @@ class LogcatFragment : ToolbarFragment(R.layout.layout_logcat),
         }
         return true
     }
-
 }
