@@ -3,16 +3,13 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Release Tag'
+        description: "Release Tag"
         required: true
-      upload:
-        description: 'Upload: If want ignore'
-        required: false
       publish:
-        description: 'Publish: If want ignore'
+        description: "Publish: If want ignore"
         required: false
       play:
-        description: 'Play: If want ignore'
+        description: "Play: If want ignore"
         required: false
 jobs:
   libcore:
@@ -41,7 +38,7 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         uses: actions/setup-go@v5
         with:
-          go-version: ^1.21
+          go-version: "1.22.10"
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
         run: ./run lib core
@@ -110,36 +107,6 @@ jobs:
           mkdir apks
           find artifacts -name "*.apk" -exec cp {} apks \;
           ./ghr -delete -t "${{ github.token }}" -n "${{ github.event.inputs.tag }}" "${{ github.event.inputs.tag }}" apks
-  upload:
-    name: Upload Release
-    if: github.event.inputs.upload != 'y'
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Donwload Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: APKs
-          path: artifacts
-      - name: Release
-        run: |
-          mkdir apks
-          find artifacts -name "*.apk" -exec cp {} apks \;
-
-          function upload() {
-            for apk in $@; do
-              echo ">> Uploading $apk"
-              curl https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendDocument \
-                -X POST \
-                -F chat_id="${{ secrets.TELEGRAM_CHANNEL }}" \
-                -F document="@$apk" \
-                --silent --show-error --fail >/dev/null &
-            done
-            for job in $(jobs -p); do
-              wait $job || exit 1
-            done
-          }
-          upload apks/*
   play:
     name: Build Play Bundle
     if: github.event.inputs.play != 'y'

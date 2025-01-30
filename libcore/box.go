@@ -21,6 +21,7 @@ import (
 	_ "github.com/sagernet/sing-box/include"
 	"github.com/sagernet/sing-box/option"
 	"github.com/sagernet/sing-box/outbound"
+	"github.com/sagernet/sing/common"
 	"github.com/sagernet/sing/service"
 	"github.com/sagernet/sing/service/pause"
 )
@@ -80,15 +81,16 @@ func NewSingBoxInstance(config string) (b *BoxInstance, err error) {
 		return nil, fmt.Errorf("decode config: %v", err)
 	}
 
-	// create box
+	// create box context
 	ctx, cancel := context.WithCancel(context.Background())
 	ctx = service.ContextWithDefaultRegistry(ctx)
-	platformWrapper := &boxPlatformInterfaceWrapper{useProcFS: intfBox.UseProcFS()}
+
+	// create box
 	instance, err := box.New(box.Options{
 		Options:           options,
 		Context:           ctx,
-		PlatformInterface: platformWrapper,
-		PlatformLogWriter: platformWrapper,
+		PlatformInterface: boxPlatformInterfaceInstance,
+		PlatformLogWriter: boxPlatformLogWriter,
 	})
 	if err != nil {
 		cancel()
@@ -137,8 +139,7 @@ func (b *BoxInstance) Close() (err error) {
 	}
 
 	// close box
-	b.cancel()
-	b.Box.Close()
+	common.Close(b.Box)
 
 	return nil
 }

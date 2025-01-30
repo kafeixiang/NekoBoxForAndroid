@@ -14,7 +14,8 @@ import (
 	"github.com/matsuridayo/libneko/neko_log"
 	"github.com/sagernet/sing-box/adapter"
 	"github.com/sagernet/sing-box/common/process"
-	"github.com/sagernet/sing-box/log"
+	"github.com/sagernet/sing-box/experimental/libbox/platform"
+	sblog "github.com/sagernet/sing-box/log"
 	"github.com/sagernet/sing-box/option"
 	tun "github.com/sagernet/sing-tun"
 	"github.com/sagernet/sing/common/control"
@@ -146,6 +147,22 @@ func (w *boxPlatformInterfaceWrapper) DisableColors() bool {
 }
 
 func (w *boxPlatformInterfaceWrapper) WriteMessage(level log.Level, message string) {
+	if !strings.HasSuffix(message, "\n") {
+		message += "\n"
+	}
+	neko_log.LogWriter.Write([]byte(message))
+}
+
+// 日志
+
+type boxPlatformLogWriterWrapper struct {
+}
+
+var boxPlatformLogWriter sblog.PlatformWriter = &boxPlatformLogWriterWrapper{}
+
+func (w *boxPlatformLogWriterWrapper) DisableColors() bool { return true }
+
+func (w *boxPlatformLogWriterWrapper) WriteMessage(level uint8, message string) {
 	if !strings.HasSuffix(message, "\n") {
 		message += "\n"
 	}

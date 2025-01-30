@@ -2,7 +2,6 @@ module libcore
 
 go 1.22.0
 
-require (
 	github.com/matsuridayo/libneko v0.0.0-20240702024904-1c47a3af7199
 	github.com/miekg/dns v1.1.62
 	github.com/sagernet/sing v0.5.0-rc.2
@@ -82,6 +81,7 @@ require (
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
 	go4.org/netipx v0.0.0-20231129151722-fdeea329fbba // indirect
+	golang.zx2c4.com/wireguard/wgctrl v0.0.0-20230429144221-925a1e7659e6 // indirect
 	golang.org/x/crypto v0.28.0 // indirect
 	golang.org/x/exp v0.0.0-20241004190924-225e2abe05e6 // indirect
 	golang.org/x/mod v0.21.0 // indirect
@@ -101,7 +101,7 @@ require (
 
 replace github.com/sagernet/sing-box => ../../sing-box
 
-// replace github.com/sagernet/sing-quic => ../../sing-quic
+replace github.com/sagernet/sing-quic => ../../sing-quic
 
 // replace github.com/sagernet/sing => ../../sing
 
