@@ -162,6 +162,9 @@ object Key {
     const val NEKO_PLUGIN_MANAGED = "nekoPlugins"
     const val APP_TLS_VERSION = "appTLSVersion"
     const val ENABLE_CLASH_API = "enableClashAPI"
+
+    const val ENABLE_TLS_FRAGMENT = "enableTLSFragment"
+    const val ENABLE_TLS_RECORD_FRAGMENT = "enableTLSRecordFragment"
 }
 
 object TunImplementation {

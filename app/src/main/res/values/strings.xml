@@ -579,4 +579,6 @@
     <string name="allow_insecure_on_request_sum">Disable certificate checking when updating
         subscriptions</string>
     <string name="global_allow_insecure">Always allow insecure</string>
+    <string name="enable_tls_fragment">Enable TLS Fragment</string>
+    <string name="enable_tls_record_fragment">Enable TLS Record Fragment</string>
 </resources>

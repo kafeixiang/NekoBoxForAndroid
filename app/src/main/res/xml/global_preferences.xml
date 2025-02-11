@@ -121,6 +121,12 @@
             app:key="resolveDestination"
             app:summary="@string/resolve_destination_summary"
             app:title="@string/resolve_destination" />
+        <SwitchPreference
+            app:key="enableTLSFragment"
+            app:title="@string/enable_tls_fragment" />
+        <SwitchPreference
+            app:key="enableTLSRecordFragment"
+            app:title="@string/enable_tls_record_fragment" />
         <moe.matsuri.nb4a.ui.SimpleMenuPreference
             app:defaultValue="0"
             app:entries="@array/ipv6_mode"

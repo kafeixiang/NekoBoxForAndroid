@@ -656,6 +656,13 @@ fun buildConfig(
                     if (!it.checkEmpty()) dns.rules.add(it)
                 }
             }
+            if (DataStore.enableTLSFragment || DataStore.enableTLSRecordFragment) {
+                route.rules.add(0, Rule_DefaultOptions().apply {
+                    action = "route-options"
+                    tls_fragment = DataStore.enableTLSFragment
+                    tls_record_fragment = DataStore.enableTLSRecordFragment
+                })
+            }
             // built-in DNS rules
             route.rules.add(0, Rule_DefaultOptions().apply {
                 port = listOf(53)

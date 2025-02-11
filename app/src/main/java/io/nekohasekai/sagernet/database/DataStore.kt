@@ -143,6 +143,9 @@ object DataStore : OnPreferenceDataStoreChangeListener {
 
     var ipv6Mode by configurationStore.stringToInt(Key.IPV6_MODE) { IPv6Mode.DISABLE }
 
+    var enableTLSFragment by configurationStore.boolean(Key.ENABLE_TLS_FRAGMENT) { false }
+    var enableTLSRecordFragment by configurationStore.boolean(Key.ENABLE_TLS_RECORD_FRAGMENT) { false }
+
     var meteredNetwork by configurationStore.boolean(Key.METERED_NETWORK)
     var proxyApps by configurationStore.boolean(Key.PROXY_APPS)
     var bypass by configurationStore.boolean(Key.BYPASS_MODE) { true }
