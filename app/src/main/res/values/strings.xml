@@ -4,8 +4,6 @@
     <string name="app_name_long" translatable="false">NekoBox for Android</string>
     <string name="app_desc">The universal proxy toolchain for Android, written in Kotlin.</string>
     <string name="project">Project</string>
-    <string name="github">Source code</string>
-    <string name="telegram">Telegram update channel</string>
     <string name="oss_licenses">Open source licenses</string>
     <string name="app_version">Version</string>
     <string name="version_x">Version (%s)</string>
@@ -577,4 +575,27 @@
     <string name="minimize">Minimize</string>
     <string name="app_list_permission_denied">Unable to read installed apps.\nThis is usually because the system has restricted app read permissions.\nPlease grant permissions in the system settings.</string>
     <string name="open_app_settings">Open System Settings</string>
+    <string name="backup_local">Local Backup</string>
+    <string name="backup_webdav">WebDAV Backup</string>
+    <string name="webdav_settings">WebDAV Settings</string>
+    <string name="webdav_server">Server Address</string>
+    <string name="webdav_username">Username</string>
+    <string name="webdav_password">Password</string>
+    <string name="webdav_path">Backup Path</string>
+    <string name="webdav_test">Test Connection</string>
+    <string name="webdav_test_success">Connection Successful</string>
+    <string name="webdav_test_failed" formatted="false">Connection Failed: %s</string>
+    <string name="backup_to_webdav">Backup to WebDAV</string>
+    <string name="restore_from_webdav">Restore from WebDAV</string>
+    <string name="webdav_backup_success">Backup to WebDAV successful</string>
+    <string name="webdav_backup_failed">Backup to WebDAV failed: %s</string>
+    <string name="webdav_restore_success">Restore from WebDAV successful</string>
+    <string name="webdav_restore_failed">Restore from WebDAV failed: %s</string>
+    <string name="webdav_server_empty">Please configure WebDAV server first</string>
+    <string name="webdav_auth_error">Authentication failed: Invalid username or password</string>
+    <string name="webdav_permission_denied">Permission denied</string>
+    <string name="webdav_server_not_found">Server not found</string>
+    <string name="webdav_server_error">Server error</string>
+    <string name="webdav_connect_failed">Connection failed with code: %d</string>
+    <string name="webdav_create_dir_failed">Failed to create or access backup directory</string>
 </resources>
