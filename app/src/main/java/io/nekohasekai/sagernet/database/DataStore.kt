@@ -163,6 +163,10 @@ object DataStore : OnPreferenceDataStoreChangeListener {
 
     var globalAllowInsecure by configurationStore.boolean(Key.GLOBAL_ALLOW_INSECURE) { false }
 
+    var enableTLSFragment by configurationStore.boolean(Key.ENABLE_TLS_FRAGMENT) { false }
+    var fragmentLength by configurationStore.string(Key.FRAGMENT_LENGTH) { "100-200" }
+    var fragmentInterval by configurationStore.string(Key.FRAGMENT_INTERVAL) { "10-20" }
+
     // old cache, DO NOT ADD
 
     var dirty by profileCacheStore.boolean(Key.PROFILE_DIRTY)
@@ -248,6 +252,25 @@ object DataStore : OnPreferenceDataStoreChangeListener {
 
     var rulesFirstCreate by profileCacheStore.boolean("rulesFirstCreate")
 
+    // var enableTLSFragment by configurationStore.boolean(Key.ENABLE_TLS_FRAGMENT)
+
+    var webdavServer: String?
+        get() = configurationStore.getString("webdavServer")
+        set(value) = configurationStore.putString("webdavServer", value)
+
+    var webdavUsername: String?
+        get() = configurationStore.getString("webdavUsername")
+        set(value) = configurationStore.putString("webdavUsername", value)
+
+    var webdavPassword: String?
+        get() = configurationStore.getString("webdavPassword")
+        set(value) = configurationStore.putString("webdavPassword", value)
+
+    var webdavPath: String?
+        get() = configurationStore.getString("webdavPath") ?: "NekoBox"  // 设置默认值
+        set(value) = configurationStore.putString("webdavPath", value)
+
     override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {
     }
 }
+
