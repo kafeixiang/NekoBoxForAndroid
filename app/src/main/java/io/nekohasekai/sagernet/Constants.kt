@@ -161,6 +161,11 @@ object Key {
     const val NEKO_PLUGIN_MANAGED = "nekoPlugins"
     const val APP_TLS_VERSION = "appTLSVersion"
     const val ENABLE_CLASH_API = "enableClashAPI"
+
+    const val WEBDAV_SERVER = "webdavServer"
+    const val WEBDAV_USERNAME = "webdavUsername"
+    const val WEBDAV_PASSWORD = "webdavPassword"
+    const val WEBDAV_PATH = "webdavPath"
 }
 
 object TunImplementation {
