@@ -34,6 +34,14 @@ import io.nekohasekai.sagernet.fmt.KryoConverters
 import io.nekohasekai.sagernet.fmt.PluginEntry
 import io.nekohasekai.sagernet.group.GroupInterfaceAdapter
 import io.nekohasekai.sagernet.group.GroupUpdater
+import io.nekohasekai.sagernet.ktx.alert
+import io.nekohasekai.sagernet.ktx.isPlay
+import io.nekohasekai.sagernet.ktx.launchCustomTab
+import io.nekohasekai.sagernet.ktx.onMainDispatcher
+import io.nekohasekai.sagernet.ktx.parseProxies
+import io.nekohasekai.sagernet.ktx.readableMessage
+import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
+import io.nekohasekai.sagernet.ui.MessageStore
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.widget.ListHolderListener
 import moe.matsuri.nb4a.utils.Util
@@ -49,6 +57,7 @@ class MainActivity : ThemedActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        MessageStore.setCurrentActivity(this)
 
         window?.apply {
             statusBarColor = Color.TRANSPARENT
@@ -110,6 +119,11 @@ class MainActivity : ThemedActivity(),
                 )
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        MessageStore.setCurrentActivity(this)
     }
 
     fun refreshNavMenu(clashApi: Boolean) {
@@ -325,9 +339,7 @@ class MainActivity : ThemedActivity(),
             R.id.nav_traffic -> displayFragment(WebviewFragment())
             R.id.nav_tools -> displayFragment(ToolsFragment())
             R.id.nav_logcat -> displayFragment(LogcatFragment())
-
             R.id.nav_about -> displayFragment(AboutFragment())
-
             else -> return false
         }
         navigation.menu.findItem(id).isChecked = true
