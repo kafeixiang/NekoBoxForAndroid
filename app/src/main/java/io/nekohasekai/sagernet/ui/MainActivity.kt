@@ -48,6 +48,7 @@ import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.parseProxies
 import io.nekohasekai.sagernet.ktx.readableMessage
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
+import io.nekohasekai.sagernet.ui.MessageStore
 import moe.matsuri.nb4a.utils.Util
 
 class MainActivity : ThemedActivity(),
@@ -60,6 +61,7 @@ class MainActivity : ThemedActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        MessageStore.setCurrentActivity(this)
 
         binding = LayoutMainBinding.inflate(layoutInflater)
         binding.fab.initProgress(binding.fabProgress)
@@ -124,6 +126,11 @@ class MainActivity : ThemedActivity(),
                 .setPositiveButton(android.R.string.ok, null)
                 .show()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        MessageStore.setCurrentActivity(this)
     }
 
     fun refreshNavMenu(clashApi: Boolean) {
