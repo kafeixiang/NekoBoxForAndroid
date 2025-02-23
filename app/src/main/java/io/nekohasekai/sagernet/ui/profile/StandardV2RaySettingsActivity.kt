@@ -45,8 +45,6 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
     private val realityShortId = pbm.add(PreferenceBinding(Type.Text, "realityShortId"))
 
     private val enableECH = pbm.add(PreferenceBinding(Type.Bool, "enableECH"))
-    private val enablePqSignature = pbm.add(PreferenceBinding(Type.Bool, "enablePqSignature"))
-    private val disabledDRS = pbm.add(PreferenceBinding(Type.Bool, "disabledDRS"))
     private val echConfig = pbm.add(PreferenceBinding(Type.Text, "echConfig"))
 
     override fun StandardV2RayBean.init() {
@@ -66,7 +64,6 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
     private lateinit var securityCategory: PreferenceCategory
     private lateinit var tlsCamouflageCategory: PreferenceCategory
     private lateinit var wsCategory: PreferenceCategory
-    private lateinit var echCategory: PreferenceCategory
 
     override fun PreferenceFragmentCompat.createPreferences(
         savedInstanceState: Bundle?,
@@ -76,7 +73,6 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         pbm.setPreferenceFragment(this)
         securityCategory = findPreference(Key.SERVER_SECURITY_CATEGORY)!!
         tlsCamouflageCategory = findPreference(Key.SERVER_TLS_CAMOUFLAGE_CATEGORY)!!
-        echCategory = findPreference(Key.SERVER_ECH_CATEORY)!!
         wsCategory = findPreference(Key.SERVER_WS_CATEGORY)!!
 
 
@@ -186,7 +182,6 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         val isTLS = "tls" in tls
         securityCategory.isVisible = isTLS
         tlsCamouflageCategory.isVisible = isTLS
-        echCategory.isVisible = isTLS
     }
 
 }
