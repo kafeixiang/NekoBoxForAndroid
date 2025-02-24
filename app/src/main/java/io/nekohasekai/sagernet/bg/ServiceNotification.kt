@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
 import android.os.Build
 import android.text.format.Formatter
 import androidx.core.app.NotificationCompat
@@ -172,7 +173,15 @@ class ServiceNotification(
 
 
     private suspend fun show() = useBuilder {
-        (service as Service).startForeground(notificationId, it.build())
+        if (Build.VERSION.SDK_INT >= 34) {
+            (service as Service).startForeground(
+                notificationId,
+                it.build(),
+                FOREGROUND_SERVICE_TYPE_SPECIAL_USE
+            )
+        } else {
+            (service as Service).startForeground(notificationId, it.build())
+        }
     }
 
     private suspend fun update() = useBuilder {
@@ -181,7 +190,11 @@ class ServiceNotification(
 
     fun destroy() {
         listenPostSpeed = false
-        (service as Service).stopForeground(true)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            (service as Service).stopForeground(Service.STOP_FOREGROUND_REMOVE)
+        } else {
+            (service as Service).stopForeground(true)
+        }
         service.unregisterReceiver(this)
     }
 }

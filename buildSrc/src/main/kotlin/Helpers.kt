@@ -1,18 +1,12 @@
 import com.android.build.api.dsl.ApplicationExtension
-import com.android.build.api.dsl.Lint
 import com.android.build.gradle.AbstractAppExtension
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.getByName
-import java.security.MessageDigest
-import java.util.*
+import java.util.Base64
+import java.util.Locale
+import java.util.Properties
 import kotlin.system.exitProcess
-
-fun sha256Hex(bytes: ByteArray): String {
-    val md = MessageDigest.getInstance("SHA-256")
-    val digest = md.digest(bytes)
-    return digest.fold("") { str, it -> str + "%02x".format(it) }
-}
 
 private val Project.android get() = extensions.getByName<ApplicationExtension>("android")
 

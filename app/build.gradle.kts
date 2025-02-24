@@ -32,6 +32,9 @@ android {
         buildConfig = true
         aidl = true
     }
+    androidResources {
+        generateLocaleConfig = true
+    }
     namespace = "io.nekohasekai.sagernet"
 }
 
