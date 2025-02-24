@@ -55,7 +55,6 @@ fun Project.requireLocalProperties(): Properties {
 
         val base64 = System.getenv("LOCAL_PROPERTIES")
         if (!base64.isNullOrBlank()) {
-
             localProperties.load(Base64.getDecoder().decode(base64).inputStream())
         } else if (project.rootProject.file("local.properties").exists()) {
             localProperties.load(rootProject.file("local.properties").inputStream())
@@ -82,10 +81,10 @@ fun Project.requireTargetAbi(): String {
 
 fun Project.setupCommon() {
     android.apply {
-        compileSdk = 35
+        compileSdk = 36
         defaultConfig {
             minSdk = 21
-            targetSdk = 35
+            targetSdk = 36
         }
         buildTypes {
             getByName("release") {
@@ -239,7 +238,7 @@ fun Project.setupApp() {
         }
 
         for (abi in listOf("Arm64", "Arm", "X64", "X86")) {
-            tasks.create("assemble" + abi + "FdroidRelease") {
+            tasks.register("assemble${abi}FdroidRelease") {
                 dependsOn("assembleFdroidRelease")
             }
         }
