@@ -4,6 +4,7 @@ import com.wireguard.crypto.KeyPair
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
 import io.nekohasekai.sagernet.ktx.Logs
+import io.nekohasekai.sagernet.ktx.unwrap
 import io.nekohasekai.sagernet.utils.cf.DeviceResponse
 import io.nekohasekai.sagernet.utils.cf.RegisterRequest
 import io.nekohasekai.sagernet.utils.cf.UpdateDeviceRequest
@@ -37,8 +38,8 @@ object Cloudflare {
                 setUserAgent("okhttp/3.12.1")
             }.execute()
 
-            Logs.d(response.contentString)
-            val device = gson.fromJson(response.contentString, DeviceResponse::class.java)
+            Logs.d(response.content.unwrap)
+            val device = gson.fromJson(response.content.unwrap, DeviceResponse::class.java)
             val accessToken = device.token
 
             client.newRequest().apply {

@@ -69,10 +69,10 @@ object RawUpdater : GroupUpdater() {
                 setURL(subscription.link)
                 setUserAgent(subscription.customUserAgent.takeIf { it.isNotBlank() } ?: USER_AGENT)
             }.execute()
-            proxies = parseRaw(response.contentString)
+            proxies = parseRaw(response.content.unwrap)
                 ?: error(app.getString(R.string.no_proxies_found))
 
-            subscription.subscriptionUserinfo = response.getHeader("Subscription-Userinfo")
+            subscription.subscriptionUserinfo = response.getHeader("Subscription-Userinfo").unwrap
         }
 
         val proxiesMap = LinkedHashMap<String, AbstractBean>()

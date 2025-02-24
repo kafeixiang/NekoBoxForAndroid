@@ -284,7 +284,7 @@ class AssetsActivity : ThemedActivity() {
                 setURL("https://api.github.com/repos/$repo/releases/latest")
             }.execute()
 
-            val release = JSONObject(response.contentString)
+            val release = JSONObject(response.content.unwrap)
             val tagName = release.optString("tag_name")
 
             if (tagName == localVersion) {
