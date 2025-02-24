@@ -33,6 +33,7 @@ import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.database.preference.PublicDatabase
 import io.nekohasekai.sagernet.ui.MainActivity
 import io.nekohasekai.sagernet.ui.ThemedActivity
+import libbox.StringBox
 import kotlinx.coroutines.*
 import moe.matsuri.nb4a.utils.NGUtil
 import java.io.FileDescriptor
@@ -48,6 +49,8 @@ import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty0
 
+val StringBox?.unwrap: String
+    get() = this?.value.orEmpty()
 
 inline fun <T> Iterable<T>.forEachTry(action: (T) -> Unit) {
     var result: Exception? = null
