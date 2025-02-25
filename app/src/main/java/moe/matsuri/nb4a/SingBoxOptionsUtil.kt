@@ -8,21 +8,21 @@ import moe.matsuri.nb4a.SingBoxOptions.RuleSet
 object SingBoxOptionsUtil {
 
     fun domainStrategy(tag: String): String {
-        fun auto2AsIs(key: String): String {
-            return (DataStore.configurationStore.getString(key) ?: "").replace("auto", "")
+        fun auto2(key: String, newS: String): String {
+            return (DataStore.configurationStore.getString(key) ?: "").replace("auto", newS)
         }
         return when (tag) {
             "dns-remote" -> {
-                auto2AsIs("domain_strategy_for_remote")
+                auto2("domain_strategy_for_remote", "")
             }
 
             "dns-direct" -> {
-                auto2AsIs("domain_strategy_for_direct")
+                auto2("domain_strategy_for_direct", "")
             }
 
             // server
             else -> {
-                auto2AsIs("domain_strategy_for_server")
+                auto2("domain_strategy_for_server", "prefer_ipv4")
             }
         }
     }
@@ -47,8 +47,7 @@ fun SingBoxOptions.DNSRule_DefaultOptions.makeSingBoxRule(list: List<String>) {
         } else if (it.startsWith("keyword:")) {
             domain_keyword.plusAssign(it.removePrefix("keyword:").lowercase())
         } else {
-            // https://github.com/SagerNet/sing-box/commit/5d41e328d4a9f7549dd27f11b4ccc43710a73664
-            domain.plusAssign(it.lowercase())
+            domain_suffix.plusAssign(it.lowercase())
         }
     }
     rule_set?.removeIf { it.isNullOrBlank() }
