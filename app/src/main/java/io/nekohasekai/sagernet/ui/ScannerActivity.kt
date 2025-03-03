@@ -34,7 +34,6 @@ import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.readableMessage
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.ktx.startFilesForResult
-import io.nekohasekai.sagernet.widget.ListHolderListener
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -50,7 +49,6 @@ class ScannerActivity : ThemedActivity(), CameraScan.OnScanResultCallback<Result
         if (Build.VERSION.SDK_INT >= 25) getSystemService<ShortcutManager>()!!.reportShortcutUsed("scan")
         binding = LayoutScannerBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        ListHolderListener.setup(this)
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
