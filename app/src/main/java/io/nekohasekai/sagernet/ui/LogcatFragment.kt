@@ -6,9 +6,11 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.ViewCompat
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.databinding.LayoutLogcatBinding
 import io.nekohasekai.sagernet.ktx.*
+import io.nekohasekai.sagernet.widget.ListListener
 import io.nekohasekai.sfa.utils.ColorUtils
 import libbox.Libbox
 import moe.matsuri.nb4a.utils.SendLog
@@ -31,6 +33,8 @@ class LogcatFragment : ToolbarFragment(R.layout.layout_logcat),
         if (Build.VERSION.SDK_INT >= 23) {
             binding.textview.breakStrategy = 0 // simple
         }
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root, ListListener)
 
         reloadSession()
         // TODO new logcat
