@@ -186,38 +186,109 @@
     </string-array>
 
     <string-array name="ss_enc_method_value">
+        <item>none</item>
         <item>2022-blake3-aes-128-gcm</item>
         <item>2022-blake3-aes-256-gcm</item>
         <item>2022-blake3-chacha20-poly1305</item>
-        <item>none</item>
+        <item>2022-blake3-chacha8-poly1305</item>
+        <item>2022-blake3-aes-128-ccm</item>
+        <item>2022-blake3-aes-256-ccm</item>
         <item>aes-128-gcm</item>
         <item>aes-192-gcm</item>
         <item>aes-256-gcm</item>
         <item>chacha20-ietf-poly1305</item>
         <item>xchacha20-ietf-poly1305</item>
+        <item>chacha8-ietf-poly1305</item>
+        <item>xchacha8-ietf-poly1305</item>
+        <item>rabbit128-poly1305</item>
+        <item>aes-128-ccm</item>
+        <item>aes-192-ccm</item>
+        <item>aes-256-ccm</item>
+        <item>aes-128-gcm-siv</item>
+        <item>aes-256-gcm-siv</item>
+        <item>aegis-128l</item>
+        <item>aegis-256</item>
+        <item>aez-384</item>
+        <item>deoxys-ii-256-128</item>
+        <item>lea-128-gcm</item>
+        <item>lea-192-gcm</item>
+        <item>lea-256-gcm</item>
+        <item>sm4-gcm</item>
+        <item>sm4-ccm</item>
         <item>aes-128-ctr</item>
         <item>aes-192-ctr</item>
         <item>aes-256-ctr</item>
         <item>aes-128-cfb</item>
         <item>aes-192-cfb</item>
         <item>aes-256-cfb</item>
+        <item>aes-128-cfb8</item>
+        <item>aes-192-cfb8</item>
+        <item>aes-256-cfb8</item>
+        <item>aes-128-ofb</item>
+        <item>aes-192-ofb</item>
+        <item>aes-256-ofb</item>
+        <item>camellia-128-cfb</item>
+        <item>camellia-192-cfb</item>
+        <item>camellia-256-cfb</item>
+        <item>camellia-128-cfb8</item>
+        <item>camellia-192-cfb8</item>
+        <item>camellia-256-cfb8</item>
         <item>rc4-md5</item>
+        <item>rc4-md5-6</item>
+        <item>rc4</item>
+        <item>bf-cfb</item>
+        <item>cast5-cfb</item>
+        <item>des-cfb</item>
+        <item>idea-cfb</item>
+        <item>rc2-cfb</item>
+        <item>seed-cfb</item>
         <item>chacha20-ietf</item>
         <item>xchacha20</item>
+        <item>chacha20</item>
+        <item>xsalsa20</item>
+        <item>salsa20</item>
+        <item>hc128</item>
+        <item>table</item>
+        <item>zuc</item>
     </string-array>
 
     <string-array name="ssr_enc_method_value">
         <item>none</item>
-        <item>chacha20-ietf</item>
-        <item>chacha20</item>
-        <item>xchacha20</item>
         <item>aes-128-ctr</item>
         <item>aes-192-ctr</item>
         <item>aes-256-ctr</item>
         <item>aes-128-cfb</item>
         <item>aes-192-cfb</item>
         <item>aes-256-cfb</item>
+        <item>aes-128-cfb8</item>
+        <item>aes-192-cfb8</item>
+        <item>aes-256-cfb8</item>
+        <item>aes-128-ofb</item>
+        <item>aes-192-ofb</item>
+        <item>aes-256-ofb</item>
+        <item>camellia-128-cfb</item>
+        <item>camellia-192-cfb</item>
+        <item>camellia-256-cfb</item>
+        <item>camellia-128-cfb8</item>
+        <item>camellia-192-cfb8</item>
+        <item>camellia-256-cfb8</item>
         <item>rc4-md5</item>
+        <item>rc4-md5-6</item>
+        <item>rc4</item>
+        <item>bf-cfb</item>
+        <item>cast5-cfb</item>
+        <item>des-cfb</item>
+        <item>idea-cfb</item>
+        <item>rc2-cfb</item>
+        <item>seed-cfb</item>
+        <item>chacha20-ietf</item>
+        <item>xchacha20</item>
+        <item>chacha20</item>
+        <item>xsalsa20</item>
+        <item>salsa20</item>
+        <item>hc128</item>
+        <item>table</item>
+        <item>zuc</item>
     </string-array>
 
     <string-array name="ssr_protocol_value">
