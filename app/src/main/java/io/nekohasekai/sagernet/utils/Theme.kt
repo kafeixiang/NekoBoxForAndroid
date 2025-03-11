@@ -32,7 +32,7 @@ object Theme {
 
     const val PINK_SSR = 21
 
-    private fun defaultTheme() = BLUE_GREY
+    private fun defaultTheme() = PINK_SSR
 
     fun apply(context: Context) {
         context.setTheme(getTheme())
