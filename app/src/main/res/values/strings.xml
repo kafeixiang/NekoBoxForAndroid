@@ -598,4 +598,8 @@
     <string name="webdav_server_error">Server error</string>
     <string name="webdav_connect_failed">Connection failed with code: %d</string>
     <string name="webdav_create_dir_failed">Failed to create or access backup directory</string>
+    <string name="global_mode">Global Mode</string>
+    <string name="backup_in_progress">Backup is already in progress</string>
+    <string name="restore_in_progress">Restore is already in progress</string>
+    <string name="restore_cancelled">Restore operation cancelled</string>
 </resources>
