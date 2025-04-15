@@ -51,12 +51,16 @@ jobs:
         env:
           BUILD_PLUGIN: none
         run: |
-          export LOCAL_PROPERTIES="${{ secrets.LOCAL_PROPERTIES }}"
-          ./run init action gradle
-          ./gradlew bundlePlayRelease
-          APK=$(find app/build/outputs/apk -name '*arm64-v8a*.apk')
-          APK=$(dirname $APK)
-          echo "APK=$APK" >> $GITHUB_ENV
+           echo "sdk.dir=${ANDROID_HOME}" > local.properties
+           export LOCAL_PROPERTIES="${{ secrets.LOCAL_PROPERTIES }}"
+           export KEYSTORE_PASS="${{ secrets.KEYSTORE_PASS }}"
+           export ALIAS_NAME="${{ secrets.ALIAS_NAME }}"
+           export ALIAS_PASS="${{ secrets.ALIAS_PASS }}"
+           ./run init action gradle
+           ./gradlew bundlePlayRelease
+           APK=$(find app/build/outputs/apk -name '*arm64-v8a*.apk')
+           APK=$(dirname $APK)
+           echo "APK=$APK" >> $GITHUB_ENV
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
