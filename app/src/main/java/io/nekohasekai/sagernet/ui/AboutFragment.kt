@@ -77,79 +77,80 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
             return MaterialAboutList.Builder()
                 .addCard(
                     MaterialAboutCard.Builder()
-                    .outline(false)
-                    .addItem(
-                        MaterialAboutActionItem.Builder()
-                        .icon(R.drawable.ic_baseline_update_24)
-                        .text(R.string.app_version)
-                        .subText(versionName)
-                        .setOnClickAction {
-                            requireContext().launchCustomTab(
-                                "https://github.com/MatsuriDayo/NekoBoxForAndroid/releases"
-                            )
-                        }
-                        .build())
-                    .addItem(
-                        MaterialAboutActionItem.Builder()
-                        .icon(R.drawable.ic_baseline_layers_24)
-                        .text(getString(R.string.version_x, "sing-box"))
-                        .subText(Libcore.versionBox())
-                        .setOnClickAction { }
-                        .build())
-                    .apply {
-                        PackageCache.awaitLoadSync()
-                        for ((_, pkg) in PackageCache.installedPluginPackages) {
-                            try {
-                                val pluginId =
-                                    pkg.providers?.get(0)?.loadString(Plugins.METADATA_KEY_ID)
-                                if (pluginId.isNullOrBlank()) continue
-                                addItem(
-                                    MaterialAboutActionItem.Builder()
-                                    .icon(R.drawable.ic_baseline_nfc_24)
-                                    .text(
-                                        getString(
-                                            R.string.version_x,
-                                            pluginId
-                                        ) + " (${Plugins.displayExeProvider(pkg.packageName)})"
+                        .outline(false)
+                        .addItem(
+                            MaterialAboutActionItem.Builder()
+                                .icon(R.drawable.ic_baseline_update_24)
+                                .text(R.string.app_version)
+                                .subText(versionName)
+                                .setOnClickAction {
+                                    requireContext().launchCustomTab(
+                                        "https://github.com/MatsuriDayo/NekoBoxForAndroid/releases"
                                     )
-                                    .subText("v" + pkg.versionName)
-                                    .setOnClickAction {
-                                        startActivity(Intent().apply {
-                                            action =
-                                                Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                                            data = Uri.fromParts(
-                                                "package", pkg.packageName, null
+                                }
+                                .build())
+                        .addItem(
+                            MaterialAboutActionItem.Builder()
+                                .icon(R.drawable.ic_baseline_layers_24)
+                                .text(getString(R.string.version_x, "sing-box"))
+                                .subText(Libcore.versionBox())
+                                .setOnClickAction { }
+                                .build())
+                        .apply {
+                            PackageCache.awaitLoadSync()
+                            for ((_, pkg) in PackageCache.installedPluginPackages) {
+                                try {
+                                    val pluginId =
+                                        pkg.providers?.get(0)?.loadString(Plugins.METADATA_KEY_ID)
+                                    if (pluginId.isNullOrBlank()) continue
+                                    addItem(
+                                        MaterialAboutActionItem.Builder()
+                                            .icon(R.drawable.ic_baseline_nfc_24)
+                                            .text(
+                                                getString(
+                                                    R.string.version_x,
+                                                    pluginId
+                                                ) + " (${Plugins.displayExeProvider(pkg.packageName)})"
                                             )
-                                        })
-                                    }
-                                    .build())
-                            } catch (e: Exception) {
-                                Logs.w(e)
+                                            .subText("v" + pkg.versionName)
+                                            .setOnClickAction {
+                                                startActivity(Intent().apply {
+                                                    action =
+                                                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                                                    data = Uri.fromParts(
+                                                        "package", pkg.packageName, null
+                                                    )
+                                                })
+                                            }
+                                            .build())
+                                } catch (e: Exception) {
+                                    Logs.w(e)
+                                }
                             }
                         }
-                    }
-                    .apply {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            val pm = app.getSystemService(Context.POWER_SERVICE) as PowerManager
-                            if (!pm.isIgnoringBatteryOptimizations(app.packageName)) {
-                                addItem(
-                                    MaterialAboutActionItem.Builder()
-                                    .icon(R.drawable.ic_baseline_running_with_errors_24)
-                                    .text(R.string.ignore_battery_optimizations)
-                                    .subText(R.string.ignore_battery_optimizations_sum)
-                                    .setOnClickAction {
-                                        requestIgnoreBatteryOptimizations.launch(
-                                            Intent(
-                                                Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
-                                                Uri.parse("package:${app.packageName}")
-                                            )
-                                        )
-                                    }
-                                    .build())
+                        .apply {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                val pm = app.getSystemService(Context.POWER_SERVICE) as PowerManager
+                                if (!pm.isIgnoringBatteryOptimizations(app.packageName)) {
+                                    addItem(
+                                        MaterialAboutActionItem.Builder()
+                                            .icon(R.drawable.ic_baseline_running_with_errors_24)
+                                            .text(R.string.ignore_battery_optimizations)
+                                            .subText(R.string.ignore_battery_optimizations_sum)
+                                            .setOnClickAction {
+                                                requestIgnoreBatteryOptimizations.launch(
+                                                    Intent(
+                                                        Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+                                                        Uri.parse("package:${app.packageName}")
+                                                    )
+                                                )
+                                            }
+                                            .build())
+                                }
                             }
                         }
-                    }
-                    .build())
+                        .build())
+                .build()
 
         }
 
