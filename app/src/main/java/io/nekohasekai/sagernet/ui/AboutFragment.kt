@@ -150,7 +150,24 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                             }
                         }
                         .build())
+                .addCard(
+                    MaterialAboutCard.Builder()
+                        .outline(false)
+                        .title(R.string.project)
+                        .addItem(
+                            MaterialAboutActionItem.Builder()
+                                .icon(R.drawable.ic_baseline_sanitizer_24)
+                                .text(R.string.github)
+                                .setOnClickAction {
+                                    requireContext().launchCustomTab(
+                                        "https://github.com/MatsuriDayo/NekoBoxForAndroid"
+
+                                    )
+                                }
+                                .build())
+                        .build())
                 .build()
+
         }
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
