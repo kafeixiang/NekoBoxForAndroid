@@ -66,7 +66,7 @@
     <string name="speed_interval">Speed Notification Update Interval</string>
     <string name="cag_misc">Misc Settings</string>
     <string name="show_stop">Show Stop Button</string>
-    <string name="show_stop_sum">If you don’t want to use Quick Tile as the switch</string>
+    <string name="show_stop_sum">If you don\'t want to use Quick Tile as the switch</string>
     <string name="show_direct_speed">Show Direct Speed</string>
     <string name="show_direct_speed_sum">Show the traffic speed without proxy in the notification as
         well</string>
@@ -251,6 +251,7 @@
     <string name="profile_config">Profile config</string>
     <string name="delete">Remove</string>
     <string name="delete_confirm_prompt">Are you sure you want to remove this profile?</string>
+    <string name="confirm_profile_delete">Delete profile confirmation</string>
     <string name="share_qr_nfc">QR code</string>
     <string name="add_profile_methods_scan_qr_code">Scan QR code</string>
     <string name="add_profile_methods_manual_settings">Manual Settings</string>
@@ -498,6 +499,9 @@
     <string name="release_wake_lock">Release WakeLock</string>
     <string name="acquire_wake_lock_summary">Keep the CPU on</string>
     <string name="action_switch">Switch</string>
+    <string name="custom_rules_provider">Custom</string>
+    <string name="rules_geosite_url">geosite URL</string>
+    <string name="rules_geoip_url">geoip URL</string>
 
     <string name="tuic_udp_relay_mode">UDP Relay Mode</string>
     <string name="tuic_congestion_controller">Congestion Controller</string>
@@ -562,8 +566,51 @@
     <string name="allow_insecure_on_request_sum">Disable certificate checking when updating
         subscriptions</string>
     <string name="global_allow_insecure">Always allow insecure</string>
+    <string name="fragment_settings">Fragment Settings</string>
+    <string name="enable_tls_fragment">Enable TLS Client Hello Fragment</string>
+    <string name="fragment_length">Fragment Length (min-max)</string>
+    <string name="fragment_interval">Fragment Interval (min-max)</string>
+
+    <string name="backup_local">Local Backup</string>
+    <string name="backup_webdav">WebDAV Backup</string>
+    <string name="webdav_settings">WebDAV Settings</string>
+    <string name="webdav_server">Server Address</string>
+    <string name="webdav_username">Username</string>
+    <string name="webdav_password">Password</string>
+    <string name="webdav_path">Backup Path</string>
+    <string name="webdav_test">Test Connection</string>
+    <string name="webdav_test_success">Connection Successful</string>
+    <string name="webdav_test_failed" formatted="false">Connection Failed: %s</string>
+    <string name="backup_to_webdav">Backup to WebDAV</string>
+    <string name="restore_from_webdav">Restore from WebDAV</string>
+    <string name="webdav_backup_success">Backup to WebDAV successful</string>
+    <string name="webdav_backup_failed">Backup to WebDAV failed: %s</string>
+    <string name="webdav_restore_success">Restore from WebDAV successful</string>
+    <string name="webdav_restore_failed">Restore from WebDAV failed: %s</string>
+    <string name="webdav_server_empty">Please configure WebDAV server first</string>
+    <string name="webdav_auth_error">Authentication failed: Invalid username or password</string>
+    <string name="webdav_permission_denied">Permission denied</string>
+    <string name="webdav_server_not_found">Server not found</string>
+    <string name="webdav_server_error">Server error</string>
+    <string name="webdav_connect_failed">Connection failed with code: %d</string>
+    <string name="webdav_create_dir_failed">Failed to create or access backup directory</string>
+    <string name="global_mode">Global Mode</string>
+    <string name="global_mode_summary">Bypass all routing rules and proxy all traffic through current node</string>
     <string name="mux_preference">Mulitplex</string>
     <string name="padding">Padding</string>
     <string name="network_change_reset_connections">Reset outbound connections when network changes</string>
     <string name="wake_reset_connections">Reset outbound connections when device wake from sleep</string>
+    <string name="backup_in_progress">Backup is already in progress</string>
+    <string name="restore_in_progress">Restore is already in progress</string>
+    <string name="restore_cancelled">Restore operation cancelled</string>
+    <string name="ruleset_update_interval">RuleSet Update Interval</string>
+    <string name="ruleset_update_interval_summary">Time between updates of remote RuleSets. Examples: 1h, 30m, 3600s. Set to 0 to disable automatic updates</string>
+    <string name="ruleset_prefix_error">Ruleset format error: must start with rsip: or rssite:</string>
+    <string name="clear_cache">Clear Cache</string>
+    <string name="clear_cache_summary">Clear application cache files to fix some abnormal issues</string>
+    <string name="clear_cache_confirm">Are you sure you want to clear the cache?</string>
+    <string name="clear_cache_success">Cache cleared</string>
+    <string name="clear_cache_failed">Failed to clear cache: %s</string>
+    <string name="concurrent_dial">Concurrent Dial</string>
+    <string name="concurrent_dial_summary">Enable concurrent connections for faster network establishment, may increase battery usage</string>
 </resources>

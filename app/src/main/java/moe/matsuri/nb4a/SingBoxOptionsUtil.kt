@@ -2,6 +2,9 @@ package moe.matsuri.nb4a
 
 import io.nekohasekai.sagernet.database.DataStore
 import moe.matsuri.nb4a.SingBoxOptions.RuleSet
+import io.nekohasekai.sagernet.R
+import io.nekohasekai.sagernet.SagerNet
+import kotlin.Exception
 
 object SingBoxOptionsUtil {
 
@@ -153,9 +156,42 @@ fun SingBoxOptions.Rule_DefaultOptions.checkEmpty(): Boolean {
     if (domain_regex?.isNotEmpty() == true) return false
     if (domain_keyword?.isNotEmpty() == true) return false
     if (user_id?.isNotEmpty() == true) return false
+    if (protocol?.isNotEmpty() == true) return false
     //
     if (port?.isNotEmpty() == true) return false
     if (port_range?.isNotEmpty() == true) return false
     if (source_ip_cidr?.isNotEmpty() == true) return false
     return true
+}
+
+fun processRulesetUrl(origUrl: String): Pair<String, Boolean> {
+    return when {
+        origUrl.startsWith("rsip:") -> {
+            // IP类型ruleset
+            Pair(origUrl.substring(5), true)
+        }
+        origUrl.startsWith("rssite:") -> {
+            // 域名类型ruleset
+            Pair(origUrl.substring(7), false)
+        }
+        else -> {
+            throw kotlin.Exception(SagerNet.application.getString(R.string.ruleset_prefix_error))
+        }
+    }
+}
+
+fun generateRemoteRuleSet(url: String, ruleSets: MutableList<RuleSet>, updateInterval: String): String {
+    val hashCode = kotlin.math.abs(url.hashCode())
+    val tag = "ruleset-$hashCode"
+    
+    // 添加到规则集列表
+    ruleSets.add(RuleSet().apply {
+        type = "remote"
+        this.tag = tag
+        format = "binary"
+        this.url = url
+        update_interval = updateInterval
+    })
+    
+    return tag
 }

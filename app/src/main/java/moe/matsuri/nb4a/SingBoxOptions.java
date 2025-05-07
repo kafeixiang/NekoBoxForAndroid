@@ -804,6 +804,13 @@ public class SingBoxOptions {
 
     }
 
+    public static class Fragment extends SingBoxOption {
+
+        public String length;
+
+        public String interval;
+    }
+
     public static class DialerOptions extends SingBoxOption {
 
         public String detour;
@@ -985,6 +992,8 @@ public class SingBoxOptions {
 
         public Integer default_mark;
 
+        public Boolean concurrent_dial;
+
     }
 
 
@@ -1009,6 +1018,8 @@ public class SingBoxOptions {
         public String path;
 
         public String url;
+
+	public String update_interval;
 
     }
 

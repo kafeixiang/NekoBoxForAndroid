@@ -1,5 +1,6 @@
 package io.nekohasekai.sagernet.ui
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
@@ -12,6 +13,7 @@ import android.text.format.Formatter
 import android.text.style.ForegroundColorSpan
 import android.view.KeyEvent
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -115,6 +117,8 @@ import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.zip.ZipInputStream
 import kotlin.collections.set
+import androidx.appcompat.app.AlertDialog
+import io.nekohasekai.sagernet.database.SubscriptionBean
 
 class ConfigurationFragment @JvmOverloads constructor(
     val select: Boolean = false, val selectedItem: ProxyEntity? = null, val titleRes: Int = 0
@@ -162,6 +166,7 @@ class ConfigurationFragment @JvmOverloads constructor(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
 
         if (savedInstanceState != null) {
             parentFragmentManager.beginTransaction()
@@ -177,6 +182,7 @@ class ConfigurationFragment @JvmOverloads constructor(
 
         if (!select) {
             toolbar.inflateMenu(R.menu.add_profile_menu)
+            toolbar.menu.findItem(R.id.action_global_mode)?.isChecked = DataStore.globalMode
             toolbar.setOnMenuItemClickListener(this)
         } else {
             toolbar.setTitle(titleRes)
@@ -241,6 +247,11 @@ class ConfigurationFragment @JvmOverloads constructor(
         }
 
         DataStore.profileCacheStore.registerChangeListener(this)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        menu.findItem(R.id.action_global_mode)?.isChecked = DataStore.globalMode
+        super.onPrepareOptionsMenu(menu)
     }
 
     override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {
@@ -356,14 +367,27 @@ class ConfigurationFragment @JvmOverloads constructor(
                 } else runOnDefaultDispatcher {
                     try {
                         val proxies = RawUpdater.parseRaw(text)
-                        if (proxies.isNullOrEmpty()) onMainDispatcher {
-                            snackbar(getString(R.string.no_proxies_found_in_clipboard)).show()
-                        } else import(proxies)
-                    } catch (e: SubscriptionFoundException) {
-                        (requireActivity() as MainActivity).importSubscription(Uri.parse(e.link))
+                        if (!proxies.isNullOrEmpty()) {
+                            import(proxies)
+                        } else {
+                            val singleURI = Uri.parse(text)
+                            if (singleURI.scheme == "http" || singleURI.scheme == "https") {
+                                val group = ProxyGroup(type = GroupType.SUBSCRIPTION)
+                                val subscription = SubscriptionBean()
+                                group.subscription = subscription
+                                subscription.link = text
+                                subscription.autoUpdate = false
+                                group.name = ""
+                                startActivity(Intent(requireContext(), GroupSettingsActivity::class.java).apply {
+                                    putExtra(GroupSettingsActivity.EXTRA_FROM_CLIPBOARD, true)
+                                    putExtra(GroupSettingsActivity.EXTRA_GROUP_SUBSCRIPTION_LINK, text)
+                                })
+                            } else onMainDispatcher {
+                                snackbar(getString(R.string.no_proxies_found_in_clipboard)).show()
+                            }
+                        }
                     } catch (e: Exception) {
                         Logs.w(e)
-
                         onMainDispatcher {
                             snackbar(e.readableMessage).show()
                         }
@@ -590,8 +614,41 @@ class ConfigurationFragment @JvmOverloads constructor(
             R.id.action_connection_url_test -> {
                 urlTest()
             }
+
+            R.id.action_global_mode -> {
+                item.isChecked = !item.isChecked
+                DataStore.globalMode = item.isChecked
+                if (DataStore.serviceState.canStop) {
+                    runOnDefaultDispatcher {
+                        try {
+                            // 等待一段时间确保配置已保存
+                            delay(500)
+                            snackbar(getString(R.string.need_reload)).setAction(R.string.apply) {
+                                runOnDefaultDispatcher {
+                                    try {
+                                        // 再次等待确保配置已保存
+                                        delay(100)
+                                        SagerNet.reloadService()
+                                    } catch (e: Exception) {
+                                        Logs.w(e)
+                                        onMainDispatcher {
+                                            snackbar(getString(R.string.service_failed)).show()
+                                        }
+                                    }
+                                }
+                            }.show()
+                        } catch (e: Exception) {
+                            Logs.w(e)
+                            onMainDispatcher {
+                                snackbar(getString(R.string.service_failed)).show()
+                            }
+                        }
+                    }
+                }
+                return true
+            }
         }
-        return true
+        return false
     }
 
     inner class TestDialog {
@@ -687,9 +744,11 @@ class ConfigurationFragment @JvmOverloads constructor(
         val testJobs = mutableListOf<Job>()
         val dialog = test.builder.show()
         val mainJob = runOnDefaultDispatcher {
+            // var vpnWasStoped = false
             if (DataStore.serviceState.started) {
                 stopService()
                 delay(500) // wait for service stop
+                // vpnWasStoped = true
             }
             val group = DataStore.currentGroup()
             val profilesUnfiltered = SagerDatabase.proxyDao.getByGroup(group.id)
@@ -804,6 +863,14 @@ class ConfigurationFragment @JvmOverloads constructor(
             testJobs.joinAll()
             testPool.close()
 
+            // if (vpnWasStoped) {
+            //     try {
+            //         SagerNet.startService()
+            //     } catch (e: Exception) {
+            //         Logs.w("恢复 VPN 连接失败", e)
+            //     }
+            // }
+
             onMainDispatcher {
                 dialog.dismiss()
             }
@@ -831,6 +898,12 @@ class ConfigurationFragment @JvmOverloads constructor(
         val testJobs = mutableListOf<Job>()
 
         val mainJob = runOnDefaultDispatcher {
+            // var vpnWasStoped = false
+            // if (DataStore.serviceState.started) {
+            //     stopService()
+            //     delay(500) // wait for service stop
+                // vpnWasStoped = true
+            // }
             val group = DataStore.currentGroup()
             val profilesUnfiltered = SagerDatabase.proxyDao.getByGroup(group.id)
             test.proxyN = profilesUnfiltered.size
@@ -865,6 +938,14 @@ class ConfigurationFragment @JvmOverloads constructor(
             }
 
             testJobs.joinAll()
+
+            // if (vpnWasStoped) {
+            //     try {
+            //         SagerNet.startService()
+            //     } catch (e: Exception) {
+            //         Logs.w("恢复 VPN 连接失败", e)
+            //     }
+            // }
 
             onMainDispatcher {
                 dialog.dismiss()
@@ -1587,10 +1668,22 @@ class ConfigurationFragment @JvmOverloads constructor(
                 }
 
                 removeButton.setOnClickListener {
-                    adapter?.let {
-                        val index = it.configurationIdList.indexOf(proxyEntity.id)
-                        it.remove(index)
-                        undoManager.remove(index to proxyEntity)
+                    adapter?.let { adapter ->
+                        val index = adapter.configurationIdList.indexOf(proxyEntity.id)
+                        if (DataStore.confirmProfileDelete) {
+                            AlertDialog.Builder(requireContext())
+                                .setTitle(R.string.delete_confirm_prompt)
+                                // .setMessage(getString(R.string.delete_confirm_prompt))
+                                .setPositiveButton(R.string.yes) { dialog: DialogInterface, which: Int ->
+                                    adapter.remove(index)
+                                    undoManager.remove(index to proxyEntity)
+                                }
+                                .setNegativeButton(R.string.no, null)
+                                .show()
+                        } else {
+                            adapter.remove(index)
+                            undoManager.remove(index to proxyEntity)
+                        }
                     }
                 }
 
@@ -1727,3 +1820,6 @@ class ConfigurationFragment @JvmOverloads constructor(
     }
 
 }
+
+
+

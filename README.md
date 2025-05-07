@@ -8,11 +8,15 @@ sing-box / universal proxy toolchain for Android.
 
 一款使用 sing-box 的 Android 通用代理软件.
 
+> 免责声明：本项目仅供个人学习和交流，请不要将其用于非法目的，请不要在生产环境中使用。请于下载后24小时内删除所有相关内容，勿用于长期存储或传播。
+> 
+> Disclaimer: This project is only for personal learning and communication, please do not use it for illegal purposes, please do not use it in a production environment. Please delete all related content within 24 hours after downloading and do not use it for long-term storage or dissemination.
+
 ## 下载 / Downloads
 
-[![GitHub All Releases](https://img.shields.io/github/downloads/Matsuridayo/NekoBoxForAndroid/total?label=downloads-total&logo=github&style=flat-square)](https://github.com/Matsuridayo/NekoBoxForAndroid/releases)
+[![GitHub All Releases](https://img.shields.io/github/downloads/Matsuridayo/NekoBoxForAndroid/total?label=downloads-total&logo=github&style=flat-square)](https://github.com/starifly/NekoBoxForAndroid/releases)
 
-[GitHub Releases 下载](https://github.com/Matsuridayo/NekoBoxForAndroid/releases)
+[GitHub Releases 下载](https://github.com/starifly/NekoBoxForAndroid/releases)
 
 **Google Play 版本自 2024 年 5 月起已被第三方控制，为非开源版本，请不要下载。**
 
