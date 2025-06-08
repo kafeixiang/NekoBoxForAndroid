@@ -16,7 +16,6 @@ import io.nekohasekai.sagernet.fmt.tuic.*
 import io.nekohasekai.sagernet.fmt.hysteria.*
 import io.nekohasekai.sagernet.fmt.wireguard.*
 import io.nekohasekai.sagernet.fmt.ssh.*
-import moe.matsuri.nb4a.proxy.shadowtls.*
 import io.nekohasekai.sagernet.fmt.mieru.*
 import io.nekohasekai.sagernet.fmt.naive.*
 import io.nekohasekai.sagernet.fmt.trojan.*
@@ -26,15 +25,13 @@ import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.applyDefaultValues
 import io.nekohasekai.sagernet.ui.profile.*
 import moe.matsuri.nb4a.Protocols
-import moe.matsuri.nb4a.proxy.config.ConfigBean
-import moe.matsuri.nb4a.proxy.config.ConfigSettingActivity
+import moe.matsuri.nb4a.proxy.anytls.*
+import moe.matsuri.nb4a.proxy.shadowtls.*
+import moe.matsuri.nb4a.proxy.config.*
 import moe.matsuri.nb4a.proxy.neko.*
-import moe.matsuri.nb4a.proxy.shadowtls.ShadowTLSSettingsActivity
 import moe.matsuri.nb4a.utils.JavaUtil.gson
 
-@Entity(
-    tableName = "proxy_entities", indices = [Index("groupId", name = "groupId")]
-)
+@Entity(tableName = "proxy_entities", indices = [Index("groupId", name = "groupId")])
 data class ProxyEntity(
     @PrimaryKey(autoGenerate = true) var id: Long = 0L,
     var groupId: Long = 0L,
@@ -60,6 +57,7 @@ data class ProxyEntity(
     var sshBean: SSHBean? = null,
     var wgBean: WireGuardBean? = null,
     var shadowTLSBean: ShadowTLSBean? = null,
+    var anyTLSBean: AnyTLSBean? = null,
     var chainBean: ChainBean? = null,
     var nekoBean: NekoBean? = null,
     var configBean: ConfigBean? = null,
@@ -74,15 +72,15 @@ data class ProxyEntity(
         const val TYPE_TROJAN = 6
 
         const val TYPE_TROJAN_GO = 7
-        const val TYPE_MIERU = 21
         const val TYPE_NAIVE = 9
-        const val TYPE_HYSTERIA = 15
-        const val TYPE_TUIC = 20
 
+        const val TYPE_HYSTERIA = 15
         const val TYPE_SSH = 17
         const val TYPE_WG = 18
-
         const val TYPE_SHADOWTLS = 19
+        const val TYPE_TUIC = 20
+        const val TYPE_MIERU = 21
+        const val TYPE_ANYTLS = 22
 
         const val TYPE_CONFIG = 998
         const val TYPE_NEKO = 999
@@ -110,8 +108,7 @@ data class ProxyEntity(
     @Transient
     var dirty: Boolean = false
 
-    override fun initializeDefaultValues() {
-    }
+    override fun initializeDefaultValues() {}
 
     override fun serializeToBuffer(output: ByteBufferOutput) {
         output.writeInt(0)
@@ -152,7 +149,6 @@ data class ProxyEntity(
         dirty = input.readBoolean()
     }
 
-
     fun putByteArray(byteArray: ByteArray) {
         when (type) {
             TYPE_SOCKS -> socksBean = KryoConverters.socksDeserialize(byteArray)
@@ -169,6 +165,7 @@ data class ProxyEntity(
             TYPE_WG -> wgBean = KryoConverters.wireguardDeserialize(byteArray)
             TYPE_TUIC -> tuicBean = KryoConverters.tuicDeserialize(byteArray)
             TYPE_SHADOWTLS -> shadowTLSBean = KryoConverters.shadowTLSDeserialize(byteArray)
+            TYPE_ANYTLS -> anyTLSBean = KryoConverters.anyTLSDeserialize(byteArray)
             TYPE_CHAIN -> chainBean = KryoConverters.chainDeserialize(byteArray)
             TYPE_NEKO -> nekoBean = KryoConverters.nekoDeserialize(byteArray)
             TYPE_CONFIG -> configBean = KryoConverters.configDeserialize(byteArray)
@@ -190,6 +187,7 @@ data class ProxyEntity(
         TYPE_WG -> "WireGuard"
         TYPE_TUIC -> "TUIC"
         TYPE_SHADOWTLS -> "ShadowTLS"
+        TYPE_ANYTLS -> "AnyTLS"
         TYPE_CHAIN -> chainName
         TYPE_NEKO -> nekoBean!!.displayType()
         TYPE_CONFIG -> configBean!!.displayType()
@@ -197,6 +195,7 @@ data class ProxyEntity(
     }
 
     fun displayName() = requireBean().displayName()
+
     fun displayAddress() = requireBean().displayAddress()
 
     fun requireBean(): AbstractBean {
@@ -215,6 +214,7 @@ data class ProxyEntity(
             TYPE_WG -> wgBean
             TYPE_TUIC -> tuicBean
             TYPE_SHADOWTLS -> shadowTLSBean
+            TYPE_ANYTLS -> anyTLSBean
             TYPE_CHAIN -> chainBean
             TYPE_NEKO -> nekoBean
             TYPE_CONFIG -> configBean
@@ -254,6 +254,9 @@ data class ProxyEntity(
             is SSHBean ->
                 buildSingBoxOutboundSSHBean(bean).asMap()
 
+            is AnyTLSBean ->
+                buildSingBoxOutboundAnyTLSBean(bean).asMap()
+
             else -> throw IllegalStateException("can't reach")
         }
     }
@@ -270,6 +273,7 @@ data class ProxyEntity(
             is SSHBean -> false
             is WireGuardBean -> false
             is ShadowTLSBean -> false
+            is AnyTLSBean -> false
             is NekoBean -> nekoBean!!.haveStandardLink()
             is ConfigBean -> false
             else -> true
@@ -347,14 +351,15 @@ data class ProxyEntity(
 
     fun needCoreMux(): Boolean {
         return when (type) {
-            TYPE_VMESS -> if (vmessBean!!.isVLESS) {
-                Protocols.isProfileNeedMux(vmessBean!!) && Protocols.shouldEnableMux("vless")
-            } else {
-                Protocols.isProfileNeedMux(vmessBean!!) && Protocols.shouldEnableMux("vmess")
-            }
+            TYPE_VMESS ->
+                if (vmessBean!!.isVLESS) {
+                    Protocols.isProfileNeedMux(vmessBean!!) && Protocols.shouldEnableMux("vless")
+                } else {
+                    Protocols.isProfileNeedMux(vmessBean!!) && Protocols.shouldEnableMux("vmess")
+                }
 
-            TYPE_TROJAN -> Protocols.isProfileNeedMux(trojanBean!!)
-                    && Protocols.shouldEnableMux("trojan")
+            TYPE_TROJAN ->
+                Protocols.isProfileNeedMux(trojanBean!!) && Protocols.shouldEnableMux("trojan")
 
             TYPE_SS -> !ssBean!!.sUoT && Protocols.shouldEnableMux("shadowsocks")
             else -> false
@@ -375,6 +380,7 @@ data class ProxyEntity(
         wgBean = null
         tuicBean = null
         shadowTLSBean = null
+        anyTLSBean = null
         chainBean = null
         configBean = null
         nekoBean = null
@@ -450,6 +456,11 @@ data class ProxyEntity(
                 shadowTLSBean = bean
             }
 
+            is AnyTLSBean -> {
+                type = TYPE_ANYTLS
+                anyTLSBean = bean
+            }
+
             is ChainBean -> {
                 type = TYPE_CHAIN
                 chainBean = bean
@@ -487,6 +498,7 @@ data class ProxyEntity(
                 TYPE_WG -> WireGuardSettingsActivity::class.java
                 TYPE_TUIC -> TuicSettingsActivity::class.java
                 TYPE_SHADOWTLS -> ShadowTLSSettingsActivity::class.java
+                TYPE_ANYTLS -> AnyTLSSettingsActivity::class.java
                 TYPE_CHAIN -> ChainSettingsActivity::class.java
                 TYPE_NEKO -> NekoSettingActivity::class.java
                 TYPE_CONFIG -> ConfigSettingActivity::class.java

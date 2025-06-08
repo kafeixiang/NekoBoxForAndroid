@@ -25,6 +25,7 @@ import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
 import io.nekohasekai.sagernet.ktx.*
 import libbox.Libbox
 import moe.matsuri.nb4a.Protocols
+import moe.matsuri.nb4a.proxy.anytls.AnyTLSBean
 import moe.matsuri.nb4a.proxy.config.ConfigBean
 import org.ini4j.Ini
 import org.json.JSONArray
@@ -487,6 +488,24 @@ object RawUpdater : GroupUpdater() {
                                 }
                             }
                             proxies.add(bean)
+                        }
+
+                        "anytls" -> {
+                            proxies.add(AnyTLSBean().apply {
+                                for (opt in proxy) {
+                                    if (opt.value == null) continue
+                                    when (opt.key) {
+                                        "name" -> name = opt.value.toString()
+                                        "server" -> serverAddress = opt.value as String
+                                        "port" -> serverPort = opt.value.toString().toInt()
+                                        "password" -> password = opt.value.toString()
+                                        "client-fingerprint" -> utlsFingerprint = opt.value as String
+                                        "sni" -> sni = opt.value.toString()
+                                        "skip-cert-verify" -> allowInsecure = opt.value.toString() == "true"
+                                        "alpn" -> alpn = (opt.value as? List<String>)?.joinToString("\n")
+                                    }
+                                }
+                            })
                         }
 
                         "hysteria" -> {
