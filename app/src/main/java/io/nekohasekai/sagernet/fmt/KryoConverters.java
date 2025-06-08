@@ -24,6 +24,7 @@ import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean;
 import io.nekohasekai.sagernet.ktx.KryosKt;
 import io.nekohasekai.sagernet.ktx.Logs;
 
+import moe.matsuri.nb4a.proxy.anytls.AnyTLSBean;
 import moe.matsuri.nb4a.proxy.config.ConfigBean;
 import moe.matsuri.nb4a.proxy.neko.NekoBean;
 import moe.matsuri.nb4a.proxy.shadowtls.ShadowTLSBean;
@@ -148,6 +149,12 @@ public class KryoConverters {
     public static ShadowTLSBean shadowTLSDeserialize(byte[] bytes) {
         if (JavaUtil.isEmpty(bytes)) return null;
         return deserialize(new ShadowTLSBean(), bytes);
+    }
+
+    @TypeConverter
+    public static AnyTLSBean anyTLSDeserialize(byte[] bytes) {
+        if (JavaUtil.isEmpty(bytes)) return null;
+        return deserialize(new AnyTLSBean(), bytes);
     }
 
     @TypeConverter
