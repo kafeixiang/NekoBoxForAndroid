@@ -115,7 +115,6 @@ class MainActivity : ThemedActivity(),
     fun refreshNavMenu(clashApi: Boolean) {
         if (::navigation.isInitialized) {
             navigation.menu.findItem(R.id.nav_traffic)?.isVisible = clashApi
-            navigation.menu.findItem(R.id.nav_tuiguang)?.isVisible = !isPlay
         }
     }
 
@@ -332,10 +331,6 @@ class MainActivity : ThemedActivity(),
             }
 
             R.id.nav_about -> displayFragment(AboutFragment())
-            R.id.nav_tuiguang -> {
-                launchCustomTab("https://matsuricom.pages.dev/")
-                return false
-            }
 
             else -> return false
         }
