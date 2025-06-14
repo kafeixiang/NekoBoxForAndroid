@@ -603,6 +603,8 @@ fun buildSingBoxOutboundTLS(bean: StandardV2RayBean): OutboundTLSOptions? {
         if (bean.sni.isNotBlank()) server_name = bean.sni
         if (bean.alpn.isNotBlank()) alpn = bean.alpn.listByLineOrComma()
         if (bean.certificates.isNotBlank()) certificate = bean.certificates
+        if (bean.fragment) fragment = true
+        if (bean.recordFragment) record_fragment = true
         var fp = bean.utlsFingerprint
         if (bean.realityPubKey.isNotBlank()) {
             reality = OutboundRealityOptions().apply {

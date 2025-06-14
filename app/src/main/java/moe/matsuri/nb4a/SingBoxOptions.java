@@ -1830,6 +1830,12 @@ public class SingBoxOptions {
 
         public String certificate_path;
 
+        public Boolean fragment;
+
+        public String fragment_fallback_delay;
+
+        public Boolean record_fragment;
+
         public OutboundECHOptions ech;
 
         public OutboundUTLSOptions utls;

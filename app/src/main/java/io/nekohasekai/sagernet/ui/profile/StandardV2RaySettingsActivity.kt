@@ -44,6 +44,9 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
     private val realityPubKey = pbm.add(PreferenceBinding(Type.Text, "realityPubKey"))
     private val realityShortId = pbm.add(PreferenceBinding(Type.Text, "realityShortId"))
 
+    private val fragment = pbm.add(PreferenceBinding(Type.Bool, "fragment"))
+    private val recordFragment = pbm.add(PreferenceBinding(Type.Bool, "recordFragment"))
+
     private val enableECH = pbm.add(PreferenceBinding(Type.Bool, "enableECH"))
     private val echConfig = pbm.add(PreferenceBinding(Type.Text, "echConfig"))
 

@@ -33,6 +33,10 @@ public abstract class StandardV2RayBean extends AbstractBean {
 
     public Boolean allowInsecure;
 
+    public Boolean fragment;
+
+    public Boolean recordFragment;
+
     // --------------------------------------- reality
 
 
@@ -89,6 +93,9 @@ public abstract class StandardV2RayBean extends AbstractBean {
         if (JavaUtil.isNullOrBlank(certificates)) certificates = "";
         if (JavaUtil.isNullOrBlank(earlyDataHeaderName)) earlyDataHeaderName = "";
         if (JavaUtil.isNullOrBlank(utlsFingerprint)) utlsFingerprint = "";
+
+        if (fragment == null) fragment = false;
+        if (recordFragment == null) recordFragment = false;
 
         if (wsMaxEarlyData == null) wsMaxEarlyData = 0;
         if (allowInsecure == null) allowInsecure = false;
@@ -150,6 +157,8 @@ public abstract class StandardV2RayBean extends AbstractBean {
             output.writeString(utlsFingerprint);
             output.writeString(realityPubKey);
             output.writeString(realityShortId);
+            output.writeBoolean(fragment);
+            output.writeBoolean(recordFragment);
         }
 
         output.writeBoolean(enableECH);
@@ -208,6 +217,8 @@ public abstract class StandardV2RayBean extends AbstractBean {
             utlsFingerprint = input.readString();
             realityPubKey = input.readString();
             realityShortId = input.readString();
+            fragment = input.readBoolean();
+            recordFragment = input.readBoolean();
         }
 
         if (version >= 1) { // 从老版本升级上来
@@ -251,6 +262,8 @@ public abstract class StandardV2RayBean extends AbstractBean {
         bean.enableECH = enableECH;
         bean.disabledDRS = disabledDRS;
         bean.echConfig = echConfig;
+        bean.fragment = fragment;
+        bean.recordFragment = recordFragment;
     }
 
     public boolean isVLESS() {
