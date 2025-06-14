@@ -491,4 +491,6 @@
     <string name="allow_insecure_on_request_sum">更新订阅的时候允许不安全的连接</string>
     <string name="global_allow_insecure">总是跳过 TLS 证书验证</string>
     <string name="custom_rules_provider">自定义</string>
+    <string name="tls_fragment">TLS 分片</string>
+    <string name="tls_record_fragment">TLS Record 分片</string>
 </resources>
