@@ -147,13 +147,7 @@ class StatsBar @JvmOverloads constructor(
                 Logs.w(e.toString())
                 onMainDispatcher {
                     isEnabled = true
-                    setStatus(app.getText(R.string.connection_test_testing))
-
-                    activity.snackbar(
-                        app.getString(
-                            R.string.connection_test_error, e.readableMessage
-                        )
-                    ).show()
+                    setStatus(app.getString(R.string.connection_test_error, e.readableMessage.substringAfter("\":").trim()))
                 }
             }
         }
