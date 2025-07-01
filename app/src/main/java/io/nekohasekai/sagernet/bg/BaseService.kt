@@ -141,7 +141,7 @@ class BaseService {
                     data!!.proxy!!.box, DataStore.connectionTestURL, 3000
                 )
             } catch (e: Exception) {
-                error(Protocols.genFriendlyMsg(e.readableMessage))
+                error(e.readableMessage)
             }
         }
 
