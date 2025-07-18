@@ -108,17 +108,8 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                                 .subText(Libcore.versionBox())
                                 .setOnClickAction { }
                                 .build())
-                        .addItem(
-                            MaterialAboutActionItem.Builder()
-                                .icon(R.drawable.ic_baseline_card_giftcard_24)
-                                .text(R.string.donate)
-                                .subText(R.string.donate_info)
-                                .setOnClickAction {
-                                    requireContext().launchCustomTab(
-                                        "https://matsuridayo.github.io/index_docs/#donate"
-                                    )
-                                }
-                                .build())
+                        // 删除捐款相关功能
+                        // 删除源代码相关功能
                         .apply {
                             PackageCache.awaitLoadSync()
                             for ((_, pkg) in PackageCache.installedPluginPackages) {
@@ -173,34 +164,7 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                             }
                         }
                         .build())
-                .addCard(
-                    MaterialAboutCard.Builder()
-                        .outline(false)
-                        .title(R.string.project)
-                        .addItem(
-                            MaterialAboutActionItem.Builder()
-                                .icon(R.drawable.ic_baseline_sanitizer_24)
-                                .text(R.string.github)
-                                .setOnClickAction {
-                                    requireContext().launchCustomTab(
-                                        "https://github.com/MatsuriDayo/NekoBoxForAndroid"
-
-                                    )
-                                }
-                                .build())
-                        .addItem(
-                            MaterialAboutActionItem.Builder()
-                                .icon(R.drawable.ic_qu_shadowsocks_foreground)
-                                .text(R.string.telegram)
-                                .setOnClickAction {
-                                    requireContext().launchCustomTab(
-                                        "https://t.me/MatsuriDayo"
-                                    )
-                                }
-                                .build())
-                        .build())
                 .build()
-
         }
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
