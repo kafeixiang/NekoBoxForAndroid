@@ -495,6 +495,8 @@
     <string name="acquire_wake_lock">Acquire WakeLock</string>
     <string name="release_wake_lock">Release WakeLock</string>
     <string name="acquire_wake_lock_summary">Keep the CPU on</string>
+    <string name="hide_from_recent_apps">Hide from recent tasks</string>
+    <string name="hide_from_recent_apps_summary">Hide the app from recent tasks when running in background</string>
     <string name="action_switch">Switch</string>
 
     <string name="tuic_udp_relay_mode">UDP Relay Mode</string>
