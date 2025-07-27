@@ -106,6 +106,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var logLevel by configurationStore.stringToInt(Key.LOG_LEVEL)
     var logBufSize by configurationStore.int(Key.LOG_BUF_SIZE) { 0 }
     var acquireWakeLock by configurationStore.boolean(Key.ACQUIRE_WAKE_LOCK)
+    var hideFromRecentApps by configurationStore.boolean(Key.HIDE_FROM_RECENT_APPS)
 
     var customGlobalConfig by configurationStore.string(Key.CUSTOM_GLOBAL_CONFIG)
     
