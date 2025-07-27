@@ -141,6 +141,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         val tunImplementation = findPreference<SimpleMenuPreference>(Key.TUN_IMPLEMENTATION)!!
         val resolveDestination = findPreference<SwitchPreference>(Key.RESOLVE_DESTINATION)!!
         val acquireWakeLock = findPreference<SwitchPreference>(Key.ACQUIRE_WAKE_LOCK)!!
+        val hideFromRecentApps = findPreference<SwitchPreference>(Key.HIDE_FROM_RECENT_APPS)!!
         val enableClashAPI = findPreference<SwitchPreference>(Key.ENABLE_CLASH_API)!!
         enableClashAPI.setOnPreferenceChangeListener { _, newValue ->
             (activity as MainActivity?)?.refreshNavMenu(newValue as Boolean)
@@ -168,6 +169,8 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         tunImplementation.onPreferenceChangeListener = reloadListener
         acquireWakeLock.onPreferenceChangeListener = reloadListener
         globalCustomConfig.onPreferenceChangeListener = reloadListener
+        hideFromRecentApps.onPreferenceChangeListener = reloadListener
+
     }
 
     override fun onResume() {
