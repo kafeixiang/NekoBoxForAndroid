@@ -135,7 +135,9 @@ class MainActivity : ThemedActivity(),
         super.onResume()
         MessageStore.setCurrentActivity(this)
         
-        applyHideFromRecentApps(DataStore.hideFromRecentApps)
+        if (DataStore.hideFromRecentApps) {
+            applyHideFromRecentApps(DataStore.hideFromRecentApps)
+        }
     }
     
     private fun applyHideFromRecentApps(hide: Boolean) {
