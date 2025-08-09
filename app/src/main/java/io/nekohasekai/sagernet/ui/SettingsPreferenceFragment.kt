@@ -171,7 +171,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         globalCustomConfig.onPreferenceChangeListener = reloadListener
         hideFromRecentApps.setOnPreferenceChangeListener { _, newValue ->
             (activity as? MainActivity)?.applyHideFromRecentApps(newValue as Boolean)
-            needReload()
+            // needReload()
             true
         }
 
