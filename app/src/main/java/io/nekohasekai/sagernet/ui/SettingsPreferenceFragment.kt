@@ -217,7 +217,11 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         resolveDestination.onPreferenceChangeListener = reloadListener
         tunImplementation.onPreferenceChangeListener = reloadListener
         acquireWakeLock.onPreferenceChangeListener = reloadListener
-        hideFromRecentApps.onPreferenceChangeListener = reloadListener
+        hideFromRecentApps.setOnPreferenceChangeListener { _, newValue ->
+            (activity as? MainActivity)?.applyHideFromRecentApps(newValue as Boolean)
+            needReload()
+            true
+        }
 
     }
 

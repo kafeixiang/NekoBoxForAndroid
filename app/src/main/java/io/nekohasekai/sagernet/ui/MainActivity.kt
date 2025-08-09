@@ -132,8 +132,8 @@ class MainActivity : ThemedActivity(),
             applyHideFromRecentApps(DataStore.hideFromRecentApps)
         }
     }
-
-    private fun applyHideFromRecentApps(hide: Boolean) {
+    
+    fun applyHideFromRecentApps(hide: Boolean) {
         try {
             val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
             val tasks = activityManager.appTasks
