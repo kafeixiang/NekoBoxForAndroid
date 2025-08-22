@@ -11,7 +11,7 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/matsuridayo/libneko/neko_log"
+	"github.com/kafeixiang/libneko/neko_log"
 	"github.com/sagernet/sing-box/adapter"
 	"github.com/sagernet/sing-box/common/process"
 	"github.com/sagernet/sing-box/experimental/libbox/platform"
