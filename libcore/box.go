@@ -12,8 +12,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/matsuridayo/libneko/protect_server"
-	"github.com/matsuridayo/libneko/speedtest"
+	"github.com/kafeixiang/libneko/protect_server"
+	"github.com/kafeixiang/libneko/speedtest"
 	"github.com/sagernet/sing-box/adapter"
 	"github.com/sagernet/sing-box/boxapi"
 	"github.com/sagernet/sing-box/experimental/libbox/platform"
