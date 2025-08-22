@@ -11,8 +11,8 @@ import (
 
 	"log"
 
-	"github.com/matsuridayo/libneko/neko_common"
-	"github.com/matsuridayo/libneko/neko_log"
+	"github.com/kafeixiang/libneko/neko_common"
+	"github.com/kafeixiang/libneko/neko_log"
 	"github.com/sagernet/sing-box/nekoutils"
 	"github.com/sagernet/sing-box/option"
 	"golang.org/x/sys/unix"
