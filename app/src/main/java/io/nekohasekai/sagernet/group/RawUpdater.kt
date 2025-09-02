@@ -27,6 +27,7 @@ import libbox.Libbox
 import moe.matsuri.nb4a.Protocols
 import moe.matsuri.nb4a.proxy.anytls.AnyTLSBean
 import moe.matsuri.nb4a.proxy.config.ConfigBean
+import moe.matsuri.nb4a.utils.Util
 import org.ini4j.Ini
 import org.json.JSONArray
 import org.json.JSONObject
@@ -74,6 +75,16 @@ object RawUpdater : GroupUpdater() {
                 ?: error(app.getString(R.string.no_proxies_found))
 
             subscription.subscriptionUserinfo = response.getHeader("Subscription-Userinfo").unwrap
+            // 修改默认名字
+            if (proxyGroup.name?.startsWith("Subscription #") == true) {
+                var remoteName = Util.getStringBox(response.getHeader("content-disposition").unwrap)
+                if (remoteName.isNotBlank()) {
+                    remoteName = Util.decodeFilename(remoteName)
+                    if (remoteName.isNotBlank()) {
+                        proxyGroup.name = remoteName
+                    }
+                }
+            }
         }
 
         val proxiesMap = LinkedHashMap<String, AbstractBean>()

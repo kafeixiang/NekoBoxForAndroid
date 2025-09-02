@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Base64
 import java.io.ByteArrayOutputStream
+import java.net.URLDecoder
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.zip.Deflater
@@ -151,6 +152,28 @@ object Util {
             val collapse = statusBarManager.javaClass.getMethod("collapsePanels")
             collapse.invoke(statusBarManager)
         } catch (_: Exception) {
+        }
+    }
+
+    fun getStringBox(content: String?): String {
+        if (content.isNullOrBlank()) return ""
+        if (content.contains("filename*=UTF-8''")) {
+            return content.substringAfter("filename*=UTF-8''").substringBefore(";")
+        }
+        if (content.contains("filename=\"")) {
+            return content.substringAfter("filename=\"").substringBefore("\"")
+        }
+        if (content.contains("filename=")) {
+            return content.substringAfter("filename=").substringBefore(";")
+        }
+        return ""
+    }
+
+    fun decodeFilename(filename: String): String {
+        return try {
+            URLDecoder.decode(filename, "UTF-8")
+        } catch (e: Exception) {
+            filename
         }
     }
 
