@@ -5,7 +5,6 @@ import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import android.widget.ScrollView
 import androidx.appcompat.widget.Toolbar
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.databinding.LayoutLogcatBinding
@@ -40,10 +39,10 @@ class LogcatFragment : ToolbarFragment(R.layout.layout_logcat),
     private fun reloadSession() {
         binding.textview.text = ColorUtils.ansiEscapeToSpannable(
             requireContext(), String(SendLog.getNekoLog(50 * 1024))
-            )
-
-        binding.scroolview.post {
-            binding.scroolview.fullScroll(ScrollView.FOCUS_DOWN)
+        )
+        binding.scrollview.clearFocus()
+        binding.scrollview.post {
+            binding.scrollview.fullScroll(View.FOCUS_DOWN)
         }
     }
 
@@ -54,17 +53,11 @@ class LogcatFragment : ToolbarFragment(R.layout.layout_logcat),
                     try {
                         Libbox.nekoLogClear()
                         Runtime.getRuntime().exec("/system/bin/logcat -c")
+                        onMainDispatcher { binding.textview.text = "" }
                     } catch (e: Exception) {
-                        onMainDispatcher {
-                            snackbar(e.readableMessage).show()
-                        }
-                        return@runOnDefaultDispatcher
-                    }
-                    onMainDispatcher {
-                        binding.textview.text = ""
+                        onMainDispatcher { snackbar(e.readableMessage).show() }
                     }
                 }
-
             }
             R.id.action_send_logcat -> {
                 val context = requireContext()
