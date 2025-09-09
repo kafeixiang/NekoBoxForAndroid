@@ -5,7 +5,6 @@ import android.content.Context
 import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
 import android.os.Build
-import android.os.Build.VERSION_CODES
 import android.system.OsConstants
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -18,18 +17,10 @@ import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.utils.PackageCache
-import java.net.Inet6Address
-import java.net.InetSocketAddress
-import java.net.InterfaceAddress
-import java.net.NetworkInterface
-import java.security.KeyStore
-import kotlin.io.encoding.Base64
-import kotlin.io.encoding.ExperimentalEncodingApi
 import libbox.InterfaceUpdateListener
 import libbox.Libbox
 import libbox.LocalDNSTransport
 import libbox.NB4AInterface
-import libbox.NetworkInterface as LibboxNetworkInterface
 import libbox.NetworkInterfaceIterator
 import libbox.Notification
 import libbox.PlatformInterface
@@ -38,6 +29,14 @@ import libbox.TunOptions
 import libbox.WIFIState
 import moe.matsuri.nb4a.net.LocalResolver
 import moe.matsuri.nb4a.utils.LibcoreUtil
+import java.net.Inet6Address
+import java.net.InetSocketAddress
+import java.net.InterfaceAddress
+import java.net.NetworkInterface
+import java.security.KeyStore
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
+import libbox.NetworkInterface as LibboxNetworkInterface
 
 class NativeInterface : PlatformInterface, NB4AInterface {
 
@@ -62,7 +61,9 @@ class NativeInterface : PlatformInterface, NB4AInterface {
         return DataStore.vpnService!!.startVpn(tunOptions)
     }
 
-    override fun writeLog(message: String) {}
+    override fun writeLog(message: String) {
+        Libbox.nekoLogPrintln(message)
+    }
 
     override fun useProcFS(): Boolean {
         return Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
