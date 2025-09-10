@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.ShortcutManager
 import android.graphics.ImageDecoder
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
@@ -13,29 +12,37 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.getSystemService
+import androidx.core.net.toUri
 import com.google.zxing.Result
-import com.king.zxing.CameraScan
-import com.king.zxing.DefaultCameraScan
+import com.king.camera.scan.AnalyzeResult
+import com.king.camera.scan.BaseCameraScan
+import com.king.camera.scan.CameraScan
+import com.king.camera.scan.util.PermissionUtils
+import com.king.logx.LogX
 import com.king.zxing.analyze.QRCodeAnalyzer
 import com.king.zxing.util.CodeUtils
-import com.king.zxing.util.LogUtils
-import com.king.zxing.util.PermissionUtils
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProfileManager
 import io.nekohasekai.sagernet.databinding.LayoutScannerBinding
 import io.nekohasekai.sagernet.group.RawUpdater
-import io.nekohasekai.sagernet.ktx.*
+import io.nekohasekai.sagernet.ktx.Logs
+import io.nekohasekai.sagernet.ktx.SubscriptionFoundException
+import io.nekohasekai.sagernet.ktx.app
+import io.nekohasekai.sagernet.ktx.forEachTry
+import io.nekohasekai.sagernet.ktx.onMainDispatcher
+import io.nekohasekai.sagernet.ktx.readableMessage
+import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
+import io.nekohasekai.sagernet.ktx.startFilesForResult
 import io.nekohasekai.sagernet.widget.ListHolderListener
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 
 
-class ScannerActivity : ThemedActivity(),
-    CameraScan.OnScanResultCallback {
+class ScannerActivity : ThemedActivity(), CameraScan.OnScanResultCallback<Result> {
 
     lateinit var binding: LayoutScannerBinding
-    lateinit var cameraScan: CameraScan
+    lateinit var cameraScan: CameraScan<Result>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -111,12 +118,12 @@ class ScannerActivity : ThemedActivity(),
      * @param result 扫码结果
      * @return 返回true表示拦截，将不自动执行后续逻辑，为false表示不拦截，默认不拦截
      */
-    override fun onScanResultCallback(result: Result?): Boolean {
-        return onScanResultCallback(result, false)
+    override fun onScanResultCallback(result: AnalyzeResult<Result>) {
+        return onScanResultCallback(result.result, false)
     }
 
-    fun onScanResultCallback(result: Result?, multi: Boolean): Boolean {
-        if (!multi && finished.getAndSet(true)) return true
+    fun onScanResultCallback(result: Result?, multi: Boolean) {
+        if (!multi && finished.getAndSet(true)) return
         if (!multi) finish()
         runOnDefaultDispatcher {
             try {
@@ -140,7 +147,7 @@ class ScannerActivity : ThemedActivity(),
             } catch (e: SubscriptionFoundException) {
                 startActivity(Intent(this@ScannerActivity, MainActivity::class.java).apply {
                     action = Intent.ACTION_VIEW
-                    data = Uri.parse(e.link)
+                    data = e.link.toUri()
                 })
             } catch (e: Throwable) {
                 Logs.w(e)
@@ -151,17 +158,15 @@ class ScannerActivity : ThemedActivity(),
                 }
             }
         }
-        return true
     }
 
     /**
      * 初始化CameraScan
      */
     fun initCameraScan() {
-        cameraScan = DefaultCameraScan(this, binding.previewView)
+        cameraScan = BaseCameraScan(this, binding.previewView)
         cameraScan.setAnalyzer(QRCodeAnalyzer())
         cameraScan.setOnScanResultCallback(this)
-        cameraScan.setNeedAutoZoom(true)
     }
 
     /**
@@ -171,7 +176,7 @@ class ScannerActivity : ThemedActivity(),
         if (PermissionUtils.checkPermission(this, Manifest.permission.CAMERA)) {
             cameraScan.startCamera()
         } else {
-            LogUtils.d("checkPermissionResult != PERMISSION_GRANTED")
+            LogX.d("checkPermissionResult != PERMISSION_GRANTED")
             PermissionUtils.requestPermission(
                 this, Manifest.permission.CAMERA, CAMERA_PERMISSION_REQUEST_CODE
             )
@@ -188,13 +193,13 @@ class ScannerActivity : ThemedActivity(),
     /**
      * 切换闪光灯状态（开启/关闭）
      */
-    protected fun toggleTorchState() {
+    private fun toggleTorchState() {
         val isTorch = cameraScan.isTorchEnabled
         cameraScan.enableTorch(!isTorch)
         binding.ivFlashlight.isSelected = !isTorch
     }
 
-    val CAMERA_PERMISSION_REQUEST_CODE = 0X86
+    private val CAMERA_PERMISSION_REQUEST_CODE = 0x86
 
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<String>, grantResults: IntArray
