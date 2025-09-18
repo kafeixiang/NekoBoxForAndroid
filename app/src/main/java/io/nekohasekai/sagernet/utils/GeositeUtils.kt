@@ -15,19 +15,16 @@ object GeositeUtils {
     fun generateRuleSet(context: Context = app.applicationContext, code: String): String {
 
         val filesDir = context.getExternalFilesDir(null) ?: context.filesDir
-        val geositeFile = File(filesDir, "geosite.db")
-        val ruleSetDir = filesDir.resolve("ruleSets")
-        ruleSetDir.mkdirs()
-
-        val output = ruleSetDir.resolve("geosite-$code.srs")
+        val ruleSetDir = filesDir.resolve("ruleSets").apply { mkdirs() }
+        val output = ruleSetDir.resolve("geosite-$code.srs").absolutePath
 
         val geosite = Geosite()
-        if (!geosite.checkGeositeCode(geositeFile.absolutePath, code)) {
+        if (!geosite.checkGeositeCode(File(filesDir, "geosite.db").absolutePath, code)) {
             error("code $code not found in geosite")
         }
 
-        geosite.convertGeosite(code, output.absolutePath)
+        geosite.convertGeosite(code, output)
 
-        return output.absolutePath
+        return output
     }
 }

@@ -2,7 +2,7 @@ package io.nekohasekai.sagernet.utils
 
 import android.content.Context
 import io.nekohasekai.sagernet.ktx.app
-import libbox.Libbox
+import libbox.Geoip
 import java.io.File
 
 object GeoipUtils {
@@ -15,24 +15,16 @@ object GeoipUtils {
     fun generateRuleSet(context: Context = app.applicationContext, country: String): String {
 
         val filesDir = context.getExternalFilesDir(null) ?: context.filesDir
+        val ruleSetDir = filesDir.resolve("ruleSets").apply { mkdirs() }
+        val output = ruleSetDir.resolve("geoip-$country.srs").absolutePath
 
-        val ruleSetDir = filesDir.resolve("ruleSets")
-        ruleSetDir.mkdirs()
-        val output = ruleSetDir.resolve("geoip-$country.srs")
-
-        if (output.isFile) {
-            return output.absolutePath
-        }
-
-        val geositeFile = File(filesDir, "geoip.db")
-
-        val geoip = Libbox.newGeoip()
-        if (!geoip.openGeosite(geositeFile.absolutePath)) {
+        val geoip = Geoip()
+        if (!geoip.openGeoip(File(filesDir, "geoip.db").absolutePath)) {
             error("open geoip failed")
         }
 
-        geoip.convertGeoip(country, output.absolutePath)
+        geoip.convertGeoip(country, output)
 
-        return output.absolutePath
+        return output
     }
 }
