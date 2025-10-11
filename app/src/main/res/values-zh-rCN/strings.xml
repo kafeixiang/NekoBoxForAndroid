@@ -545,4 +545,8 @@
     <string name="xhttp_settings">XHTTP 设置</string>
     <string name="vless_encryption">加密方式</string>
     <string name="vless_encryption_hint">mlkem768x25519plus.native.0rtt.KEY1.KEY2...</string>
+    <string name="layout">布局</string>
+    <string name="layout_single_column">单列</string>
+    <string name="layout_double_column">双列</string>
+    <string name="sort_and_layout">排序与布局</string>
 </resources>
