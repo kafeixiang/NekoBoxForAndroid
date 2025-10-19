@@ -126,6 +126,21 @@ fun parseV2Ray(link: String): StandardV2RayBean {
                     bean.host = it
                 }
             }
+
+            "xhttp" -> {
+                url.queryParameter("host")?.let {
+                    bean.host = it
+                }
+                url.queryParameter("path")?.let {
+                    bean.path = it
+                }
+                url.queryParameter("mode")?.let {
+                    bean.xhttpMode = it
+                }
+                url.queryParameter("extra")?.let {
+                    bean.xhttpExtra = XhttpExtraConverter.xrayToSingBox(it)
+                }
+            }
         }
     } else {
         // also vless format
@@ -227,6 +242,21 @@ fun StandardV2RayBean.parseDuckSoft(url: HttpUrl) {
                 path = it
             }
         }
+
+        "xhttp" -> {
+            url.queryParameter("host")?.let {
+                host = it
+            }
+            url.queryParameter("path")?.let {
+                path = it
+            }
+            url.queryParameter("mode")?.let {
+                xhttpMode = it
+            }
+            url.queryParameter("extra")?.let {
+                xhttpExtra = XhttpExtraConverter.xrayToSingBox(it)
+            }
+        }
     }
 
     // maybe from matsuri vmess exoprt
@@ -246,6 +276,13 @@ fun StandardV2RayBean.parseDuckSoft(url: HttpUrl) {
     url.queryParameter("flow")?.let {
         if (isVLESS) {
             encryption = it.removeSuffix("-udp443")
+        }
+    }
+
+    // VLESS encryption (ML-KEM-768)
+    url.queryParameter("encryption")?.let {
+        if (isVLESS && it != "none") {
+            vlessEncryption = it
         }
     }
 
@@ -442,7 +479,13 @@ fun StandardV2RayBean.toUriVMessVLESSTrojan(isTrojan: Boolean): String {
         .addQueryParameter("type", type)
 
     if (isVLESS) {
-        builder.addQueryParameter("encryption", "none")
+        // Add encryption if configured
+        if (vlessEncryption.isNotBlank() && vlessEncryption != "none") {
+            builder.addQueryParameter("encryption", vlessEncryption)
+        } else {
+            builder.addQueryParameter("encryption", "none")
+        }
+
         if (encryption != "auto") builder.addQueryParameter("flow", encryption)
     }
 
@@ -465,6 +508,21 @@ fun StandardV2RayBean.toUriVMessVLESSTrojan(isTrojan: Boolean): String {
             } else if (type == "http" && !isTLS()) {
                 builder.setQueryParameter("type", "tcp")
                 builder.addQueryParameter("headerType", "http")
+            }
+        }
+
+        "xhttp" -> {
+            if (host.isNotBlank()) {
+                builder.addQueryParameter("host", host)
+            }
+            if (path.isNotBlank()) {
+                builder.addQueryParameter("path", path)
+            }
+            if (xhttpMode.isNotBlank()) {
+                builder.addQueryParameter("mode", xhttpMode)
+            }
+            if (xhttpExtra.isNotBlank()) {
+                builder.addQueryParameter("extra", XhttpExtraConverter.singBoxToXray(xhttpExtra))
             }
         }
 
@@ -584,6 +642,44 @@ fun buildSingBoxOutboundStreamSettings(bean: StandardV2RayBean): V2RayTransportO
                 path = bean.path
             }
         }
+
+        "xhttp" -> {
+            val baseConfig = V2RayTransportOptions_XHTTPOptions().apply {
+                type = "xhttp"
+                mode = bean.xhttpMode.takeIf { it.isNotBlank() } ?: "auto"
+                host = bean.host.takeIf { it.isNotBlank() }
+                path = bean.path.takeIf { it.isNotBlank() } ?: "/"
+            }
+            
+            // Merge xhttpExtra JSON config if present
+            if (bean.xhttpExtra.isNotBlank()) {
+                try {
+                    val gson = Gson()
+                    val baseJson = JSONObject(gson.toJson(baseConfig))
+                    val extraJson = JSONObject(bean.xhttpExtra)
+                    // Merge extra fields into base config
+                    val allowedKeys = arrayOf(
+                        "download",
+                        "xmux",
+                        "x_padding_bytes",
+                        "no_grpc_header",
+                        "sc_max_each_post_bytes",
+                        "sc_min_posts_interval_ms"
+                    )
+                    allowedKeys.forEach { key ->
+                        if (extraJson.has(key)) {
+                            baseJson.put(key, extraJson.get(key))
+                        }
+                    }
+                    return gson.fromJson(baseJson.toString(), V2RayTransportOptions_XHTTPOptions::class.java)
+                } catch (e: Exception) {
+                    // If parsing fails, return base config
+                    e.printStackTrace()
+                    return baseConfig
+                }
+            }
+            return baseConfig
+        }
     }
 
     return null
@@ -644,6 +740,9 @@ fun buildSingBoxOutboundStandardV2RayBean(bean: StandardV2RayBean): Outbound {
                 uuid = bean.uuid
                 if (bean.encryption.isNotBlank() && bean.encryption != "auto") {
                     flow = bean.encryption
+                }
+                if (bean.vlessEncryption.isNotBlank() && bean.vlessEncryption != "none") {
+                    encryption = bean.vlessEncryption
                 }
                 when (bean.packetEncoding) {
                     0 -> packet_encoding = ""
