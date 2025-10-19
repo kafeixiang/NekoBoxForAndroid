@@ -48,6 +48,11 @@ public abstract class StandardV2RayBean extends AbstractBean {
 
     public String certificates;
 
+    // --------------------------------------- xhttp
+
+    public String xhttpMode;
+    public String xhttpExtra;
+
     // --------------------------------------- ech
 
     public Boolean enableECH;
@@ -108,6 +113,9 @@ public abstract class StandardV2RayBean extends AbstractBean {
         if (muxPadding == null) muxPadding = false;
         if (muxType == null) muxType = 0;
         if (muxConcurrency == null) muxConcurrency = 1;
+
+        if (JavaUtil.isNullOrBlank(xhttpMode)) xhttpMode = "auto";
+        if (JavaUtil.isNullOrBlank(xhttpExtra)) xhttpExtra = "";
     }
 
     @Override
@@ -141,6 +149,13 @@ public abstract class StandardV2RayBean extends AbstractBean {
             }
             case "grpc": {
                 output.writeString(path);
+                break;
+            }
+            case "xhttp": {
+                output.writeString(host);
+                output.writeString(path);
+                output.writeString(xhttpMode);
+                output.writeString(xhttpExtra);
                 break;
             }
         }
@@ -202,6 +217,15 @@ public abstract class StandardV2RayBean extends AbstractBean {
                     // 解决老版本数据的读取问题
                     input.readString();
                     input.readString();
+                }
+                break;
+            }
+            case "xhttp": {
+                if (version >= 4) {
+                    host = input.readString();
+                    path = input.readString();
+                    xhttpMode = input.readString();
+                    xhttpExtra = input.readString();
                 }
                 break;
             }

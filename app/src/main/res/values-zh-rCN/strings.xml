@@ -528,4 +528,19 @@
     <string name="backup_in_progress">备份正在进行中</string>
     <string name="restore_in_progress">恢复正在进行中</string>
     <string name="restore_cancelled">恢复操作已取消</string>
+    <string name="ruleset_update_interval">RuleSet 更新间隔</string>
+    <string name="ruleset_update_interval_summary">远程 RuleSet 自动更新的时间间隔。例如：1h、30m、3600s。设为 0 表示禁用自动更新</string>
+    <string name="ruleset_prefix_error">Ruleset格式错误: 必须以rsip:或rssite:开头</string>
+    <string name="clear_cache">清理缓存</string>
+    <string name="clear_cache_summary">清理应用缓存文件，解决一些异常问题</string>
+    <string name="clear_cache_confirm">确定要清理缓存吗？</string>
+    <string name="clear_cache_success">缓存已清理</string>
+    <string name="clear_cache_failed">清理缓存失败: %s</string>
+    <string name="concurrent_dial">并发拨号</string>
+    <string name="concurrent_dial_summary">启用并发连接以更快地建立网络，可能会增加电池使用量</string>
+    <string name="xhttp_host">XHTTP 主机</string>
+    <string name="xhttp_path">XHTTP 路径</string>
+    <string name="xhttp_mode">XHTTP 模式</string>
+    <string name="xhttp_extra">XHTTP Extra</string>
+    <string name="xhttp_settings">XHTTP 设置</string>
 </resources>
