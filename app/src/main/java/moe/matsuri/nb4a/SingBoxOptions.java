@@ -4638,6 +4638,24 @@ public class SingBoxOptions {
 
     }
 
+    public static class V2RayTransportOptions_XHTTPOptions extends V2RayTransportOptions {
+
+        public String mode;
+
+        public String host;
+
+        public String path;
+
+        // Advanced field from extra config
+        public com.google.gson.JsonElement download;
+        public com.google.gson.JsonElement xmux;
+        public com.google.gson.JsonElement x_padding_bytes;
+        public com.google.gson.JsonElement no_grpc_header;
+        public com.google.gson.JsonElement sc_max_each_post_bytes;
+        public com.google.gson.JsonElement sc_min_posts_interval_ms;
+
+    }
+
     // sing-box Options 生成器已经坏了，以下是从 husi 抄的
 
     public static class Outbound_AnyTLSOptions extends Outbound {
