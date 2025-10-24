@@ -1,0 +1,91 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":dependencyDashboard",
+    ":semanticCommitTypeAll(chore)"
+  ],
+  "semanticCommits": "enabled",
+  "labels": [
+    "dependencies"
+  ],
+  "git-submodules": {
+    "enabled": false
+  },
+  "gradle": {
+    "managerFilePatterns": [
+      "/(^|/)build.gradle.kts$/",
+      "/(^|/)settings.gradle.kts$/"
+    ]
+  },
+  "gomod": {
+    "managerFilePatterns": [
+      "/libcore/go.mod$/"
+    ]
+  },
+  "github-actions": {
+    "managerFilePatterns": [
+      "/.github/workflows/.*.yml$/"
+    ]
+  },
+  "packageRules": [
+    {
+      "matchManagers": [
+        "github-actions"
+      ],
+      "semanticCommitType": "ci",
+      "addLabels": [
+        "github_action"
+      ]
+    },
+    {
+      "matchManagers": [
+        "gomod"
+      ],
+      "enabled": false
+    },
+    {
+      "matchManagers": [
+        "gomod"
+      ],
+      "matchPackageNames": [
+        "github.com/sagernet/sing-box",
+        "github.com/sagernet/gomobile",
+        "github.com/dyhkwong/sing-juicity"
+      ],
+      "enabled": true,
+      "postUpdateOptions": [
+        "gomodTidy"
+      ],
+      "addLabels": [
+        "go"
+      ]
+    },
+    {
+      "matchManagers": [
+        "gradle"
+      ],
+      "addLabels": [
+        "java"
+      ]
+    },
+    {
+      "matchPackageNames": [
+        "com.google.guava:guava"
+      ],
+      "allowedVersions": "/-android$/"
+    },
+    {
+      "matchManagers": [
+        "gradle"
+      ],
+      "matchPackageNames": [
+        "org.junit:junit-bom"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "enabled": false
+    }
+  ]
+}
