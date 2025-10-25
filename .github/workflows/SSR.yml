@@ -17,7 +17,8 @@ jobs:
         uses: actions/checkout@v5
         with:
           path: sing-box
-          repository: Restia-Ashbell/sing-box
+          repository: kafeixiang/sing-box
+          ref: ssr   # 指定要拉取的分支
       - name: Libcore Status
         run: |
           git ls-files buildScript | xargs cat | sha1sum > libcore_status
