@@ -6,9 +6,9 @@ import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
-import androidx.core.app.ActivityCompat
 import androidx.preference.*
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.jakewharton.processphoenix.ProcessPhoenix
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
@@ -43,15 +43,14 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
         val appTheme = findPreference<ColorPickerPreference>(Key.APP_THEME)!!
         appTheme.setOnPreferenceChangeListener { _, newTheme ->
-            if (DataStore.serviceState.started) {
-                SagerNet.reloadService()
-            }
-            val theme = Theme.getTheme(newTheme as Int)
-            app.setTheme(theme)
-            requireActivity().apply {
-                setTheme(theme)
-                ActivityCompat.recreate(this)
-            }
+            // Manually save the new theme value before restarting.
+            DataStore.appTheme = newTheme as Int
+
+            // Prepare the intent to restart and navigate to the settings page.
+            val nextIntent = requireContext().packageManager.getLaunchIntentForPackage(requireContext().packageName)!!
+            nextIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            nextIntent.putExtra("destination_fragment", R.id.nav_settings)
+            ProcessPhoenix.triggerRebirth(requireContext(), nextIntent)
             true
         }
 

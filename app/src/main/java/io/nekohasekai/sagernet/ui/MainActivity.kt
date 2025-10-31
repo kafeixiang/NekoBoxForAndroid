@@ -76,7 +76,8 @@ class MainActivity : ThemedActivity(),
         navigation.setNavigationItemSelectedListener(this)
 
         if (savedInstanceState == null) {
-            displayFragmentWithId(R.id.nav_configuration)
+            val destination = intent.getIntExtra("destination_fragment", R.id.nav_configuration)
+            displayFragmentWithId(destination)
         }
         onBackPressedDispatcher.addCallback {
             if (supportFragmentManager.findFragmentById(R.id.fragment_holder) is ConfigurationFragment) {
