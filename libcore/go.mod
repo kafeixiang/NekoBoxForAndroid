@@ -87,3 +87,5 @@ require (
 replace github.com/kafeixiang/libneko => ../../libneko
 
 replace github.com/sagernet/sing-box => ../../sing-box
+
+replace github.com/sagernet/sing-vmess => github.com/starifly/sing-vmess v0.2.7-mod.4
