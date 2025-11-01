@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 6,
-    "identityHash": "da0920cdc8e1b1a5183ca9bbdc43dd09",
+    "version": 7,
+    "identityHash": "bc464eee1f795ca3daff6eb9d3b4538c",
     "entities": [
       {
         "tableName": "proxy_groups",
@@ -80,7 +80,7 @@
       },
       {
         "tableName": "proxy_entities",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `groupId` INTEGER NOT NULL, `type` INTEGER NOT NULL, `userOrder` INTEGER NOT NULL, `tx` INTEGER NOT NULL, `rx` INTEGER NOT NULL, `status` INTEGER NOT NULL, `ping` INTEGER NOT NULL, `uuid` TEXT NOT NULL, `error` TEXT, `socksBean` BLOB, `httpBean` BLOB, `ssBean` BLOB, `vmessBean` BLOB, `trojanBean` BLOB, `trojanGoBean` BLOB, `mieruBean` BLOB, `naiveBean` BLOB, `hysteriaBean` BLOB, `tuicBean` BLOB, `juicityBean` BLOB, `sshBean` BLOB, `wgBean` BLOB, `shadowTLSBean` BLOB, `anyTLSBean` BLOB, `chainBean` BLOB, `nekoBean` BLOB, `configBean` BLOB)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `groupId` INTEGER NOT NULL, `type` INTEGER NOT NULL, `userOrder` INTEGER NOT NULL, `tx` INTEGER NOT NULL, `rx` INTEGER NOT NULL, `status` INTEGER NOT NULL, `ping` INTEGER NOT NULL, `uuid` TEXT NOT NULL, `error` TEXT, `socksBean` BLOB, `httpBean` BLOB, `ssBean` BLOB, `ssrBean` BLOB, `vmessBean` BLOB, `trojanBean` BLOB, `trojanGoBean` BLOB, `mieruBean` BLOB, `naiveBean` BLOB, `hysteriaBean` BLOB, `tuicBean` BLOB, `juicityBean` BLOB, `sshBean` BLOB, `wgBean` BLOB, `shadowTLSBean` BLOB, `anyTLSBean` BLOB, `chainBean` BLOB, `nekoBean` BLOB, `configBean` BLOB)",
         "fields": [
           {
             "fieldPath": "id",
@@ -157,6 +157,12 @@
           {
             "fieldPath": "ssBean",
             "columnName": "ssBean",
+            "affinity": "BLOB",
+            "notNull": false
+          },
+          {
+            "fieldPath": "ssrBean",
+            "columnName": "ssrBean",
             "affinity": "BLOB",
             "notNull": false
           },
@@ -373,7 +379,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'da0920cdc8e1b1a5183ca9bbdc43dd09')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'bc464eee1f795ca3daff6eb9d3b4538c')"
     ]
   }
 }
