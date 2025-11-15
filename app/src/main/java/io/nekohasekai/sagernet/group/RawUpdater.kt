@@ -485,6 +485,10 @@ object RawUpdater : GroupUpdater() {
                                                 grpcOpt.value.toString()
                                         }
                                     }
+                                    "reality-pub-key", "public-key" -> bean.realityPubKey =
+                                        opt.value.toString()
+                                    "reality-short-id", "short-id" -> bean.realityShortId =
+                                        opt.value.toString()
                                 }
                             }
                             proxies.add(bean)
