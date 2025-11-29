@@ -549,4 +549,7 @@
     <string name="layout_single_column">单列</string>
     <string name="layout_double_column">双列</string>
     <string name="sort_and_layout">排序与布局</string>
+    <string name="auto_switch_timeout">超时自动切换</string>
+    <string name="auto_switch_timeout_summary">如果超时，则自动切换到下一个配置</string>
+    <string name="auto_switch_timeout_duration">超时时长 (秒)</string>
 </resources>

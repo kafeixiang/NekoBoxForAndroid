@@ -53,6 +53,10 @@ object Key {
     const val MTU = "mtu"
     const val ALWAYS_SHOW_ADDRESS = "alwaysShowAddress"
 
+    // Auto-switch timeout settings
+    const val ENABLE_AUTO_SWITCH_TIMEOUT = "enableAutoSwitchTimeout"
+    const val AUTO_SWITCH_TIMEOUT_DURATION = "autoSwitchTimeoutDuration"
+
     // Protocol Settings
     const val GLOBAL_ALLOW_INSECURE = "globalAllowInsecure"
 
