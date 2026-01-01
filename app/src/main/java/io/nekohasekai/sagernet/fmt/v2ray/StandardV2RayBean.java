@@ -70,7 +70,10 @@ public abstract class StandardV2RayBean extends AbstractBean {
     public Boolean enableMux;
     public Boolean muxPadding;
     public Integer muxType;
-    public Integer muxConcurrency;
+    public Integer muxConcurrency;  // max_streams
+    public Integer muxMode;         // 0: max_streams, 1: connections
+    public Integer muxMaxConnections;
+    public Integer muxMinStreams;
 
 
     // --------------------------------------- //
@@ -121,7 +124,10 @@ public abstract class StandardV2RayBean extends AbstractBean {
         if (enableMux == null) enableMux = false;
         if (muxPadding == null) muxPadding = false;
         if (muxType == null) muxType = 0;
-        if (muxConcurrency == null) muxConcurrency = 1;
+        if (muxConcurrency == null) muxConcurrency = 8;
+        if (muxMode == null) muxMode = 0;
+        if (muxMaxConnections == null) muxMaxConnections = 4;
+        if (muxMinStreams == null) muxMinStreams = 4;
 
         if (JavaUtil.isNullOrBlank(xhttpMode)) xhttpMode = "auto";
         if (JavaUtil.isNullOrBlank(xhttpExtra)) xhttpExtra = "";
@@ -132,7 +138,7 @@ public abstract class StandardV2RayBean extends AbstractBean {
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(6);
+        output.writeInt(7);
         super.serialize(output);
         output.writeString(uuid);
         output.writeString(encryption);
@@ -198,6 +204,10 @@ public abstract class StandardV2RayBean extends AbstractBean {
         output.writeBoolean(muxPadding);
         output.writeInt(muxType);
         output.writeInt(muxConcurrency);
+        // v7
+        output.writeInt(muxMode);
+        output.writeInt(muxMaxConnections);
+        output.writeInt(muxMinStreams);
     }
 
     @Override
@@ -307,6 +317,13 @@ public abstract class StandardV2RayBean extends AbstractBean {
             muxPadding = input.readBoolean();
             muxType = input.readInt();
             muxConcurrency = input.readInt();
+        }
+
+        // v7
+        if (version >= 7) {
+            muxMode = input.readInt();
+            muxMaxConnections = input.readInt();
+            muxMinStreams = input.readInt();
         }
 
         // Note: xhttp fields are read in the switch case above when version >= 4
