@@ -74,6 +74,9 @@ public abstract class StandardV2RayBean extends AbstractBean {
     public Integer muxMode;         // 0: max_streams, 1: connections
     public Integer muxMaxConnections;
     public Integer muxMinStreams;
+    public Boolean muxBrutal;
+    public Integer muxBrutalUpMbps;
+    public Integer muxBrutalDownMbps;
 
 
     // --------------------------------------- //
@@ -128,6 +131,9 @@ public abstract class StandardV2RayBean extends AbstractBean {
         if (muxMode == null) muxMode = 0;
         if (muxMaxConnections == null) muxMaxConnections = 4;
         if (muxMinStreams == null) muxMinStreams = 4;
+        if (muxBrutal == null) muxBrutal = false;
+        if (muxBrutalUpMbps == null) muxBrutalUpMbps = 100;
+        if (muxBrutalDownMbps == null) muxBrutalDownMbps = 100;
 
         if (JavaUtil.isNullOrBlank(xhttpMode)) xhttpMode = "auto";
         if (JavaUtil.isNullOrBlank(xhttpExtra)) xhttpExtra = "";
@@ -138,7 +144,7 @@ public abstract class StandardV2RayBean extends AbstractBean {
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(7);
+        output.writeInt(8);
         super.serialize(output);
         output.writeString(uuid);
         output.writeString(encryption);
@@ -208,6 +214,10 @@ public abstract class StandardV2RayBean extends AbstractBean {
         output.writeInt(muxMode);
         output.writeInt(muxMaxConnections);
         output.writeInt(muxMinStreams);
+        // v8
+        output.writeBoolean(muxBrutal);
+        output.writeInt(muxBrutalUpMbps);
+        output.writeInt(muxBrutalDownMbps);
     }
 
     @Override
@@ -324,6 +334,13 @@ public abstract class StandardV2RayBean extends AbstractBean {
             muxMode = input.readInt();
             muxMaxConnections = input.readInt();
             muxMinStreams = input.readInt();
+        }
+
+        // v8
+        if (version >= 8) {
+            muxBrutal = input.readBoolean();
+            muxBrutalUpMbps = input.readInt();
+            muxBrutalDownMbps = input.readInt();
         }
 
         // Note: xhttp fields are read in the switch case above when version >= 4
