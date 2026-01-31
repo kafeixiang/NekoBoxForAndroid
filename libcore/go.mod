@@ -7,7 +7,7 @@ toolchain go1.24.9
 require (
 	github.com/dyhkwong/sing-juicity v0.0.4
 	github.com/gofrs/uuid/v5 v5.3.2
-	github.com/matsuridayo/libneko v1.0.0 // replaced
+	github.com/kafeixiang/libneko v1.0.0 // replaced
 	github.com/miekg/dns v1.1.67
 	github.com/oschwald/maxminddb-golang v1.13.1
 	github.com/sagernet/quic-go v0.52.0-sing-box-mod.3
