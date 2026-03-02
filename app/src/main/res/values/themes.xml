@@ -132,15 +132,19 @@
         <item name="rippleColor">@color/chip_ripple_color</item>
     </style>
 
-    <style name="Theme.SagerNet.Pink_SSR">
+    <style name="Theme.SagerNet.Pink_SSR" parent="Theme.SagerNet">
         <item name="colorPrimary">@color/color_pink_ssr</item>
         <item name="colorPrimaryDark">@color/color_pink_ssr</item>
         <item name="colorAccent">@color/material_pink_accent_200</item>
         <item name="colorMaterial100">@color/material_pink_accent_100</item>
         <item name="colorMaterial300">@color/color_pink_ssr</item>
+        <item name="accentOrTextSecondary">?colorAccent</item>
+        <item name="accentOrTextPrimary">?colorAccent</item>
+        <item name="primaryOrTextSecondary">?colorPrimary</item>
+        <item name="primaryOrTextPrimary">?colorPrimary</item>
     </style>
 
-    <style name="Theme.SagerNet.Amber">
+    <style name="Theme.SagerNet.Amber" parent="Theme.SagerNet">
         <item name="colorPrimary">@color/material_amber_500</item>
         <item name="colorPrimaryDark">@color/material_amber_500</item>
         <item name="colorAccent">@color/material_amber_accent_200</item>
@@ -148,7 +152,7 @@
         <item name="colorMaterial300">@color/material_amber_300</item>
     </style>
 
-    <style name="Theme.SagerNet.Blue">
+    <style name="Theme.SagerNet.Blue" parent="Theme.SagerNet">
         <item name="colorPrimary">@color/material_blue_500</item>
         <item name="colorPrimaryDark">@color/material_blue_500</item>
         <item name="colorAccent">@color/material_blue_accent_200</item>
@@ -156,7 +160,7 @@
         <item name="colorMaterial300">@color/material_blue_300</item>
     </style>
 
-    <style name="Theme.SagerNet.BlueGrey">
+    <style name="Theme.SagerNet.BlueGrey" parent="Theme.SagerNet">
         <item name="colorPrimary">@color/material_blue_grey_500</item>
         <item name="colorPrimaryDark">@color/material_blue_grey_500</item>
         <item name="colorAccent">@color/material_blue_grey_200</item>
@@ -164,7 +168,7 @@
         <item name="colorMaterial300">@color/material_blue_grey_300</item>
     </style>
 
-    <style name="Theme.SagerNet.Brown">
+    <style name="Theme.SagerNet.Brown" parent="Theme.SagerNet">
         <item name="colorPrimary">@color/material_brown_500</item>
         <item name="colorPrimaryDark">@color/material_brown_500</item>
         <item name="colorAccent">@color/material_brown_200</item>
@@ -172,7 +176,7 @@
         <item name="colorMaterial300">@color/material_brown_300</item>
     </style>
 
-    <style name="Theme.SagerNet.Cyan">
+    <style name="Theme.SagerNet.Cyan" parent="Theme.SagerNet">
         <item name="colorPrimary">@color/material_cyan_500</item>
         <item name="colorPrimaryDark">@color/material_cyan_500</item>
         <item name="colorAccent">@color/material_cyan_accent_200</item>
@@ -180,7 +184,7 @@
         <item name="colorMaterial300">@color/material_cyan_300</item>
     </style>
 
-    <style name="Theme.SagerNet.DeepOrange">
+    <style name="Theme.SagerNet.DeepOrange" parent="Theme.SagerNet">
         <item name="colorPrimary">@color/material_deep_orange_500</item>
         <item name="colorPrimaryDark">@color/material_deep_orange_500</item>
         <item name="colorAccent">@color/material_deep_orange_accent_200</item>
@@ -188,7 +192,7 @@
         <item name="colorMaterial300">@color/material_deep_orange_300</item>
     </style>
 
-    <style name="Theme.SagerNet.DeepPurple">
+    <style name="Theme.SagerNet.DeepPurple" parent="Theme.SagerNet">
         <item name="colorPrimary">@color/material_deep_purple_500</item>
         <item name="colorPrimaryDark">@color/material_deep_purple_500</item>
         <item name="colorAccent">@color/material_deep_purple_accent_200</item>
@@ -196,7 +200,7 @@
         <item name="colorMaterial300">@color/material_deep_purple_300</item>
     </style>
 
-    <style name="Theme.SagerNet.Green">
+    <style name="Theme.SagerNet.Green" parent="Theme.SagerNet">
         <item name="colorPrimary">@color/material_green_500</item>
         <item name="colorPrimaryDark">@color/material_green_500</item>
         <item name="colorAccent">@color/material_green_accent_200</item>
@@ -204,7 +208,7 @@
         <item name="colorMaterial300">@color/material_green_300</item>
     </style>
 
-    <style name="Theme.SagerNet.Grey">
+    <style name="Theme.SagerNet.Grey" parent="Theme.SagerNet">
         <item name="colorPrimary">@color/material_grey_500</item>
         <item name="colorPrimaryDark">@color/material_grey_500</item>
         <item name="colorAccent">@color/material_grey_700</item>
@@ -212,7 +216,7 @@
         <item name="colorMaterial300">@color/material_grey_300</item>
     </style>
 
-    <style name="Theme.SagerNet.Indigo">
+    <style name="Theme.SagerNet.Indigo" parent="Theme.SagerNet">
         <item name="colorPrimary">@color/material_indigo_500</item>
         <item name="colorPrimaryDark">@color/material_indigo_500</item>
         <item name="colorAccent">@color/material_indigo_accent_200</item>
@@ -220,7 +224,7 @@
         <item name="colorMaterial300">@color/material_indigo_300</item>
     </style>
 
-    <style name="Theme.SagerNet.LightBlue">
+    <style name="Theme.SagerNet.LightBlue" parent="Theme.SagerNet">
         <item name="colorPrimary">@color/material_light_blue_500</item>
         <item name="colorPrimaryDark">@color/material_light_blue_500</item>
         <item name="colorAccent">@color/material_light_blue_accent_200</item>
@@ -228,7 +232,7 @@
         <item name="colorMaterial300">@color/material_light_blue_300</item>
     </style>
 
-    <style name="Theme.SagerNet.LightGreen">
+    <style name="Theme.SagerNet.LightGreen" parent="Theme.SagerNet">
         <item name="colorPrimary">@color/material_light_green_500</item>
         <item name="colorPrimaryDark">@color/material_light_green_500</item>
         <item name="colorAccent">@color/material_light_green_accent_200</item>
@@ -236,7 +240,7 @@
         <item name="colorMaterial300">@color/material_light_green_300</item>
     </style>
 
-    <style name="Theme.SagerNet.Lime">
+    <style name="Theme.SagerNet.Lime" parent="Theme.SagerNet">
         <item name="colorPrimary">@color/material_lime_500</item>
         <item name="colorPrimaryDark">@color/material_lime_500</item>
         <item name="colorAccent">@color/material_lime_accent_200</item>
@@ -244,7 +248,7 @@
         <item name="colorMaterial300">@color/material_lime_300</item>
     </style>
 
-    <style name="Theme.SagerNet.Orange">
+    <style name="Theme.SagerNet.Orange" parent="Theme.SagerNet">
         <item name="colorPrimary">@color/material_orange_500</item>
         <item name="colorPrimaryDark">@color/material_orange_500</item>
         <item name="colorAccent">@color/material_orange_accent_200</item>
@@ -252,7 +256,7 @@
         <item name="colorMaterial300">@color/material_orange_300</item>
     </style>
 
-    <style name="Theme.SagerNet.Purple">
+    <style name="Theme.SagerNet.Purple" parent="Theme.SagerNet">
         <item name="colorPrimary">@color/material_purple_500</item>
         <item name="colorPrimaryDark">@color/material_purple_500</item>
         <item name="colorAccent">@color/material_purple_accent_200</item>
@@ -260,7 +264,7 @@
         <item name="colorMaterial300">@color/material_purple_300</item>
     </style>
 
-    <style name="Theme.SagerNet.Red">
+    <style name="Theme.SagerNet.Red" parent="Theme.SagerNet">
         <item name="colorPrimary">@color/material_red_500</item>
         <item name="colorPrimaryDark">@color/material_red_500</item>
         <item name="colorAccent">@color/material_red_accent_200</item>
@@ -268,7 +272,7 @@
         <item name="colorMaterial300">@color/material_red_300</item>
     </style>
 
-    <style name="Theme.SagerNet.Teal">
+    <style name="Theme.SagerNet.Teal" parent="Theme.SagerNet">
         <item name="colorPrimary">@color/material_teal_500</item>
         <item name="colorPrimaryDark">@color/material_teal_500</item>
         <item name="colorAccent">@color/material_teal_accent_200</item>
@@ -276,7 +280,7 @@
         <item name="colorMaterial300">@color/material_teal_300</item>
     </style>
 
-    <style name="Theme.SagerNet.Yellow">
+    <style name="Theme.SagerNet.Yellow" parent="Theme.SagerNet">
         <item name="colorPrimary">@color/material_yellow_500</item>
         <item name="colorPrimaryDark">@color/material_yellow_500</item>
         <item name="colorAccent">@color/material_yellow_accent_200</item>
@@ -285,7 +289,7 @@
         <item name="colorOnPrimarySurface">@color/black</item>
     </style>
 
-    <style name="Theme.SagerNet.Dialog.Amber">
+    <style name="Theme.SagerNet.Dialog.Amber" parent="Theme.SagerNet.Dialog">
         <item name="colorPrimary">@color/material_amber_500</item>
         <item name="colorPrimaryDark">@color/material_amber_500</item>
         <item name="colorAccent">@color/material_amber_accent_200</item>
@@ -293,7 +297,7 @@
         <item name="colorMaterial300">@color/material_amber_300</item>
     </style>
 
-    <style name="Theme.SagerNet.Dialog.Blue">
+    <style name="Theme.SagerNet.Dialog.Blue" parent="Theme.SagerNet.Dialog">
         <item name="colorPrimary">@color/material_blue_500</item>
         <item name="colorPrimaryDark">@color/material_blue_500</item>
         <item name="colorAccent">@color/material_blue_accent_200</item>
@@ -301,7 +305,7 @@
         <item name="colorMaterial300">@color/material_blue_300</item>
     </style>
 
-    <style name="Theme.SagerNet.Dialog.BlueGrey">
+    <style name="Theme.SagerNet.Dialog.BlueGrey" parent="Theme.SagerNet.Dialog">
         <item name="colorPrimary">@color/material_blue_grey_500</item>
         <item name="colorPrimaryDark">@color/material_blue_grey_500</item>
         <item name="colorAccent">@color/material_blue_grey_200</item>
@@ -309,7 +313,7 @@
         <item name="colorMaterial300">@color/material_blue_grey_300</item>
     </style>
 
-    <style name="Theme.SagerNet.Dialog.Brown">
+    <style name="Theme.SagerNet.Dialog.Brown" parent="Theme.SagerNet.Dialog">
         <item name="colorPrimary">@color/material_brown_500</item>
         <item name="colorPrimaryDark">@color/material_brown_500</item>
         <item name="colorAccent">@color/material_brown_200</item>
@@ -317,7 +321,7 @@
         <item name="colorMaterial300">@color/material_brown_300</item>
     </style>
 
-    <style name="Theme.SagerNet.Dialog.Cyan">
+    <style name="Theme.SagerNet.Dialog.Cyan" parent="Theme.SagerNet.Dialog">
         <item name="colorPrimary">@color/material_cyan_500</item>
         <item name="colorPrimaryDark">@color/material_cyan_500</item>
         <item name="colorAccent">@color/material_cyan_accent_200</item>
@@ -325,7 +329,7 @@
         <item name="colorMaterial300">@color/material_cyan_300</item>
     </style>
 
-    <style name="Theme.SagerNet.Dialog.DeepOrange">
+    <style name="Theme.SagerNet.Dialog.DeepOrange" parent="Theme.SagerNet.Dialog">
         <item name="colorPrimary">@color/material_deep_orange_500</item>
         <item name="colorPrimaryDark">@color/material_deep_orange_500</item>
         <item name="colorAccent">@color/material_deep_orange_accent_200</item>
@@ -333,7 +337,7 @@
         <item name="colorMaterial300">@color/material_deep_orange_300</item>
     </style>
 
-    <style name="Theme.SagerNet.Dialog.DeepPurple">
+    <style name="Theme.SagerNet.Dialog.DeepPurple" parent="Theme.SagerNet.Dialog">
         <item name="colorPrimary">@color/material_deep_purple_500</item>
         <item name="colorPrimaryDark">@color/material_deep_purple_500</item>
         <item name="colorAccent">@color/material_deep_purple_accent_200</item>
@@ -341,7 +345,7 @@
         <item name="colorMaterial300">@color/material_deep_purple_300</item>
     </style>
 
-    <style name="Theme.SagerNet.Dialog.Green">
+    <style name="Theme.SagerNet.Dialog.Green" parent="Theme.SagerNet.Dialog">
         <item name="colorPrimary">@color/material_green_500</item>
         <item name="colorPrimaryDark">@color/material_green_500</item>
         <item name="colorAccent">@color/material_green_accent_200</item>
@@ -349,7 +353,7 @@
         <item name="colorMaterial300">@color/material_green_300</item>
     </style>
 
-    <style name="Theme.SagerNet.Dialog.Grey">
+    <style name="Theme.SagerNet.Dialog.Grey" parent="Theme.SagerNet.Dialog">
         <item name="colorPrimary">@color/material_grey_500</item>
         <item name="colorPrimaryDark">@color/material_grey_500</item>
         <item name="colorAccent">@color/material_grey_200</item>
@@ -357,7 +361,7 @@
         <item name="colorMaterial300">@color/material_grey_300</item>
     </style>
 
-    <style name="Theme.SagerNet.Dialog.Indigo">
+    <style name="Theme.SagerNet.Dialog.Indigo" parent="Theme.SagerNet.Dialog">
         <item name="colorPrimary">@color/material_indigo_500</item>
         <item name="colorPrimaryDark">@color/material_indigo_500</item>
         <item name="colorAccent">@color/material_indigo_accent_200</item>
@@ -365,7 +369,7 @@
         <item name="colorMaterial300">@color/material_indigo_300</item>
     </style>
 
-    <style name="Theme.SagerNet.Dialog.LightBlue">
+    <style name="Theme.SagerNet.Dialog.LightBlue" parent="Theme.SagerNet.Dialog">
         <item name="colorPrimary">@color/material_light_blue_500</item>
         <item name="colorPrimaryDark">@color/material_light_blue_500</item>
         <item name="colorAccent">@color/material_light_blue_accent_200</item>
@@ -373,7 +377,7 @@
         <item name="colorMaterial300">@color/material_light_blue_300</item>
     </style>
 
-    <style name="Theme.SagerNet.Dialog.LightGreen">
+    <style name="Theme.SagerNet.Dialog.LightGreen" parent="Theme.SagerNet.Dialog">
         <item name="colorPrimary">@color/material_light_green_500</item>
         <item name="colorPrimaryDark">@color/material_light_green_500</item>
         <item name="colorAccent">@color/material_light_green_accent_200</item>
@@ -381,7 +385,7 @@
         <item name="colorMaterial300">@color/material_light_green_300</item>
     </style>
 
-    <style name="Theme.SagerNet.Dialog.Lime">
+    <style name="Theme.SagerNet.Dialog.Lime" parent="Theme.SagerNet.Dialog">
         <item name="colorPrimary">@color/material_lime_500</item>
         <item name="colorPrimaryDark">@color/material_lime_500</item>
         <item name="colorAccent">@color/material_lime_accent_200</item>
@@ -389,7 +393,7 @@
         <item name="colorMaterial300">@color/material_lime_300</item>
     </style>
 
-    <style name="Theme.SagerNet.Dialog.Orange">
+    <style name="Theme.SagerNet.Dialog.Orange" parent="Theme.SagerNet.Dialog">
         <item name="colorPrimary">@color/material_orange_500</item>
         <item name="colorPrimaryDark">@color/material_orange_500</item>
         <item name="colorAccent">@color/material_orange_accent_200</item>
@@ -397,7 +401,7 @@
         <item name="colorMaterial300">@color/material_orange_300</item>
     </style>
 
-    <style name="Theme.SagerNet.Dialog.Purple">
+    <style name="Theme.SagerNet.Dialog.Purple" parent="Theme.SagerNet.Dialog">
         <item name="colorPrimary">@color/material_purple_500</item>
         <item name="colorPrimaryDark">@color/material_purple_500</item>
         <item name="colorAccent">@color/material_purple_accent_200</item>
@@ -405,7 +409,7 @@
         <item name="colorMaterial300">@color/material_purple_300</item>
     </style>
 
-    <style name="Theme.SagerNet.Dialog.Red">
+    <style name="Theme.SagerNet.Dialog.Red" parent="Theme.SagerNet.Dialog">
         <item name="colorPrimary">@color/material_red_500</item>
         <item name="colorPrimaryDark">@color/material_red_500</item>
         <item name="colorAccent">@color/material_red_accent_200</item>
@@ -413,7 +417,7 @@
         <item name="colorMaterial300">@color/material_red_300</item>
     </style>
 
-    <style name="Theme.SagerNet.Dialog.Pink_SSR">
+    <style name="Theme.SagerNet.Dialog.Pink_SSR" parent="Theme.SagerNet.Dialog">
         <item name="colorPrimary">@color/color_pink_ssr</item>
         <item name="colorPrimaryDark">@color/color_pink_ssr</item>
         <item name="colorAccent">@color/material_pink_accent_200</item>
@@ -421,7 +425,7 @@
         <item name="colorMaterial300">@color/color_pink_ssr</item>
     </style>
 
-    <style name="Theme.SagerNet.Dialog.Teal">
+    <style name="Theme.SagerNet.Dialog.Teal" parent="Theme.SagerNet.Dialog">
         <item name="colorPrimary">@color/material_teal_500</item>
         <item name="colorPrimaryDark">@color/material_teal_500</item>
         <item name="colorAccent">@color/material_teal_accent_200</item>
@@ -429,7 +433,7 @@
         <item name="colorMaterial300">@color/material_teal_300</item>
     </style>
 
-    <style name="Theme.SagerNet.Dialog.Yellow">
+    <style name="Theme.SagerNet.Dialog.Yellow" parent="Theme.SagerNet.Dialog">
         <item name="colorPrimary">@color/material_yellow_500</item>
         <item name="colorPrimaryDark">@color/material_yellow_500</item>
         <item name="colorAccent">@color/material_yellow_accent_200</item>
@@ -438,7 +442,7 @@
         <item name="colorOnPrimarySurface">@color/black</item>
     </style>
 
-    <style name="Theme.SagerNet.Black">
+    <style name="Theme.SagerNet.Black" parent="Theme.SagerNet">
         <item name="colorPrimary">@color/color_ng_black_primary</item>
         <item name="colorPrimaryDark">@color/color_ng_black_primary</item>
         <item name="colorAccent">@color/color_ng_black_accent</item>
@@ -455,7 +459,7 @@
         <item name="primaryOrTextPrimary">?android:textColorPrimary</item>
     </style>
 
-    <style name="Theme.SagerNet.Dialog.Black">
+    <style name="Theme.SagerNet.Dialog.Black" parent="Theme.SagerNet.Dialog">
         <item name="colorPrimary">@color/color_ng_black_primary</item>
         <item name="colorPrimaryDark">@color/color_ng_black_primary</item>
         <item name="colorAccent">@color/color_ng_black_accent</item>
