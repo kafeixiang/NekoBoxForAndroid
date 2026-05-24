@@ -463,6 +463,7 @@
         <item>Loyalsoldier (soffchen/sing-geosite)</item>
         <item>Chocolate4U/Iran-sing-box-rules</item>
         <item>L11R/Antizapret-sing-box-geo</item>
+        <item>@string/custom_rules_provider</item>
     </string-array>
 
     <string-array name="balancer_type">
@@ -665,4 +666,45 @@
         <item>error</item>
         <item>none</item>
     </string-array>
+    <!-- Snell Protocol -->
+    <string-array name="snell_versions_entry">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+
+    <string-array name="snell_versions_value">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+
+    <string-array name="snell_obfs_modes_entry">
+        <item>None</item>
+        <item>HTTP</item>
+        <item>TLS</item>
+    </string-array>
+
+    <string-array name="snell_obfs_modes_value">
+        <item></item>
+        <item>http</item>
+        <item>tls</item>
+    </string-array>
+
+    <string-array name="snell_network_entry">
+        <item>Auto</item>
+        <item>TCP</item>
+        <item>UDP</item>
+    </string-array>
+
+    <string-array name="snell_network_value">
+        <item></item>
+        <item>tcp</item>
+        <item>udp</item>
+    </string-array>
+
 </resources>

@@ -40,9 +40,9 @@
     <string name="group_status_empty">Empty group</string>
     <string name="group_status_empty_subscription">Not updated yet</string>
     <string name="group_status_proxies">%d Proxies</string>
-    <string name="group_status_proxies_subscription">%d Proxies | Updated on %s</string>
+    <string name="group_status_proxies_subscription">%1$d Proxies | Updated on %2$s</string>
     <string name="group_no_difference">%s: No difference</string>
-    <string name="group_updated">%s: Updated %d proxies</string>
+    <string name="group_updated">%1$s: Updated %2$d proxies</string>
     <string name="group_show_diff">Diff</string>
     <string name="group_diff">Diff (%s)</string>
     <string name="group_delete_confirm_prompt">Are you sure you want to remove this group?</string>
@@ -70,7 +70,7 @@
     <string name="speed_interval">Speed Notification Update Interval</string>
     <string name="cag_misc">Misc Settings</string>
     <string name="show_stop">Show Stop Button</string>
-    <string name="show_stop_sum">If you don’t want to use Quick Tile as the switch</string>
+    <string name="show_stop_sum">If you don\'t want to use Quick Tile as the switch</string>
     <string name="show_direct_speed">Show Direct Speed</string>
     <string name="show_direct_speed_sum">Show the traffic speed without proxy in the notification as
         well</string>
@@ -101,9 +101,6 @@
     <string name="require_transproxy">Enable Transproxy Inbound</string>
     <string name="transproxy_mode">Transproxy Mode</string>
     <string name="connection_test_url">Connection Test URL</string>
-    <string name="auto_switch_timeout">Auto-switch on Timeout</string>
-    <string name="auto_switch_timeout_summary">Automatically switch to next config if no response</string>
-    <string name="auto_switch_timeout_duration">Timeout Duration (seconds)</string>
     <!-- proxy category -->
     <string name="profile_name">Profile Name</string>
     <string name="server_address">Server</string>
@@ -384,7 +381,7 @@
     <string name="subscription_user_agent">UserAgent</string>
     <string name="confirm">Confirm</string>
     <string name="missing_plugin">Missing Plugin</string>
-    <string name="profile_requiring_plugin">Profile %s requires the %s plugin to be installed, but
+    <string name="profile_requiring_plugin">Profile %1$s requires the %2$s plugin to be installed, but
         it was not found.</string>
     <string name="action_learn_more">LEARN MORE</string>
     <string name="action_download">DOWNLOAD</string>
@@ -403,7 +400,7 @@
     <string name="subscription_update_message">Updating %s …</string>
     <string name="group_filter">Filter</string>
     <string name="subscription_used">%s Used</string>
-    <string name="subscription_traffic">%s Used / %s Remaining</string>
+    <string name="subscription_traffic">%1$s Used / %2$s Remaining</string>
     <string name="subscription_expire">Expire: %s</string>
     <string name="subscription_import">Import subscription</string>
     <string name="subscription_import_message">Confirm you want to import subscription %s? If you
@@ -428,7 +425,7 @@
     <string name="group_order_origin">Origin</string>
     <string name="group_order_by_name">By Name</string>
     <string name="group_order_by_delay">By Delay</string>
-    <string name="plugin_exists_but_on_shit_system">Profile %s requires the %s plugin, but your
+    <string name="plugin_exists_but_on_shit_system">Profile %1$s requires the %2$s plugin, but your
         proprietary equipment vendor (usually surveillance capital giants and malware maker)
         tampered with your Android, making the plugin unusable.</string>
 
@@ -534,9 +531,9 @@
 
     <string name="pinned_certchain_sha256">Pinned Certificate SHA256</string>
 
-    <string name="please_update">Your APP is too old (%s). And will stop working at %s. Please
+    <string name="please_update">Your APP is too old (%1$s). And will stop working at %2$s. Please
         update!</string>
-    <string name="please_update_force">Your APP is too old (%s). And has been stopped working at %s.
+    <string name="please_update_force">Your APP is too old (%1$s). And has been stopped working at %2$s.
         Please update!</string>
     <string name="connection_test_delete_unavailable">Clear unavailable</string>
     <string name="move">Move</string>
@@ -639,4 +636,34 @@
     <string name="xhttp_settings">XHTTP Settings</string>
     <string name="vless_encryption">Encryption</string>
     <string name="vless_encryption_hint">mlkem768x25519plus.native.0rtt.KEY1.KEY2...</string>
+
+    <string name="github">GitHub</string>
+    <string name="telegram">Telegram</string>
+    <string name="global_mode">Global Mode</string>
+    <string name="global_mode_summary">Bypass all routing rules, all traffic passes through the current node</string>
+    <string name="ruleset_update_interval">RuleSet Update Interval</string>
+    <string name="ruleset_update_interval_summary">The time interval for remote RuleSet auto-update. For example: 1h, 30m, 3600s. Set to 0 to disable auto-update</string>
+    <string name="ruleset_prefix_error">Ruleset format error: must start with rsip: or rssite:</string>
+    <string name="clear_cache">Clear Cache</string>
+    <string name="clear_cache_summary">Clear application cache files to solve some abnormal problems</string>
+    <string name="clear_cache_confirm">Are you sure you want to clear the cache?</string>
+    <string name="clear_cache_success">Cache cleared</string>
+    <string name="clear_cache_failed">Failed to clear cache: %s</string>
+    <string name="concurrent_dial">Concurrent Dial</string>
+    <string name="concurrent_dial_summary">Enable concurrent connections to establish network faster, may increase battery usage</string>
+    <string name="auto_switch_timeout">Auto Switch Timeout</string>
+    <string name="auto_switch_timeout_summary">Automatically switch to the next configuration if timeout occurs</string>
+    <string name="auto_switch_timeout_duration">Timeout Duration (seconds)</string>
+    <string name="custom_rules_provider">Custom</string>
+
+    <!-- Snell Protocol -->
+    <string name="action_snell">Snell</string>
+    <string name="snell_psk">密钥</string>
+    <string name="snell_version">版本</string>
+    <string name="snell_network">协议</string>
+    <string name="snell_obfs_mode">Obfs 模式</string>
+    <string name="snell_obfs_host">Obfs 主机</string>
+    <string name="snell_reuse">Reuse</string>
+    <string name="snell_reuse_summary">v4/v5 only</string>
+
 </resources>
