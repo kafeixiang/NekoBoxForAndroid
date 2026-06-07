@@ -75,7 +75,7 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
             return MaterialAboutList.Builder()
                 .addCard(
                     MaterialAboutCard.Builder()
-                        .outline(false)
+                        .outline(true)
                         .addItem(
                             MaterialAboutActionItem.Builder()
                                 .icon(R.drawable.ic_baseline_update_24)

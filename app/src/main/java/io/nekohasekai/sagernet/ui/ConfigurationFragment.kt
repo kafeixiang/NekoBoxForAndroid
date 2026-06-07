@@ -24,6 +24,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.graphics.ColorUtils
 import androidx.core.net.toUri
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -35,6 +36,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -1346,6 +1348,26 @@ class ConfigurationFragment @JvmOverloads constructor(
 
             private fun getItemAt(index: Int) = getItem(configurationIdList[index])
 
+            private fun hasMiddleRow(p: ProxyEntity): Boolean {
+                val showTraffic = p.rx + p.tx != 0L
+                var address = p.displayAddress()
+                if (p.requireBean().name.isBlank() || !DataStore.alwaysShowAddress) {
+                    address = ""
+                }
+                return !((!showTraffic || p.status <= 0) && address.isBlank())
+            }
+
+            fun neighbourHasMiddleRow(position: Int): Boolean {
+                if (position == RecyclerView.NO_POSITION) return false
+                val np = if (position % 2 == 0) position + 1 else position - 1
+                if (np < 0 || np >= itemCount) return false
+                return try {
+                    hasMiddleRow(getItemAt(np))
+                } catch (e: Exception) {
+                    false
+                }
+            }
+
             override fun onCreateViewHolder(
                 parent: ViewGroup,
                 viewType: Int,
@@ -1631,13 +1653,33 @@ class ConfigurationFragment @JvmOverloads constructor(
             val profileStatus: TextView = view.findViewById(R.id.profile_status)
 
             val trafficText: TextView = view.findViewById(R.id.traffic_text)
-            val selectedView: LinearLayout = view.findViewById(R.id.selected_view)
+            private val card = view as MaterialCardView
             val editButton: ImageView = view.findViewById(R.id.edit)
             val doubleColumnMenuButton: ImageView = view.findViewById(R.id.double_column_menu)
             val shareLayout: LinearLayout = view.findViewById(R.id.share)
             val shareLayer: LinearLayout = view.findViewById(R.id.share_layer)
             val shareButton: ImageView = view.findViewById(R.id.shareIcon)
             val removeButton: ImageView = view.findViewById(R.id.remove)
+
+            private fun applySelected(selected: Boolean) {
+                val ctx = card.context
+                val primary = ctx.getColorAttr(R.attr.colorPrimary)
+                val surface = ctx.getColorAttr(R.attr.colorSurface)
+                card.strokeWidth = ctx.resources.getDimensionPixelSize(
+                    if (selected) R.dimen.card_stroke_width_selected else R.dimen.card_stroke_width
+                )
+                card.strokeColor =
+                    if (selected) primary else ctx.getColour(R.color.card_stroke)
+                card.setCardBackgroundColor(
+                    if (selected) {
+                        ColorUtils.compositeColors(
+                            ColorUtils.setAlphaComponent(primary, 26), surface
+                        )
+                    } else {
+                        surface
+                    }
+                )
+            }
 
             fun bind(proxyEntity: ProxyEntity, trafficData: TrafficData? = null) {
                 val pf = parentFragment as? ConfigurationFragment ?: return
@@ -1658,7 +1700,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                                 lastSelected = DataStore.selectedProxy
                                 DataStore.selectedProxy = proxyEntity.id
                                 onMainDispatcher {
-                                    selectedView.visibility = View.VISIBLE
+                                    applySelected(true)
                                 }
                             }
 
@@ -1712,8 +1754,13 @@ class ConfigurationFragment @JvmOverloads constructor(
                 }
 
                 profileAddress.text = address
-                (trafficText.parent as View).isGone =
+                val trafficRowEmpty =
                     (!showTraffic || proxyEntity.status <= 0) && address.isBlank()
+                (trafficText.parent as View).visibility = when {
+                    !trafficRowEmpty -> View.VISIBLE
+                    DataStore.groupLayoutMode == 1 && adapter?.neighbourHasMiddleRow(bindingAdapterPosition) == true -> View.INVISIBLE
+                    else -> View.GONE
+                }
 
                 if (proxyEntity.status <= 0) {
                     if (showTraffic) {
@@ -1830,7 +1877,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                     onMainDispatcher {
                         editButton.isEnabled = !started
                         removeButton.isEnabled = !started
-                        selectedView.visibility = if (selected) View.VISIBLE else View.INVISIBLE
+                        applySelected(selected)
                     }
 
                     if (!(select || proxyEntity.type == ProxyEntity.TYPE_CHAIN)) {
