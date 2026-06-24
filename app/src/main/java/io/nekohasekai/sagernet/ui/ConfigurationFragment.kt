@@ -1668,7 +1668,7 @@ class ConfigurationFragment @JvmOverloads constructor(
 
             private fun applySelected(selected: Boolean) {
                 val ctx = card.context
-                val primary = ctx.getColorAttr(R.attr.colorPrimary)
+                val primary = ctx.getColorAttr(R.attr.selectedColorPrimary)
                 val surface = ctx.getColorAttr(R.attr.colorSurface)
                 card.strokeWidth = ctx.resources.getDimensionPixelSize(
                     if (selected) R.dimen.card_stroke_width_selected else R.dimen.card_stroke_width
@@ -1792,8 +1792,10 @@ class ConfigurationFragment @JvmOverloads constructor(
                     profileStatus.setOnClickListener {
                         alert(err).tryToShow()
                     }
+                    profileStatus.isFocusable = false
                 } else {
-                    profileStatus.setOnClickListener(null)
+                    profileStatus.setOnClickListener { }
+                    profileStatus.isFocusable = false
                 }
 
                 editButton.setOnClickListener {

@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:max="1"
             android:visibility="invisible"
-            app:indicatorColor="?colorMaterial100"
+            app:indicatorColor="?primaryOrTextSecondary"
             app:layout_anchor="@+id/fab"
             app:layout_anchorGravity="center"
             app:layout_behavior="io.nekohasekai.sagernet.widget.FabProgressBehavior"
@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:elevation="6dp"
             android:nextFocusDown="@+id/stats"
-            app:backgroundTint="?fabColorBackground"
+            app:backgroundTint="?colorPrimary"
             app:layout_anchor="@id/stats"
             app:pressedTranslationZ="6dp"
             app:srcCompat="@drawable/ic_service_idle" />
@@ -50,7 +50,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:nextFocusUp="@+id/fab"
-            app:backgroundTint="?colorMaterial300"
+            app:backgroundTint="?colorPrimary"
             app:contentInsetStart="0dp"
             app:hideOnScroll="true"
             app:layout_scrollFlags="enterAlways|scroll">
@@ -70,7 +70,7 @@
                     android:layout_gravity="fill_horizontal"
                     android:ellipsize="marquee"
                     android:singleLine="true"
-                    android:textColor="?whiteOrTextPrimary"
+                    android:textColor="@color/white"
                     android:textSize="14sp" />
 
                 <TextView
@@ -81,7 +81,7 @@
                     android:layout_gravity="fill_horizontal"
                     android:ellipsize="marquee"
                     android:singleLine="true"
-                    android:textColor="?whiteOrTextPrimary"
+                    android:textColor="@color/white"
                     android:textSize="14sp" />
 
                 <TextView
@@ -91,7 +91,7 @@
                     android:layout_gravity="fill_horizontal"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:textColor="?whiteOrTextPrimary"
+                    android:textColor="@color/white"
                     android:textSize="16sp"
                     tools:text="@string/connection_test_available" />
 
