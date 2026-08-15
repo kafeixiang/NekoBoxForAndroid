@@ -97,7 +97,7 @@ replace github.com/sagernet/sing-box => ../../sing-box
 
 replace github.com/sagernet/sing-vmess => github.com/starifly/sing-vmess v0.2.8-mod.1
 
-replace github.com/sagernet/sing-snell => github.com/reF1nd/sing-snell v0.0.0-20260719154503-b398d6497cc0
+replace github.com/sagernet/sing-snell => github.com/reF1nd/sing-snell v0.0.0-20260808134633-c120d40d0d5b
 
 // replace github.com/sagernet/sing-quic => github.com/matsuridayo/sing-quic v0.0.0-20241009042333-b49ce60d9b36
 // replace github.com/sagernet/sing-quic => ../../sing-quic

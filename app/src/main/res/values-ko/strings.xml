@@ -573,4 +573,6 @@
     <string name="snell_mode">모드</string>
     <string name="snell_reuse">재사용</string>
     <string name="snell_reuse_summary">v4-v6만</string>
+    <string name="snell_quic_proxy">QUIC 프록시 모드</string>
+    <string name="snell_quic_proxy_summary">v6 전용: 레거시 v5 QUIC 프록시 호환</string>
 </resources>

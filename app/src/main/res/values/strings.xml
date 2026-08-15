@@ -666,6 +666,8 @@
     <string name="snell_obfs_host">Obfs Host</string>
     <string name="snell_mode">Mode</string>
     <string name="snell_reuse">Reuse</string>
+    <string name="snell_quic_proxy">QUIC Proxy Mode</string>
+    <string name="snell_quic_proxy_summary">v6 only: legacy v5 QUIC Proxy compatibility</string>
     <string name="snell_reuse_summary">v4-v6 only</string>
 
 </resources>

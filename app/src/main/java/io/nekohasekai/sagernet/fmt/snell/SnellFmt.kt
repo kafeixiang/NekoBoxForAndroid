@@ -24,6 +24,7 @@ fun parseSnell(url: String): SnellBean {
         link.queryParameter("reuse")?.let { reuse = it.toBoolean() }
         link.queryParameter("network")?.let { network = it }
         link.queryParameter("mode")?.let { mode = it }
+        link.queryParameter("quic-proxy-mode")?.let { quicProxyMode = it.toBoolean() }
     }
 }
 
@@ -37,6 +38,7 @@ fun SnellBean.toUri(): String {
     if (userKey.isNotBlank()) params.add("userkey=${userKey.urlSafe()}")
     if (version == 6) {
         if (mode.isNotBlank() && mode != "default") params.add("mode=$mode")
+        if (quicProxyMode == true) params.add("quic-proxy-mode=true")
     } else {
         if (obfsMode.isNotBlank()) params.add("obfs-mode=$obfsMode")
         if (obfsHost.isNotBlank()) params.add("obfs-host=$obfsHost")
@@ -60,8 +62,7 @@ fun parseClashSnell(proxy: Map<String, Any?>): SnellBean {
         serverPort = (proxy["port"] as? Number)?.toInt() ?: 443
         psk = proxy["psk"] as? String ?: ""
 
-        val clashVersion = ((proxy["version"] as? Number)?.toInt() ?: 4).coerceIn(1, 5)
-        version = if (clashVersion == 5) 4 else clashVersion
+        version = ((proxy["version"] as? Number)?.toInt() ?: 4).coerceIn(1, 5)
 
         reuse = proxy["reuse"] as? Boolean ?: false
 

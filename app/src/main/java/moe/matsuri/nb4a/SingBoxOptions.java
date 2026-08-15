@@ -4816,6 +4816,8 @@ public class SingBoxOptions {
 
         public String mode;
 
+        public Boolean quic_proxy_mode;
+
         public Boolean reuse;
 
     }

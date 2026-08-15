@@ -579,4 +579,6 @@
     <string name="snell_mode">モード</string>
     <string name="snell_reuse">再利用</string>
     <string name="snell_reuse_summary">v4-v6 のみ</string>
+    <string name="snell_quic_proxy">QUIC プロキシモード</string>
+    <string name="snell_quic_proxy_summary">v6 のみ：旧 v5 QUIC プロキシ互換</string>
 </resources>

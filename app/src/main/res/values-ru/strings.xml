@@ -640,4 +640,6 @@
     <string name="snell_mode">Режим</string>
     <string name="snell_reuse">Повторное использование</string>
     <string name="snell_reuse_summary">Только v4-v6</string>
+    <string name="snell_quic_proxy">Режим QUIC Proxy</string>
+    <string name="snell_quic_proxy_summary">Только v6: совместимость со старым QUIC Proxy v5</string>
 </resources>

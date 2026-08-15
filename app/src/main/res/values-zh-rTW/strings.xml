@@ -600,4 +600,6 @@
     <string name="snell_mode">模式</string>
     <string name="snell_reuse">重用</string>
     <string name="snell_reuse_summary">僅 v4-v6</string>
+    <string name="snell_quic_proxy">QUIC Proxy 模式</string>
+    <string name="snell_quic_proxy_summary">僅 v6：舊版 v5 QUIC Proxy 相容</string>
 </resources>
