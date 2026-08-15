@@ -75,11 +75,15 @@ https://matsuridayo.github.io
     "uplink_http_method": "",
     "session_placement": "",
     "session_key": "",
+    "session_id_table": "",  // hex/base36/base62/alphabet etc, ""=UUID
+    "session_id_length": 0,
     "seq_placement": "",
     "seq_key": "",
     "uplink_data_placement": "",
     "uplink_data_key": "",
     "uplink_chunk_size": 0,
+    "congestion_controller": "",  // H3 only: ""=bbr, bbr/cubic/reno
+    "cwnd": 0,  // H3 only, default 32
 	"download": {
 		"mode": "auto",
 		"host": "b.yourdomain.com",
@@ -104,11 +108,15 @@ https://matsuridayo.github.io
         "uplink_http_method": "",
         "session_placement": "",
         "session_key": "",
+        "session_id_table": "",  // hex/base36/base62/alphabet etc, ""=UUID
+        "session_id_length": 0,
         "seq_placement": "",
         "seq_key": "",
         "uplink_data_placement": "",
         "uplink_data_key": "",
         "uplink_chunk_size": 0,
+        "congestion_controller": "",  // H3 only: ""=bbr, bbr/cubic/reno
+        "cwnd": 0,  // H3 only, default 32
 		"server": "$(ip_or_domain_of_your_cdn)",
 		"server_port": 443,
 		"tls": {
@@ -150,11 +158,15 @@ https://matsuridayo.github.io
     "uplink_http_method": "",
     "session_placement": "",
     "session_key": "",
+    "session_id_table": "",  // hex/base36/base62/alphabet etc, ""=UUID
+    "session_id_length": 0,
     "seq_placement": "",
     "seq_key": "",
     "uplink_data_placement": "",
     "uplink_data_key": "",
     "uplink_chunk_size": 0,
+    "congestion_controller": "",  // H3 only: ""=bbr, bbr/cubic/reno
+    "cwnd": 0,  // H3 only, default 32
 	"download": {
 		"mode": "auto",
 		"host": "example.com",
@@ -179,11 +191,15 @@ https://matsuridayo.github.io
         "uplink_http_method": "",
         "session_placement": "",
         "session_key": "",
+        "session_id_table": "",  // 可选: hex/base36/base62/alphabet 等, 留空则用 UUID
+        "session_id_length": 0,
         "seq_placement": "",
         "seq_key": "",
         "uplink_data_placement": "",
         "uplink_data_key": "",
         "uplink_chunk_size": 0,
+        "congestion_controller": "",  // H3 only: ""=bbr, bbr/cubic/reno
+        "cwnd": 0,  // H3 only, default 32
 		"server": "$(ip_or_domain_of_your_cdn)",
 		"server_port": 443,
 		"tls": {
