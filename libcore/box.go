@@ -221,17 +221,17 @@ func UrlTest(i *BoxInstance, link string, timeout int32) (latency int32, err err
 		if i.v2api != nil {
 			connectionTracker = i.v2api.StatsService()
 		}
-		return speedtest.UrlTest(boxapi.CreateProxyHttpClient(i.Box, connectionTracker), link, timeout, speedtest.UrlTestStandard_RTT)
+		return speedtest.UrlTest(boxapi.CreateProxyHttpClient(i.Box, connectionTracker), link, timeout, speedtest.UrlTestStandard_FisrtHandshake)
 	}
 	// test direct
 	if mainInstance == nil {
-		return speedtest.UrlTest(boxapi.CreateProxyHttpClient(nil, nil), link, timeout, speedtest.UrlTestStandard_RTT)
+		return speedtest.UrlTest(boxapi.CreateProxyHttpClient(nil, nil), link, timeout, speedtest.UrlTestStandard_FisrtHandshake)
 	}
 	// test mainInstance
 	if mainInstance.v2api != nil {
 		connectionTracker = mainInstance.v2api.StatsService()
 	}
-	return speedtest.UrlTest(boxapi.CreateProxyHttpClient(mainInstance.Box, connectionTracker), link, timeout, speedtest.UrlTestStandard_RTT)
+	return speedtest.UrlTest(boxapi.CreateProxyHttpClient(mainInstance.Box, connectionTracker), link, timeout, speedtest.UrlTestStandard_FisrtHandshake)
 }
 
 var protectCloser io.Closer
