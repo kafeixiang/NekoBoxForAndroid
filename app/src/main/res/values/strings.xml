@@ -682,4 +682,66 @@
     <string name="masque_headers">Extra Headers</string>
     <string name="masque_path">Path Template</string>
 
+    <!-- OpenVPN -->
+    <string name="action_openvpn">OpenVPN</string>
+    <string name="openvpn_network">Network Protocol</string>
+    <string name="cipher">Cipher</string>
+    <string name="openvpn_cipher">Cipher</string>
+    <string name="openvpn_data_ciphers">Data Ciphers</string>
+    <string name="openvpn_auth">Auth Digest</string>
+    <string name="openvpn_compression">Compression</string>
+    <string name="openvpn_redirect_gateway">Redirect Gateway</string>
+    <string name="openvpn_server_name_type">Server Name Type</string>
+    <string name="openvpn_ca_certificate">CA Certificate</string>
+    <string name="openvpn_client_certificate">Client Certificate</string>
+    <string name="openvpn_client_key">Client Key</string>
+    <string name="openvpn_peer_fingerprint">Peer Fingerprint</string>
+    <string name="openvpn_remote_cert_ku">Remote Certificate KU</string>
+    <string name="openvpn_remote_cert_eku">Remote Certificate EKU</string>
+    <string name="openvpn_control_wrap_type">Control Wrap Type</string>
+    <string name="openvpn_control_wrap_key">Control Wrap Key</string>
+    <string name="openvpn_control_wrap_direction">Control Wrap Direction</string>
+
+    <!-- OpenConnect -->
+    <string name="action_openconnect">OpenConnect</string>
+    <string name="openconnect_server">Server URL</string>
+    <string name="openconnect_flavor">Protocol Flavor</string>
+    <string name="openconnect_auth_group">Auth Group</string>
+    <string name="openconnect_user_agent">User Agent</string>
+    <string name="openconnect_reported_os">Reported OS</string>
+    <string name="openconnect_local_hostname">Local Hostname</string>
+    <string name="openconnect_allow_insecure_crypto">Allow Insecure Crypto</string>
+    <string name="openconnect_tls_peer_fingerprint">TLS Peer Fingerprint</string>
+    <string name="openconnect_ca">CA Certificate</string>
+    <string name="openconnect_client_key_password">Client Key Password</string>
+    <string name="openconnect_mca_certificate">MCA Certificate</string>
+    <string name="openconnect_mca_key">MCA Key</string>
+    <string name="openconnect_mca_key_password">MCA Key Password</string>
+
+    <!-- Tailscale -->
+    <string name="action_tailscale">Tailscale</string>
+    <string name="tailscale_control_url">Control Server URL</string>
+    <string name="tailscale_auth_key">Auth Key</string>
+    <string name="tailscale_hostname">Hostname</string>
+    <string name="tailscale_state_directory">State Directory</string>
+    <string name="tailscale_ephemeral">Ephemeral Node</string>
+    <string name="tailscale_accept_routes">Accept Subnet Routes</string>
+    <string name="tailscale_exit_node">Exit Node (IP or Name)</string>
+    <string name="tailscale_exit_node_allow_lan">Exit Node Allow LAN Access</string>
+    <string name="tailscale_advertise_routes">Advertise Routes</string>
+    <string name="tailscale_advertise_exit_node">Advertise Exit Node</string>
+    <string name="tailscale_advertise_tags">Advertise Tags</string>
+    <string name="tailscale_listen_port">Listen Port</string>
+
+    <!-- Tor -->
+    <string name="action_tor">Tor</string>
+    <string name="tor_executable_path">Executable Path</string>
+    <string name="tor_data_directory">Data Directory</string>
+    <string name="tor_extra_args">Extra Arguments</string>
+    <string name="tor_torrc">Custom Torrc Options</string>
+
+    <!-- Services -->
+    <string name="service_oom_killer">OOM Killer</string>
+    <string name="service_oom_killer_limit">OOM Memory Limit</string>
+
 </resources>

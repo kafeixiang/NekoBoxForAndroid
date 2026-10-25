@@ -115,6 +115,10 @@ public class SingBoxOptions {
 
         public List<SingBoxOption> outbounds;
 
+        public List<SingBoxOption> services;
+
+        public List<SingBoxOption> certificate_providers;
+
         public RouteOptions route;
 
         public ExperimentalOptions experimental;
@@ -178,6 +182,10 @@ public class SingBoxOptions {
         public List<Endpoint> endpoints;
 
         public List<Outbound> outbounds;
+
+        public List<SingBoxOption> services;
+
+        public List<SingBoxOption> certificate_providers;
 
         public RouteOptions route;
 
@@ -333,9 +341,25 @@ public class SingBoxOptions {
 
     public static class DNSServerOptions extends SingBoxOption {
 
+        public String type;
+
         public String tag;
 
         public String address;
+
+        public String server;
+
+        public Integer server_port;
+
+        public String path;
+
+        public OutboundTLSOptions tls;
+
+        public String inet4_range;
+
+        public String inet6_range;
+
+        public String rcode;
 
         public String address_resolver;
 
@@ -4023,6 +4047,127 @@ public class SingBoxOptions {
 
         public Boolean on_demand;
 
+    }
+
+    public static class OpenVPNRemoteOptions extends SingBoxOption {
+        public String server;
+        public Integer server_port;
+    }
+
+    public static class OpenVPNControlWrapOptions extends SingBoxOption {
+        public String type;
+        public List<String> key;
+        public String direction;
+    }
+
+    public static class OpenVPNOutboundTLSOptions extends SingBoxOption {
+        public String server_name;
+        public String server_name_type;
+        public List<String> certificate;
+        public List<String> client_certificate;
+        public List<String> client_key;
+        public List<String> peer_fingerprint;
+        public List<String> remote_certificate_ku;
+        public String remote_certificate_eku;
+        public OpenVPNControlWrapOptions control_wrap;
+    }
+
+    public static class Endpoint_OpenVPNClientOptions extends Endpoint {
+        public String detour;
+        public String server;
+        public Integer server_port;
+        public String network;
+        public String username;
+        public String password;
+        public String cipher;
+        public List<String> data_ciphers;
+        public String auth;
+        public String compression;
+        public Boolean redirect_gateway;
+        public Integer mtu;
+        public OpenVPNOutboundTLSOptions tls;
+    }
+
+    public static class OpenConnectFormEntryOptions extends SingBoxOption {
+        public String form_id;
+        public String submission_key;
+        public String name;
+        public String value;
+    }
+
+    public static class OpenConnectTLSOptions extends SingBoxOption {
+        public Boolean insecure;
+        public String server_name;
+        public List<String> peer_fingerprint;
+        public List<String> certificate_authority;
+        public List<String> client_certificate;
+        public List<String> client_key;
+        public String client_key_password;
+        public List<String> mca_certificate;
+        public List<String> mca_key;
+        public String mca_key_password;
+    }
+
+    public static class Endpoint_OpenConnectOptions extends Endpoint {
+        public String detour;
+        public String server;
+        public String flavor;
+        public String username;
+        public String password;
+        public String auth_group;
+        public String reported_os;
+        public String user_agent;
+        public String local_hostname;
+        public Boolean allow_insecure_crypto;
+        public List<OpenConnectFormEntryOptions> form_entries;
+        public OpenConnectTLSOptions tls;
+    }
+
+    public static class TailscaleSSHServerOptions extends SingBoxOption {
+        public Boolean enabled;
+    }
+
+    public static class Endpoint_TailscaleOptions extends Endpoint {
+        public String detour;
+        public String state_directory;
+        public String auth_key;
+        public String control_url;
+        public Boolean ephemeral;
+        public String hostname;
+        public Boolean accept_routes;
+        public String exit_node;
+        public Boolean exit_node_allow_lan_access;
+        public List<String> advertise_routes;
+        public Boolean advertise_exit_node;
+        public List<String> advertise_tags;
+        public Integer listen_port;
+        public String taildrop_directory;
+        public TailscaleSSHServerOptions ssh_server;
+    }
+
+    public static class Service_OOMKillerOptions extends SingBoxOption {
+        public String type = "oom-killer";
+        public String tag;
+        public String memory_limit;
+    }
+
+    public static class Service_ResolvedOptions extends SingBoxOption {
+        public String type = "resolved";
+        public String tag;
+    }
+
+    public static class CertProvider_ACMEOptions extends SingBoxOption {
+        public String type = "acme";
+        public String tag;
+        public String email;
+        public List<String> domain;
+    }
+
+    public static class CertProvider_OriginCAOptions extends SingBoxOption {
+        public String type = "origin-ca";
+        public String tag;
+        public String api_key;
+        public List<String> domain;
     }
 
     public static class Outbound_HysteriaOptions extends Outbound {

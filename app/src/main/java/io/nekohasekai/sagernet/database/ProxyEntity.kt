@@ -27,6 +27,10 @@ import io.nekohasekai.sagernet.fmt.direct.DirectBean
 import io.nekohasekai.sagernet.fmt.direct.toUri
 import io.nekohasekai.sagernet.fmt.masque.MASQUEBean
 import io.nekohasekai.sagernet.fmt.masque.toUri
+import io.nekohasekai.sagernet.fmt.openvpn.OpenVPNBean
+import io.nekohasekai.sagernet.fmt.openconnect.OpenConnectBean
+import io.nekohasekai.sagernet.fmt.tailscale.TailscaleBean
+import io.nekohasekai.sagernet.fmt.tor.TorBean
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.socks.toUri
 import io.nekohasekai.sagernet.fmt.ssh.SSHBean
@@ -88,6 +92,10 @@ data class ProxyEntity(
     var snellBean: SnellBean? = null,
     var directBean: DirectBean? = null,
     var masqueBean: MASQUEBean? = null,
+    var openvpnBean: OpenVPNBean? = null,
+    var openconnectBean: OpenConnectBean? = null,
+    var tailscaleBean: TailscaleBean? = null,
+    var torBean: TorBean? = null,
 ) : Serializable() {
 
     companion object {
@@ -112,6 +120,10 @@ data class ProxyEntity(
         const val TYPE_SNELL = 24
         const val TYPE_DIRECT = 25
         const val TYPE_MASQUE = 26
+        const val TYPE_OPENVPN = 27
+        const val TYPE_OPENCONNECT = 28
+        const val TYPE_TAILSCALE = 29
+        const val TYPE_TOR = 30
 
         const val TYPE_CONFIG = 998
         const val TYPE_NEKO = 999
@@ -204,6 +216,10 @@ data class ProxyEntity(
             TYPE_SNELL -> snellBean = KryoConverters.snellDeserialize(byteArray)
             TYPE_DIRECT -> directBean = KryoConverters.directDeserialize(byteArray)
             TYPE_MASQUE -> masqueBean = KryoConverters.masqueDeserialize(byteArray)
+            TYPE_OPENVPN -> openvpnBean = KryoConverters.openvpnDeserialize(byteArray)
+            TYPE_OPENCONNECT -> openconnectBean = KryoConverters.openconnectDeserialize(byteArray)
+            TYPE_TAILSCALE -> tailscaleBean = KryoConverters.tailscaleDeserialize(byteArray)
+            TYPE_TOR -> torBean = KryoConverters.torDeserialize(byteArray)
         }
     }
 
@@ -230,6 +246,10 @@ data class ProxyEntity(
         TYPE_SNELL -> "Snell"
         TYPE_DIRECT -> "Direct"
         TYPE_MASQUE -> "MASQUE"
+        TYPE_OPENVPN -> "OpenVPN"
+        TYPE_OPENCONNECT -> "OpenConnect"
+        TYPE_TAILSCALE -> "Tailscale"
+        TYPE_TOR -> "Tor"
         else -> "Undefined type $type"
     }
 
@@ -260,6 +280,10 @@ data class ProxyEntity(
             TYPE_SNELL -> snellBean
             TYPE_DIRECT -> directBean
             TYPE_MASQUE -> masqueBean
+            TYPE_OPENVPN -> openvpnBean
+            TYPE_OPENCONNECT -> openconnectBean
+            TYPE_TAILSCALE -> tailscaleBean
+            TYPE_TOR -> torBean
             else -> error("Undefined type $type")
         } ?: error("Null ${displayType()} profile")
     }
@@ -279,6 +303,10 @@ data class ProxyEntity(
             is NekoBean -> false
             is ConfigBean -> false
             is DirectBean -> false
+            is OpenVPNBean -> false
+            is OpenConnectBean -> false
+            is TailscaleBean -> false
+            is TorBean -> false
             else -> true
         }
     }
@@ -457,6 +485,10 @@ data class ProxyEntity(
         nekoBean = null
         directBean = null
         masqueBean = null
+        openvpnBean = null
+        openconnectBean = null
+        tailscaleBean = null
+        torBean = null
 
         when (bean) {
             is SOCKSBean -> {
@@ -569,6 +601,26 @@ data class ProxyEntity(
                 masqueBean = bean
             }
 
+            is OpenVPNBean -> {
+                type = TYPE_OPENVPN
+                openvpnBean = bean
+            }
+
+            is OpenConnectBean -> {
+                type = TYPE_OPENCONNECT
+                openconnectBean = bean
+            }
+
+            is TailscaleBean -> {
+                type = TYPE_TAILSCALE
+                tailscaleBean = bean
+            }
+
+            is TorBean -> {
+                type = TYPE_TOR
+                torBean = bean
+            }
+
             else -> error("Undefined type $type")
         }
         return this
@@ -598,6 +650,10 @@ data class ProxyEntity(
                 TYPE_SNELL -> SnellSettingsActivity::class.java
                 TYPE_DIRECT -> DirectSettingsActivity::class.java
                 TYPE_MASQUE -> MASQUESettingsActivity::class.java
+                TYPE_OPENVPN -> OpenVPNSettingsActivity::class.java
+                TYPE_OPENCONNECT -> OpenConnectSettingsActivity::class.java
+                TYPE_TAILSCALE -> TailscaleSettingsActivity::class.java
+                TYPE_TOR -> TorSettingsActivity::class.java
                 else -> throw IllegalArgumentException()
             }
         ).apply {

@@ -80,6 +80,18 @@
                         android:id="@+id/action_new_masque"
                         android:title="@string/action_masque" />
                     <item
+                        android:id="@+id/action_new_openvpn"
+                        android:title="@string/action_openvpn" />
+                    <item
+                        android:id="@+id/action_new_openconnect"
+                        android:title="@string/action_openconnect" />
+                    <item
+                        android:id="@+id/action_new_tailscale"
+                        android:title="@string/action_tailscale" />
+                    <item
+                        android:id="@+id/action_new_tor"
+                        android:title="@string/action_tor" />
+                    <item
                         android:id="@+id/action_new_ssh"
                         android:title="@string/action_ssh" />
                     <item

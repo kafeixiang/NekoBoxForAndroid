@@ -596,4 +596,66 @@
     <string name="masque_disable_version_fallback">禁用版本降级</string>
     <string name="masque_headers">自定义请求头</string>
     <string name="masque_path">路径模板</string>
+
+    <!-- OpenVPN -->
+    <string name="action_openvpn">OpenVPN</string>
+    <string name="openvpn_network">网络协议</string>
+    <string name="cipher">加密算法</string>
+    <string name="openvpn_cipher">加密算法</string>
+    <string name="openvpn_data_ciphers">数据加密算法</string>
+    <string name="openvpn_auth">认证算法</string>
+    <string name="openvpn_compression">压缩算法</string>
+    <string name="openvpn_redirect_gateway">重定向网关</string>
+    <string name="openvpn_server_name_type">服务器名称类型</string>
+    <string name="openvpn_ca_certificate">CA 证书</string>
+    <string name="openvpn_client_certificate">客户端证书</string>
+    <string name="openvpn_client_key">客户端私钥</string>
+    <string name="openvpn_peer_fingerprint">对端证书指纹</string>
+    <string name="openvpn_remote_cert_ku">远程证书用法 (KU)</string>
+    <string name="openvpn_remote_cert_eku">远程证书扩展用法 (EKU)</string>
+    <string name="openvpn_control_wrap_type">控制通道封装类型</string>
+    <string name="openvpn_control_wrap_key">封装密钥</string>
+    <string name="openvpn_control_wrap_direction">封装方向</string>
+
+    <!-- OpenConnect -->
+    <string name="action_openconnect">OpenConnect</string>
+    <string name="openconnect_server">服务器 URL</string>
+    <string name="openconnect_flavor">协议类型</string>
+    <string name="openconnect_auth_group">认证组</string>
+    <string name="openconnect_user_agent">用户代理</string>
+    <string name="openconnect_reported_os">上报操作系统</string>
+    <string name="openconnect_local_hostname">本地主机名</string>
+    <string name="openconnect_allow_insecure_crypto">允许不安全密码套件</string>
+    <string name="openconnect_tls_peer_fingerprint">TLS 对端证书指纹</string>
+    <string name="openconnect_ca">CA 证书</string>
+    <string name="openconnect_client_key_password">私钥密码</string>
+    <string name="openconnect_mca_certificate">MCA 证书</string>
+    <string name="openconnect_mca_key">MCA 私钥</string>
+    <string name="openconnect_mca_key_password">MCA 私钥密码</string>
+
+    <!-- Tailscale -->
+    <string name="action_tailscale">Tailscale</string>
+    <string name="tailscale_control_url">控制服务器 URL</string>
+    <string name="tailscale_auth_key">认证密钥</string>
+    <string name="tailscale_hostname">主机名</string>
+    <string name="tailscale_state_directory">状态存储目录</string>
+    <string name="tailscale_ephemeral">临时节点</string>
+    <string name="tailscale_accept_routes">接受子网路由</string>
+    <string name="tailscale_exit_node">出口节点 (IP 或主机名)</string>
+    <string name="tailscale_exit_node_allow_lan">出口节点允许局域网访问</string>
+    <string name="tailscale_advertise_routes">通告子网路由</string>
+    <string name="tailscale_advertise_exit_node">作为出口节点通告</string>
+    <string name="tailscale_advertise_tags">通告标签</string>
+    <string name="tailscale_listen_port">监听端口</string>
+
+    <!-- Tor -->
+    <string name="action_tor">Tor</string>
+    <string name="tor_executable_path">可执行文件路径</string>
+    <string name="tor_data_directory">数据存储目录</string>
+    <string name="tor_extra_args">额外启动参数</string>
+    <string name="tor_torrc">自定义 Torrc 配置</string>
+
+    <!-- Services -->
+    <string name="service_oom_killer">OOM 内存保护</string>
+    <string name="service_oom_killer_limit">OOM 内存上限</string>
 </resources>

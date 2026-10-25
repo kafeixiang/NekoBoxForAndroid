@@ -87,6 +87,10 @@ import io.nekohasekai.sagernet.ui.profile.HttpSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.HysteriaSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.JuicitySettingsActivity
 import io.nekohasekai.sagernet.ui.profile.MASQUESettingsActivity
+import io.nekohasekai.sagernet.ui.profile.OpenVPNSettingsActivity
+import io.nekohasekai.sagernet.ui.profile.OpenConnectSettingsActivity
+import io.nekohasekai.sagernet.ui.profile.TailscaleSettingsActivity
+import io.nekohasekai.sagernet.ui.profile.TorSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.MieruSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.NaiveSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.SSHSettingsActivity
@@ -580,6 +584,22 @@ class ConfigurationFragment @JvmOverloads constructor(
 
             R.id.action_new_masque -> {
                 startActivity(Intent(requireActivity(), MASQUESettingsActivity::class.java))
+            }
+
+            R.id.action_new_openvpn -> {
+                startActivity(Intent(requireActivity(), OpenVPNSettingsActivity::class.java))
+            }
+
+            R.id.action_new_openconnect -> {
+                startActivity(Intent(requireActivity(), OpenConnectSettingsActivity::class.java))
+            }
+
+            R.id.action_new_tailscale -> {
+                startActivity(Intent(requireActivity(), TailscaleSettingsActivity::class.java))
+            }
+
+            R.id.action_new_tor -> {
+                startActivity(Intent(requireActivity(), TorSettingsActivity::class.java))
             }
 
             R.id.action_new_wg -> {

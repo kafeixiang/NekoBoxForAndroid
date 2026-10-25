@@ -33,6 +33,14 @@ import io.nekohasekai.sagernet.fmt.direct.DirectBean
 import io.nekohasekai.sagernet.fmt.direct.buildSingBoxOutboundDirectBean
 import io.nekohasekai.sagernet.fmt.masque.MASQUEBean
 import io.nekohasekai.sagernet.fmt.masque.buildSingBoxEndpointMASQUEBean
+import io.nekohasekai.sagernet.fmt.openvpn.OpenVPNBean
+import io.nekohasekai.sagernet.fmt.openvpn.buildSingBoxEndpointOpenVPNBean
+import io.nekohasekai.sagernet.fmt.openconnect.OpenConnectBean
+import io.nekohasekai.sagernet.fmt.openconnect.buildSingBoxEndpointOpenConnectBean
+import io.nekohasekai.sagernet.fmt.tailscale.TailscaleBean
+import io.nekohasekai.sagernet.fmt.tailscale.buildSingBoxEndpointTailscaleBean
+import io.nekohasekai.sagernet.fmt.tor.TorBean
+import io.nekohasekai.sagernet.fmt.tor.buildSingBoxOutboundTorBean
 import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
 import io.nekohasekai.sagernet.fmt.wireguard.buildSingBoxOutboundWireguardBean
 import io.nekohasekai.sagernet.ktx.isIpAddress
@@ -395,6 +403,18 @@ fun buildConfig(
                         is MASQUEBean ->
                             buildSingBoxEndpointMASQUEBean(bean)
 
+                        is OpenVPNBean ->
+                            buildSingBoxEndpointOpenVPNBean(bean)
+
+                        is OpenConnectBean ->
+                            buildSingBoxEndpointOpenConnectBean(bean)
+
+                        is TailscaleBean ->
+                            buildSingBoxEndpointTailscaleBean(bean)
+
+                        is TorBean ->
+                            buildSingBoxOutboundTorBean(bean)
+
                         else -> throw IllegalStateException("can't reach")
                     }
 
@@ -672,35 +692,37 @@ fun buildConfig(
             }
         }
 
-        dns.servers.add(DNSServerOptions().apply {
-            address = "rcode://success"
-            tag = "dns-block"
-        })
-
-        dns.servers.add(DNSServerOptions().apply {
-            address = "local"
+        dns.servers.add(SingBoxOptions.DNSServerOptions().apply {
             tag = "dns-local"
+            type = "local"
             detour = TAG_DIRECT
         })
 
-        directDNS.firstOrNull().let {
-            dns.servers.add(DNSServerOptions().apply {
-                address = it ?: throw Exception("No direct DNS, check your settings!")
-                tag = "dns-direct"
-                detour = TAG_DIRECT
-                address_resolver = "dns-local"
-                strategy = autoDnsDomainStrategy(SingBoxOptionsUtil.domainStrategy(tag))
-            })
+        directDNS.firstOrNull()?.let {
+            dns.servers.add(
+                buildDNSServer(
+                    it,
+                    tag = "dns-direct",
+                    detour = TAG_DIRECT,
+                    domainResolver = "dns-local",
+                    strategy = autoDnsDomainStrategy(SingBoxOptionsUtil.domainStrategy("dns-direct"))
+                )
+            )
         }
 
-        remoteDns.firstOrNull().let {
+        remoteDns.firstOrNull()?.let {
             // Always use direct DNS for urlTest
-            if (!forTest) dns.servers.add(DNSServerOptions().apply {
-                address = it ?: throw Exception("No remote DNS, check your settings!")
-                tag = "dns-remote"
-                address_resolver = "dns-direct"
-                strategy = autoDnsDomainStrategy(SingBoxOptionsUtil.domainStrategy(tag))
-            })
+            if (!forTest) {
+                dns.servers.add(
+                    buildDNSServer(
+                        it,
+                        tag = "dns-remote",
+                        detour = null,
+                        domainResolver = "dns-direct",
+                        strategy = autoDnsDomainStrategy(SingBoxOptionsUtil.domainStrategy("dns-remote"))
+                    )
+                )
+            }
         }
 
         dns.final_ = if (forTest) "dns-direct" else "dns-remote"
@@ -738,15 +760,11 @@ fun buildConfig(
             })
             // FakeDNS obj
             if (useFakeDns) {
-                dns.fakeip = DNSFakeIPOptions().apply {
-                    enabled = true
+                dns.servers.add(SingBoxOptions.DNSServerOptions().apply {
+                    type = "fakeip"
+                    tag = "dns-fake"
                     inet4_range = "198.18.0.0/15"
                     inet6_range = "fc00::/18"
-                }
-                dns.servers.add(DNSServerOptions().apply {
-                    address = "fakeip"
-                    tag = "dns-fake"
-                    strategy = "ipv4_only"
                 })
                 dns.rules.add(DNSRule_DefaultOptions().apply {
                     inbound = listOf("tun-in")
@@ -768,17 +786,23 @@ fun buildConfig(
             }
         }
 
+        val endpointTypes = arrayOf("wireguard", "masque-client", "openvpn-client", "openconnect", "tailscale")
         val (epList, obList) = outbounds.partition {
             it is SingBoxOptions.Endpoint ||
-            (it as? Outbound)?.type == "wireguard" ||
-            (it as? Outbound)?.type == "masque-client" ||
-            it._hack_config_map["type"] == "wireguard" ||
-            it._hack_config_map["type"] == "masque-client"
+            endpointTypes.contains((it as? Outbound)?.type) ||
+            endpointTypes.contains(it._hack_config_map["type"])
         }
         if (epList.isNotEmpty()) {
             endpoints = epList.toMutableList()
         }
         outbounds = obList.toMutableList()
+
+        // Services: OOM killer
+        val serviceList = mutableListOf<SingBoxOptions.SingBoxOption>()
+        serviceList.add(SingBoxOptions.Service_OOMKillerOptions().apply {
+            type = "oom-killer"
+        })
+        services = serviceList
 
         if (!forTest) _hack_custom_config = DataStore.globalCustomConfig
     }.let {

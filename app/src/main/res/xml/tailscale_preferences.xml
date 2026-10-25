@@ -1,0 +1,68 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <EditTextPreference
+        app:icon="@drawable/ic_social_emoji_symbols"
+        app:key="name"
+        app:title="@string/profile_name"
+        app:useSimpleSummaryProvider="true" />
+
+    <PreferenceCategory app:title="@string/proxy_cat">
+        <EditTextPreference
+            app:dialogLayout="@layout/layout_password_dialog"
+            app:icon="@drawable/ic_settings_password"
+            app:key="authKey"
+            app:title="@string/tailscale_auth_key" />
+        <EditTextPreference
+            app:icon="@drawable/ic_hardware_router"
+            app:key="controlURL"
+            app:title="@string/tailscale_control_url"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:icon="@drawable/ic_hardware_router"
+            app:key="hostname"
+            app:title="@string/tailscale_hostname"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:icon="@drawable/ic_baseline_folder_open_24"
+            app:key="stateDirectory"
+            app:title="@string/tailscale_state_directory"
+            app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:icon="@drawable/baseline_flight_takeoff_24"
+            app:key="ephemeral"
+            app:title="@string/tailscale_ephemeral" />
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_compare_arrows_24"
+            app:key="acceptRoutes"
+            app:title="@string/tailscale_accept_routes" />
+        <EditTextPreference
+            app:icon="@drawable/ic_hardware_router"
+            app:key="exitNode"
+            app:title="@string/tailscale_exit_node"
+            app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:icon="@drawable/baseline_public_24"
+            app:key="exitNodeAllowLANAccess"
+            app:title="@string/tailscale_exit_node_allow_lan" />
+        <EditTextPreference
+            app:icon="@drawable/ic_baseline_compare_arrows_24"
+            app:key="advertiseRoutes"
+            app:title="@string/tailscale_advertise_routes"
+            app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:icon="@drawable/baseline_flight_takeoff_24"
+            app:key="advertiseExitNode"
+            app:title="@string/tailscale_advertise_exit_node" />
+        <EditTextPreference
+            app:icon="@drawable/ic_baseline_view_list_24"
+            app:key="advertiseTags"
+            app:title="@string/tailscale_advertise_tags"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:icon="@drawable/ic_maps_directions_boat"
+            app:key="listenPort"
+            app:title="@string/tailscale_listen_port"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

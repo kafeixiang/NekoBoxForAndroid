@@ -17,6 +17,8 @@ import io.nekohasekai.sagernet.fmt.internal.ChainBean;
 import io.nekohasekai.sagernet.fmt.masque.MASQUEBean;
 import io.nekohasekai.sagernet.fmt.mieru.MieruBean;
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean;
+import io.nekohasekai.sagernet.fmt.openconnect.OpenConnectBean;
+import io.nekohasekai.sagernet.fmt.openvpn.OpenVPNBean;
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean;
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean;
 import moe.matsuri.nb4a.proxy.anytls.AnyTLSBean;
@@ -24,6 +26,8 @@ import moe.matsuri.nb4a.proxy.shadowtls.ShadowTLSBean;
 import io.nekohasekai.sagernet.fmt.snell.SnellBean;
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean;
 import io.nekohasekai.sagernet.fmt.ssh.SSHBean;
+import io.nekohasekai.sagernet.fmt.tailscale.TailscaleBean;
+import io.nekohasekai.sagernet.fmt.tor.TorBean;
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean;
 import io.nekohasekai.sagernet.fmt.trojan_go.TrojanGoBean;
 import io.nekohasekai.sagernet.fmt.tuic.TuicBean;
@@ -200,6 +204,30 @@ public class KryoConverters {
     public static MASQUEBean masqueDeserialize(byte[] bytes) {
         if (JavaUtil.isEmpty(bytes)) return null;
         return deserialize(new MASQUEBean(), bytes);
+    }
+
+    @TypeConverter
+    public static OpenVPNBean openvpnDeserialize(byte[] bytes) {
+        if (JavaUtil.isEmpty(bytes)) return null;
+        return deserialize(new OpenVPNBean(), bytes);
+    }
+
+    @TypeConverter
+    public static OpenConnectBean openconnectDeserialize(byte[] bytes) {
+        if (JavaUtil.isEmpty(bytes)) return null;
+        return deserialize(new OpenConnectBean(), bytes);
+    }
+
+    @TypeConverter
+    public static TailscaleBean tailscaleDeserialize(byte[] bytes) {
+        if (JavaUtil.isEmpty(bytes)) return null;
+        return deserialize(new TailscaleBean(), bytes);
+    }
+
+    @TypeConverter
+    public static TorBean torDeserialize(byte[] bytes) {
+        if (JavaUtil.isEmpty(bytes)) return null;
+        return deserialize(new TorBean(), bytes);
     }
 
 }

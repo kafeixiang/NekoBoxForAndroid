@@ -747,4 +747,58 @@
         <item>1</item>
     </string-array>
 
+    <string-array name="openvpn_network_entry">
+        <item>UDP</item>
+        <item>TCP</item>
+    </string-array>
+
+    <string-array name="openvpn_network_value">
+        <item>udp</item>
+        <item>tcp</item>
+    </string-array>
+
+    <string-array name="openvpn_control_wrap_entry">
+        <item>None</item>
+        <item>tls-auth</item>
+        <item>tls-crypt</item>
+        <item>tls-crypt-v2</item>
+    </string-array>
+
+    <string-array name="openvpn_control_wrap_value">
+        <item></item>
+        <item>tls_auth</item>
+        <item>tls_crypt</item>
+        <item>tls_crypt_v2</item>
+    </string-array>
+
+    <string-array name="openvpn_direction_entry">
+        <item>None</item>
+        <item>Client (1)</item>
+        <item>Server (0)</item>
+    </string-array>
+
+    <string-array name="openvpn_direction_value">
+        <item></item>
+        <item>client</item>
+        <item>server</item>
+    </string-array>
+
+    <string-array name="openconnect_flavor_entry">
+        <item>Default (AnyConnect)</item>
+        <item>AnyConnect</item>
+        <item>F5</item>
+        <item>Fortinet</item>
+        <item>Pulse</item>
+        <item>Array</item>
+    </string-array>
+
+    <string-array name="openconnect_flavor_value">
+        <item></item>
+        <item>anyconnect</item>
+        <item>f5</item>
+        <item>fortinet</item>
+        <item>pulse</item>
+        <item>array</item>
+    </string-array>
+
 </resources>
