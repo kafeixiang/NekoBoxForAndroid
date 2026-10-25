@@ -5,6 +5,7 @@ source ../buildScript/init/env_ndk.sh
 
 BUILD=".build"
 
+mkdir -p "$BUILD"
 rm -rf $BUILD/android \
   $BUILD/java \
   $BUILD/javac-output \

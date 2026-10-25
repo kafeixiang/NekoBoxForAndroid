@@ -23,6 +23,8 @@ import io.nekohasekai.sagernet.fmt.juicity.JuicityBean
 import io.nekohasekai.sagernet.fmt.juicity.buildSingBoxOutboundJuicityBean
 import io.nekohasekai.sagernet.fmt.v2ray.StandardV2RayBean
 import io.nekohasekai.sagernet.fmt.v2ray.buildSingBoxOutboundStandardV2RayBean
+import io.nekohasekai.sagernet.fmt.mieru.MieruBean
+import io.nekohasekai.sagernet.fmt.mieru.buildSingBoxOutboundMieruBean
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.shadowsocksr.buildSingBoxOutboundShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.snell.SnellBean
@@ -379,6 +381,9 @@ fun buildConfig(
 
                         is SnellBean ->
                             buildSingBoxOutboundSnellBean(bean)
+
+                        is MieruBean ->
+                            buildSingBoxOutboundMieruBean(bean)
 
                         else -> throw IllegalStateException("can't reach")
                     }

@@ -13,6 +13,7 @@ import io.nekohasekai.sagernet.fmt.hysteria.*
 import io.nekohasekai.sagernet.fmt.internal.ChainBean
 import io.nekohasekai.sagernet.fmt.mieru.MieruBean
 import io.nekohasekai.sagernet.fmt.mieru.buildMieruConfig
+import io.nekohasekai.sagernet.fmt.mieru.canUseSingBox
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean
 import io.nekohasekai.sagernet.fmt.naive.buildNaiveConfig
 import io.nekohasekai.sagernet.fmt.naive.toUri
@@ -331,7 +332,7 @@ data class ProxyEntity(
     fun needExternal(): Boolean {
         return when (type) {
             TYPE_TROJAN_GO -> true
-            TYPE_MIERU -> true
+            TYPE_MIERU -> !mieruBean!!.canUseSingBox()
             TYPE_NAIVE -> true
             TYPE_HYSTERIA -> !hysteriaBean!!.canUseSingBox()
             TYPE_NEKO -> true
