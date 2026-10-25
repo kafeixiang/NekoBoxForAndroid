@@ -197,7 +197,6 @@ fun buildConfig(
         dns = DNSOptions().apply {
             servers = mutableListOf()
             rules = mutableListOf()
-            independent_cache = true
         }
 
         fun autoDnsDomainStrategy(s: String): String? {
@@ -219,28 +218,24 @@ fun buildConfig(
             if (isVPN) inbounds.add(Inbound_TunOptions().apply {
                 type = "tun"
                 tag = "tun-in"
-                stack = when (DataStore.tunImplementation) {
-                    TunImplementation.GVISOR -> "gvisor"
-                    TunImplementation.SYSTEM -> "system"
-                    else -> "mixed"
-                }
                 endpoint_independent_nat = true
                 mtu = DataStore.mtu
-                domain_strategy = genDomainStrategy(DataStore.resolveDestination)
-                sniff = needSniff
-                sniff_override_destination = needSniffOverride
+                auto_route = false
+                strict_route = false
                 when (ipv6Mode) {
                     IPv6Mode.DISABLE -> {
-                        inet4_address = listOf(VpnService.PRIVATE_VLAN4_CLIENT + "/28")
+                        address = listOf(VpnService.PRIVATE_VLAN4_CLIENT + "/28")
                     }
 
                     IPv6Mode.ONLY -> {
-                        inet6_address = listOf(VpnService.PRIVATE_VLAN6_CLIENT + "/126")
+                        address = listOf(VpnService.PRIVATE_VLAN6_CLIENT + "/126")
                     }
 
                     else -> {
-                        inet4_address = listOf(VpnService.PRIVATE_VLAN4_CLIENT + "/28")
-                        inet6_address = listOf(VpnService.PRIVATE_VLAN6_CLIENT + "/126")
+                        address = listOf(
+                            VpnService.PRIVATE_VLAN4_CLIENT + "/28",
+                            VpnService.PRIVATE_VLAN6_CLIENT + "/126"
+                        )
                     }
                 }
             })
@@ -249,9 +244,6 @@ fun buildConfig(
                 tag = TAG_MIXED
                 listen = bind
                 listen_port = DataStore.mixedPort
-                domain_strategy = genDomainStrategy(DataStore.resolveDestination)
-                sniff = needSniff
-                sniff_override_destination = needSniffOverride
             })
         }
 
@@ -260,6 +252,7 @@ fun buildConfig(
         // init routing object
         route = RouteOptions().apply {
             auto_detect_interface = true
+            default_domain_resolver = "dns-direct"
             rules = mutableListOf()
             rule_set = mutableListOf()
         }
@@ -618,8 +611,7 @@ fun buildConfig(
 
                     -2L -> {
                         userDNSRuleList += makeDnsRuleObj().apply {
-                            server = "dns-block"
-                            disable_cache = true
+                            action = "reject"
                         }
                     }
                 }
@@ -746,6 +738,18 @@ fun buildConfig(
                 port = listOf(53)
                 action = "hijack-dns"
             })
+            val destinationStrategy = genDomainStrategy(DataStore.resolveDestination)
+            if (!destinationStrategy.isNullOrEmpty()) {
+                route.rules.add(0, Rule_DefaultOptions().apply {
+                    action = "resolve"
+                    strategy = destinationStrategy
+                })
+            }
+            if (needSniff) {
+                route.rules.add(0, Rule_DefaultOptions().apply {
+                    action = "sniff"
+                })
+            }
             if (DataStore.bypassLanInCore) {
                 route.rules.add(Rule_DefaultOptions().apply {
                     outbound = TAG_BYPASS
@@ -772,11 +776,6 @@ fun buildConfig(
                     disable_cache = true
                 })
             }
-            // avoid loopback
-            dns.rules.add(0, DNSRule_DefaultOptions().apply {
-                outbound = mutableListOf("any")
-                server = "dns-direct"
-            })
             // force bypass (always top DNS rule)
             if (domainListDNSDirectForce.isNotEmpty()) {
                 dns.rules.add(0, DNSRule_DefaultOptions().apply {

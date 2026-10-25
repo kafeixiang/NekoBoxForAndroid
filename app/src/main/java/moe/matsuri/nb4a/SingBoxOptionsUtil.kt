@@ -262,7 +262,7 @@ fun buildDNSServer(
     }
 
     if (domainResolver != null) {
-        serverOpt.address_resolver = domainResolver
+        serverOpt.domain_resolver = domainResolver
     }
 
     return serverOpt

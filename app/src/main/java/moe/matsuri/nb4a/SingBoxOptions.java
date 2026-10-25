@@ -361,6 +361,8 @@ public class SingBoxOptions {
 
         public String rcode;
 
+        public String domain_resolver;
+
         public String address_resolver;
 
         public String address_strategy;
@@ -1096,6 +1098,8 @@ public class SingBoxOptions {
         @SerializedName("final")
         public String final_;
 
+        public String default_domain_resolver;
+
         public Boolean find_process;
 
         public Boolean auto_detect_interface;
@@ -1283,6 +1287,8 @@ public class SingBoxOptions {
         public String clash_mode;
 
         public Boolean invert;
+
+        public String action;
 
         public String server;
 
@@ -2851,6 +2857,9 @@ public class SingBoxOptions {
         public String interface_name;
 
         public Integer mtu;
+
+        // Generate note: Listable
+        public List<String> address;
 
         // Generate note: Listable
         public List<String> inet4_address;
@@ -4760,6 +4769,10 @@ public class SingBoxOptions {
 
         public String action;
 
+        public String strategy;
+
+        public String timeout;
+
         public String outbound;
 
     }
@@ -4833,6 +4846,8 @@ public class SingBoxOptions {
         public String clash_mode;
 
         public Boolean invert;
+
+        public String action;
 
         public String server;
 
