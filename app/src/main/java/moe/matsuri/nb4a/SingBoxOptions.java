@@ -111,6 +111,8 @@ public class SingBoxOptions {
 
         public List<Inbound> inbounds;
 
+        public List<SingBoxOption> endpoints;
+
         public List<SingBoxOption> outbounds;
 
         public RouteOptions route;
@@ -172,6 +174,8 @@ public class SingBoxOptions {
         public NTPOptions ntp;
 
         public List<Inbound> inbounds;
+
+        public List<Endpoint> endpoints;
 
         public List<Outbound> outbounds;
 
@@ -880,6 +884,9 @@ public class SingBoxOptions {
 
         // Generate note: option type:  public URLTestOutboundOptions URLTestOptions;
 
+    }
+
+    public static class Endpoint extends Outbound {
     }
 
     public static class DialerOptions extends SingBoxOption {
@@ -2797,6 +2804,12 @@ public class SingBoxOptions {
 
         // End of public ServerOptions ;
 
+        public String address;
+
+        public Integer port;
+
+        public Integer persistent_keepalive_interval;
+
         public String public_key;
 
         public String pre_shared_key;
@@ -3863,7 +3876,7 @@ public class SingBoxOptions {
 
     }
 
-    public static class Outbound_WireGuardOptions extends Outbound {
+    public static class Outbound_WireGuardOptions extends Endpoint {
 
         // Generate note: nested type DialerOptions
         public String detour;
@@ -3900,6 +3913,8 @@ public class SingBoxOptions {
         public String interface_name;
 
         // Generate note: Listable
+        public List<String> address;
+
         public List<String> local_address;
 
         public String private_key;
@@ -3925,6 +3940,88 @@ public class SingBoxOptions {
         public Integer mtu;
 
         public String network;
+
+    }
+
+    public static class Endpoint_MASQUEClientOptions extends Endpoint {
+
+        public String detour;
+
+        public String bind_interface;
+
+        public String inet4_bind_address;
+
+        public String inet6_bind_address;
+
+        public Boolean bind_address_no_port;
+
+        public String protect_path;
+
+        public Integer routing_mark;
+
+        public Boolean reuse_addr;
+
+        public String netns;
+
+        public String connect_timeout;
+
+        public Boolean tcp_fast_open;
+
+        public Boolean tcp_multi_path;
+
+        public Boolean disable_tcp_keep_alive;
+
+        public String tcp_keep_alive;
+
+        public String tcp_keep_alive_interval;
+
+        public Boolean udp_fragment;
+
+        public String network_strategy;
+
+        public List<String> network_type;
+
+        public List<String> fallback_network_type;
+
+        public String fallback_delay;
+
+        public String domain_strategy;
+
+        public String server;
+
+        public Integer server_port;
+
+        public Boolean system;
+
+        public String name;
+
+        public Integer mtu;
+
+        public Integer udp_mapping;
+
+        public Integer udp_filtering;
+
+        public Integer udp_nat_max;
+
+        public String username;
+
+        public String password;
+
+        public OutboundTLSOptions tls;
+
+        public String path;
+
+        public Map<String, List<String>> headers;
+
+        public Integer version;
+
+        public Boolean disable_version_fallback;
+
+        public List<String> advertise_routes;
+
+        public String udp_timeout;
+
+        public Boolean on_demand;
 
     }
 

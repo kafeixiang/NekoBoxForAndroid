@@ -34,6 +34,10 @@ public class MieruBean extends AbstractBean {
     public String username;
     public String password;
     public Integer mtu;
+    public String serverPorts;
+    public String multiplexing;
+    public String trafficPattern;
+    public String handshakeMode;
 
     @Override
     public void initializeDefaultValues() {
@@ -42,11 +46,15 @@ public class MieruBean extends AbstractBean {
         if (username == null) username = "";
         if (password == null) password = "";
         if (mtu == null) mtu = 1400;
+        if (serverPorts == null) serverPorts = "";
+        if (multiplexing == null) multiplexing = "MULTIPLEXING_LOW";
+        if (trafficPattern == null) trafficPattern = "";
+        if (handshakeMode == null) handshakeMode = "";
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(0);
+        output.writeInt(1);
         super.serialize(output);
         output.writeString(protocol);
         output.writeString(username);
@@ -54,6 +62,10 @@ public class MieruBean extends AbstractBean {
         if (protocol.equals("UDP")) {
             output.writeInt(mtu);
         }
+        output.writeString(serverPorts);
+        output.writeString(multiplexing);
+        output.writeString(trafficPattern);
+        output.writeString(handshakeMode);
     }
 
     @Override
@@ -66,6 +78,31 @@ public class MieruBean extends AbstractBean {
         if (protocol.equals("UDP")) {
             mtu = input.readInt();
         }
+        if (version >= 1) {
+            serverPorts = input.readString();
+            multiplexing = input.readString();
+            trafficPattern = input.readString();
+            handshakeMode = input.readString();
+        } else {
+            serverPorts = "";
+            multiplexing = "MULTIPLEXING_LOW";
+            trafficPattern = "";
+            handshakeMode = "";
+        }
+    }
+
+    @Override
+    public boolean canTCPing() {
+        return "TCP".equalsIgnoreCase(protocol);
+    }
+
+    @NotNull
+    @Override
+    public String displayAddress() {
+        if (serverPorts != null && !serverPorts.trim().isEmpty()) {
+            return serverAddress + ":" + serverPorts;
+        }
+        return super.displayAddress();
     }
 
     @NotNull

@@ -1,57 +1,39 @@
-/******************************************************************************
- *                                                                            *
- * Copyright (C) 2021 by nekohasekai <contact-sagernet@sekai.icu>             *
- *                                                                            *
- * This program is free software: you can redistribute it and/or modify       *
- * it under the terms of the GNU General Public License as published by       *
- * the Free Software Foundation, either version 3 of the License, or          *
- *  (at your option) any later version.                                       *
- *                                                                            *
- * This program is distributed in the hope that it will be useful,            *
- * but WITHOUT ANY WARRANTY; without even the implied warranty of             *
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the              *
- * GNU General Public License for more details.                               *
- *                                                                            *
- * You should have received a copy of the GNU General Public License          *
- * along with this program. If not, see <http://www.gnu.org/licenses/>.       *
- *                                                                            *
- ******************************************************************************/
-
 package io.nekohasekai.sagernet.ui.profile
 
 import android.os.Bundle
 import androidx.preference.EditTextPreference
 import androidx.preference.PreferenceFragmentCompat
-import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
-import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.fmt.mieru.MieruBean
 import io.nekohasekai.sagernet.ktx.applyDefaultValues
+import moe.matsuri.nb4a.proxy.PreferenceBinding
+import moe.matsuri.nb4a.proxy.PreferenceBindingManager
+import moe.matsuri.nb4a.proxy.Type
 import moe.matsuri.nb4a.ui.SimpleMenuPreference
 
 class MieruSettingsActivity : ProfileSettingsActivity<MieruBean>() {
 
     override fun createEntity() = MieruBean().applyDefaultValues()
 
+    private val pbm = PreferenceBindingManager()
+    private val name = pbm.add(PreferenceBinding(Type.Text, "name"))
+    private val serverAddress = pbm.add(PreferenceBinding(Type.Text, "serverAddress"))
+    private val serverPort = pbm.add(PreferenceBinding(Type.TextToInt, "serverPort"))
+    private val serverPorts = pbm.add(PreferenceBinding(Type.Text, "serverPorts"))
+    private val protocol = pbm.add(PreferenceBinding(Type.Text, "protocol"))
+    private val username = pbm.add(PreferenceBinding(Type.Text, "username"))
+    private val password = pbm.add(PreferenceBinding(Type.Text, "password"))
+    private val mtu = pbm.add(PreferenceBinding(Type.TextToInt, "mtu"))
+    private val multiplexing = pbm.add(PreferenceBinding(Type.Text, "multiplexing"))
+    private val trafficPattern = pbm.add(PreferenceBinding(Type.Text, "trafficPattern"))
+
     override fun MieruBean.init() {
-        DataStore.profileName = name
-        DataStore.serverAddress = serverAddress
-        DataStore.serverPort = serverPort
-        DataStore.serverProtocol = protocol
-        DataStore.serverUsername = username
-        DataStore.serverPassword = password
-        DataStore.serverMTU = mtu
+        pbm.writeToCacheAll(this)
     }
 
     override fun MieruBean.serialize() {
-        name = DataStore.profileName
-        serverAddress = DataStore.serverAddress
-        serverPort = DataStore.serverPort
-        protocol = DataStore.serverProtocol
-        username = DataStore.serverUsername
-        password = DataStore.serverPassword
-        mtu = DataStore.serverMTU
+        pbm.fromCacheAll(this)
     }
 
     override fun PreferenceFragmentCompat.createPreferences(
@@ -59,17 +41,21 @@ class MieruSettingsActivity : ProfileSettingsActivity<MieruBean>() {
         rootKey: String?,
     ) {
         addPreferencesFromResource(R.xml.mieru_preferences)
-        findPreference<EditTextPreference>(Key.SERVER_PORT)!!.apply {
+        pbm.setPreferenceFragment(this)
+
+        serverPort.preference.apply {
+            this as EditTextPreference
             setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
         }
-        findPreference<EditTextPreference>(Key.SERVER_PASSWORD)!!.apply {
+        password.preference.apply {
+            this as EditTextPreference
             summaryProvider = PasswordSummaryProvider
         }
-        val protocol = findPreference<SimpleMenuPreference>(Key.SERVER_PROTOCOL)!!
-        val mtu = findPreference<EditTextPreference>(Key.SERVER_MTU)!!
-        mtu.isVisible = protocol.value.equals("UDP")
-        protocol.setOnPreferenceChangeListener { _, newValue ->
-            mtu.isVisible = newValue.equals("UDP")
+        val protocolPref = protocol.preference as SimpleMenuPreference
+        val mtuPref = mtu.preference as EditTextPreference
+        mtuPref.isVisible = protocolPref.value == "UDP"
+        protocolPref.setOnPreferenceChangeListener { _, newValue ->
+            mtuPref.isVisible = newValue == "UDP"
             true
         }
     }

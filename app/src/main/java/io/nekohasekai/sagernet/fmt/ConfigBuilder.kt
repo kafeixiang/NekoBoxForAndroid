@@ -29,6 +29,10 @@ import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.shadowsocksr.buildSingBoxOutboundShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.snell.SnellBean
 import io.nekohasekai.sagernet.fmt.snell.buildSingBoxOutboundSnellBean
+import io.nekohasekai.sagernet.fmt.direct.DirectBean
+import io.nekohasekai.sagernet.fmt.direct.buildSingBoxOutboundDirectBean
+import io.nekohasekai.sagernet.fmt.masque.MASQUEBean
+import io.nekohasekai.sagernet.fmt.masque.buildSingBoxEndpointMASQUEBean
 import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
 import io.nekohasekai.sagernet.fmt.wireguard.buildSingBoxOutboundWireguardBean
 import io.nekohasekai.sagernet.ktx.isIpAddress
@@ -384,6 +388,12 @@ fun buildConfig(
 
                         is MieruBean ->
                             buildSingBoxOutboundMieruBean(bean)
+
+                        is DirectBean ->
+                            buildSingBoxOutboundDirectBean(bean)
+
+                        is MASQUEBean ->
+                            buildSingBoxEndpointMASQUEBean(bean)
 
                         else -> throw IllegalStateException("can't reach")
                     }
@@ -757,6 +767,18 @@ fun buildConfig(
                 })
             }
         }
+
+        val (epList, obList) = outbounds.partition {
+            it is SingBoxOptions.Endpoint ||
+            (it as? Outbound)?.type == "wireguard" ||
+            (it as? Outbound)?.type == "masque-client" ||
+            it._hack_config_map["type"] == "wireguard" ||
+            it._hack_config_map["type"] == "masque-client"
+        }
+        if (epList.isNotEmpty()) {
+            endpoints = epList.toMutableList()
+        }
+        outbounds = obList.toMutableList()
 
         if (!forTest) _hack_custom_config = DataStore.globalCustomConfig
     }.let {

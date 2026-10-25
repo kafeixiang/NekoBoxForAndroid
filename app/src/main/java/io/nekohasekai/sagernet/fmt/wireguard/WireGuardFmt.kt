@@ -27,15 +27,33 @@ fun genReserved(anyStr: String): String {
 }
 
 fun buildSingBoxOutboundWireguardBean(bean: WireGuardBean): SingBoxOptions.Outbound_WireGuardOptions {
-    return SingBoxOptions.Outbound_WireGuardOptions().apply {
-        type = "wireguard"
+    val addrs = bean.localAddress.listByLineOrComma()
+    val peer = SingBoxOptions.WireGuardPeer().apply {
+        address = bean.serverAddress
+        port = bean.serverPort
         server = bean.serverAddress
         server_port = bean.serverPort
-        local_address = bean.localAddress.listByLineOrComma()
+        public_key = bean.peerPublicKey
+        if (bean.peerPreSharedKey.isNotBlank()) {
+            pre_shared_key = bean.peerPreSharedKey
+        }
+        allowed_ips = mutableListOf("0.0.0.0/0", "::/0")
+        if (bean.reserved.isNotBlank()) {
+            reserved = genReserved(bean.reserved)
+        }
+    }
+
+    return SingBoxOptions.Outbound_WireGuardOptions().apply {
+        type = "wireguard"
+        peers = mutableListOf(peer)
+        address = addrs
+        local_address = addrs
         private_key = bean.privateKey
+        mtu = bean.mtu
+        server = bean.serverAddress
+        server_port = bean.serverPort
         peer_public_key = bean.peerPublicKey
         pre_shared_key = bean.peerPreSharedKey
-        mtu = bean.mtu
         if (bean.reserved.isNotBlank()) reserved = genReserved(bean.reserved)
     }
 }

@@ -23,6 +23,8 @@ data class RuleEntity(
     var network: String = "",
     var source: String = "",
     var protocol: String = "",
+    @ColumnInfo(defaultValue = "")
+    var ruleset: String = "",
     var outbound: Long = 0,
     var packages: Set<String> = emptySet(),
 ) : Parcelable {

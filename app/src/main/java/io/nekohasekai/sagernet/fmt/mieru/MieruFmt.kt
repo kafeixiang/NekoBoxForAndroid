@@ -31,10 +31,20 @@ fun buildSingBoxOutboundMieruBean(bean: MieruBean): SingBoxOptions.Outbound_Mier
     return SingBoxOptions.Outbound_MieruOptions().apply {
         type = "mieru"
         server = bean.serverAddress
-        server_port = bean.serverPort
+        if (!bean.serverPorts.isNullOrBlank()) {
+            server_ports = bean.serverPorts.split(",").map { it.trim() }.filter { it.isNotEmpty() }
+        } else {
+            server_port = bean.serverPort
+        }
         transport = bean.protocol
         username = bean.username
         password = bean.password
+        if (!bean.multiplexing.isNullOrBlank() && bean.multiplexing != "MULTIPLEXING_OFF") {
+            multiplexing = bean.multiplexing
+        }
+        if (!bean.trafficPattern.isNullOrBlank()) {
+            traffic_pattern = bean.trafficPattern
+        }
     }
 }
 
