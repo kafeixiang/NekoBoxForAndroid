@@ -16,11 +16,9 @@ import (
 	"github.com/kafeixiang/libneko/speedtest"
 	"github.com/sagernet/sing-box/adapter"
 	"github.com/sagernet/sing-box/boxapi"
-	"github.com/sagernet/sing-box/experimental/libbox/platform"
 	"github.com/sagernet/sing-box/protocol/group"
 
 	box "github.com/sagernet/sing-box"
-	"github.com/sagernet/sing-box/common/conntrack"
 	"github.com/sagernet/sing-box/common/dialer"
 	"github.com/sagernet/sing-box/constant"
 	"github.com/sagernet/sing-box/option"
@@ -60,8 +58,10 @@ func VersionBox() string {
 
 func ResetAllConnections(system bool) {
 	if system {
-		conntrack.Close()
-		log.Println("Reset system connections done")
+		if mainInstance != nil && mainInstance.Box != nil {
+			mainInstance.Network().ResetNetwork(context.Background())
+			log.Println("Reset system connections done")
+		}
 	} else {
 		log.Println("TODO: Reset user connections")
 	}
@@ -87,9 +87,10 @@ func NewSingBoxInstance(config string, localTransport LocalDNSTransport) (b *Box
 	ctx = box.Context(ctx,
 		nekoboxAndroidInboundRegistry(), nekoboxAndroidOutboundRegistry(), nekoboxAndroidEndpointRegistry(),
 		nekoboxAndroidDNSTransportRegistry(localTransport), nekoboxAndroidServiceRegistry(),
+		nekoboxAndroidCertificateProviderRegistry(),
 	)
 	ctx = service.ContextWithDefaultRegistry(ctx)
-	service.MustRegister[platform.Interface](ctx, boxPlatformInterfaceInstance)
+	service.MustRegister[adapter.PlatformInterface](ctx, boxPlatformInterfaceInstance)
 
 	// parse options
 	var options option.Options
