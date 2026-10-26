@@ -308,6 +308,7 @@ fun getFirstPort(portStr: String): Int {
 }
 
 fun HysteriaBean.canUseSingBox(): Boolean {
+    if (protocolVersion == 1 && DataStore.providerHysteria == ProtocolProvider.PLUGIN) return false
     if (protocolVersion == 2 && DataStore.providerHysteria2 == ProtocolProvider.PLUGIN) return false
     if (protocol != HysteriaBean.PROTOCOL_UDP) return false
     return true
@@ -337,7 +338,7 @@ fun buildSingBoxOutboundHysteriaBean(bean: HysteriaBean): SingBoxOptions.SingBox
                 recv_window_conn = bean.streamReceiveWindow.toLong()
             }
             if (bean.connectionReceiveWindow > 0) {
-                recv_window_conn = bean.connectionReceiveWindow.toLong()
+                recv_window = bean.connectionReceiveWindow.toLong()
             }
             tls = SingBoxOptions.OutboundTLSOptions().apply {
                 if (bean.sni.isNotBlank()) {
@@ -399,11 +400,7 @@ fun buildSingBoxOutboundHysteriaBean(bean: HysteriaBean): SingBoxOptions.SingBox
 
 fun hopPortsToSingboxList(s: String): List<String> {
     return s.split(",").mapNotNull {
-        val pRange = it.replace("-", ":")
-        if (pRange.split(":").size == 2) {
-            pRange
-        } else {
-            null
-        }
+        val p = it.trim().replace("-", ":")
+        if (p.isNotEmpty()) p else null
     }
 }

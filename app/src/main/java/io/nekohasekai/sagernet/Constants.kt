@@ -60,6 +60,7 @@ object Key {
     // Protocol Settings
     const val GLOBAL_ALLOW_INSECURE = "globalAllowInsecure"
     const val PROVIDER_NAIVE = "providerNaive"
+    const val PROVIDER_HYSTERIA = "providerHysteria"
     const val PROVIDER_HYSTERIA2 = "providerHysteria2"
     const val PROVIDER_MIERU = "providerMieru"
     const val PROVIDER_JUICITY = "providerJuicity"
