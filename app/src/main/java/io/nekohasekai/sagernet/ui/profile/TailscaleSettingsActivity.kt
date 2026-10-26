@@ -26,6 +26,7 @@ class TailscaleSettingsActivity : ProfileSettingsActivity<TailscaleBean>() {
     private val exitNode = pbm.add(PreferenceBinding(Type.Text, "exitNode"))
     private val exitNodeAllowLANAccess = pbm.add(PreferenceBinding(Type.Bool, "exitNodeAllowLANAccess"))
     private val advertiseRoutes = pbm.add(PreferenceBinding(Type.Text, "advertiseRoutes"))
+    private val advertiseFakeDNSRoutes = pbm.add(PreferenceBinding(Type.Bool, "advertiseFakeDNSRoutes"))
     private val advertiseExitNode = pbm.add(PreferenceBinding(Type.Bool, "advertiseExitNode"))
     private val advertiseTags = pbm.add(PreferenceBinding(Type.Text, "advertiseTags"))
     private val listenPort = pbm.add(PreferenceBinding(Type.TextToInt, "listenPort"))

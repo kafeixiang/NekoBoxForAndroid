@@ -50,6 +50,11 @@
             app:title="@string/tailscale_advertise_routes"
             app:useSimpleSummaryProvider="true" />
         <SwitchPreference
+            app:icon="@drawable/ic_baseline_compare_arrows_24"
+            app:key="advertiseFakeDNSRoutes"
+            app:summary="@string/tailscale_advertise_fake_dns_routes_summary"
+            app:title="@string/tailscale_advertise_fake_dns_routes" />
+        <SwitchPreference
             app:icon="@drawable/baseline_flight_takeoff_24"
             app:key="advertiseExitNode"
             app:title="@string/tailscale_advertise_exit_node" />

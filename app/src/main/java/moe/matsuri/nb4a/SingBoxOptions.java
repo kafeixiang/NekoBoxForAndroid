@@ -4598,6 +4598,42 @@ public class SingBoxOptions {
 
     }
 
+    public static class TailcatDERPServer extends SingBoxOption {
+        public String host;
+        public String ipv4;
+        public String ipv6;
+        public Integer derp_port;
+        public Integer stun_port;
+        public String cert_name;
+    }
+
+    public static class Outbound_TailcatOptions extends Outbound {
+        public String private_key;
+        public String server_public_key;
+        public String server_disco_key;
+        public String pre_shared_key;
+
+        // TailcatDERPOptions
+        public String derp_map_url;
+        public Integer derp_region;
+        public List<TailcatDERPServer> derp_servers;
+
+        // DialerOptions
+        public String detour;
+        public String bind_interface;
+        public String inet4_bind_address;
+        public String inet6_bind_address;
+        public String protect_path;
+        public Integer routing_mark;
+        public Boolean reuse_addr;
+        public Long connect_timeout;
+        public Boolean tcp_fast_open;
+        public Boolean tcp_multi_path;
+        public Boolean udp_fragment;
+        public String domain_strategy;
+        public Long fallback_delay;
+    }
+
     public static class Outbound_JuicityOptions extends Outbound {
 
         // Generate note: nested type DialerOptions

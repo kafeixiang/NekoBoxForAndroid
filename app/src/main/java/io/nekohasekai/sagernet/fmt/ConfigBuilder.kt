@@ -41,6 +41,8 @@ import io.nekohasekai.sagernet.fmt.openconnect.OpenConnectBean
 import io.nekohasekai.sagernet.fmt.openconnect.buildSingBoxEndpointOpenConnectBean
 import io.nekohasekai.sagernet.fmt.tailscale.TailscaleBean
 import io.nekohasekai.sagernet.fmt.tailscale.buildSingBoxEndpointTailscaleBean
+import io.nekohasekai.sagernet.fmt.tailscale.TailcatBean
+import io.nekohasekai.sagernet.fmt.tailscale.buildSingBoxOutboundTailcatBean
 import io.nekohasekai.sagernet.fmt.tor.TorBean
 import io.nekohasekai.sagernet.fmt.tor.buildSingBoxOutboundTorBean
 import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
@@ -415,8 +417,17 @@ fun buildConfig(
                         is OpenConnectBean ->
                             buildSingBoxEndpointOpenConnectBean(bean)
 
-                        is TailscaleBean ->
-                            buildSingBoxEndpointTailscaleBean(bean)
+                        is TailscaleBean -> {
+                            val extraRoutes = if (bean.advertiseFakeDNSRoutes == true && useFakeDns) {
+                                listOf("198.18.0.0/15", "fc00::/18")
+                            } else {
+                                emptyList()
+                            }
+                            buildSingBoxEndpointTailscaleBean(bean, extraRoutes)
+                        }
+
+                        is TailcatBean ->
+                            buildSingBoxOutboundTailcatBean(bean)
 
                         is TorBean ->
                             buildSingBoxOutboundTorBean(bean)

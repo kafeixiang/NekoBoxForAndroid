@@ -25,6 +25,7 @@ public class TailscaleBean extends AbstractBean {
     public String advertiseTags;
     public Integer listenPort;
     public Boolean sshServer;
+    public Boolean advertiseFakeDNSRoutes;
 
     @Override
     public void initializeDefaultValues() {
@@ -42,11 +43,12 @@ public class TailscaleBean extends AbstractBean {
         if (advertiseTags == null) advertiseTags = "";
         if (listenPort == null) listenPort = 0;
         if (sshServer == null) sshServer = false;
+        if (advertiseFakeDNSRoutes == null) advertiseFakeDNSRoutes = false;
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(0);
+        output.writeInt(1);
         super.serialize(output);
         output.writeString(stateDirectory);
         output.writeString(authKey);
@@ -61,11 +63,12 @@ public class TailscaleBean extends AbstractBean {
         output.writeString(advertiseTags);
         output.writeInt(listenPort);
         output.writeBoolean(sshServer);
+        output.writeBoolean(advertiseFakeDNSRoutes);
     }
 
     @Override
     public void deserialize(ByteBufferInput input) {
-        input.readInt();
+        int version = input.readInt();
         super.deserialize(input);
         stateDirectory = input.readString();
         authKey = input.readString();
@@ -80,6 +83,11 @@ public class TailscaleBean extends AbstractBean {
         advertiseTags = input.readString();
         listenPort = input.readInt();
         sshServer = input.readBoolean();
+        if (version >= 1) {
+            advertiseFakeDNSRoutes = input.readBoolean();
+        } else {
+            advertiseFakeDNSRoutes = false;
+        }
     }
 
     @NotNull

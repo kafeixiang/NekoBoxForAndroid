@@ -91,6 +91,7 @@ import io.nekohasekai.sagernet.ui.profile.MASQUESettingsActivity
 import io.nekohasekai.sagernet.ui.profile.OpenVPNSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.OpenConnectSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.TailscaleSettingsActivity
+import io.nekohasekai.sagernet.ui.profile.TailcatSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.TorSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.MieruSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.NaiveSettingsActivity
@@ -601,6 +602,10 @@ class ConfigurationFragment @JvmOverloads constructor(
 
             R.id.action_new_tailscale -> {
                 startActivity(Intent(requireActivity(), TailscaleSettingsActivity::class.java))
+            }
+
+            R.id.action_new_tailcat -> {
+                startActivity(Intent(requireActivity(), TailcatSettingsActivity::class.java))
             }
 
             R.id.action_new_tor -> {

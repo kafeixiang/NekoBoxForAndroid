@@ -27,6 +27,7 @@ import io.nekohasekai.sagernet.fmt.snell.SnellBean;
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean;
 import io.nekohasekai.sagernet.fmt.ssh.SSHBean;
 import io.nekohasekai.sagernet.fmt.tailscale.TailscaleBean;
+import io.nekohasekai.sagernet.fmt.tailscale.TailcatBean;
 import io.nekohasekai.sagernet.fmt.tor.TorBean;
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean;
 import io.nekohasekai.sagernet.fmt.trojan_go.TrojanGoBean;
@@ -235,6 +236,12 @@ public class KryoConverters {
     public static TorBean torDeserialize(byte[] bytes) {
         if (JavaUtil.isEmpty(bytes)) return null;
         return deserialize(new TorBean(), bytes);
+    }
+
+    @TypeConverter
+    public static TailcatBean tailcatDeserialize(byte[] bytes) {
+        if (JavaUtil.isEmpty(bytes)) return null;
+        return deserialize(new TailcatBean(), bytes);
     }
 
 }

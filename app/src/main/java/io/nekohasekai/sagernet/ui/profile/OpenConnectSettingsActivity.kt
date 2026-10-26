@@ -2,7 +2,10 @@ package io.nekohasekai.sagernet.ui.profile
 
 import android.os.Bundle
 import androidx.preference.EditTextPreference
+import androidx.preference.Preference
+import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
+import com.google.android.material.snackbar.Snackbar
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.fmt.openconnect.OpenConnectBean
 import io.nekohasekai.sagernet.ktx.applyDefaultValues
@@ -63,6 +66,20 @@ class OpenConnectSettingsActivity : ProfileSettingsActivity<OpenConnectBean>() {
         mcaKeyPassword.preference.apply {
             this as EditTextPreference
             summaryProvider = PasswordSummaryProvider
+        }
+
+        val authCategory = findPreference<PreferenceCategory>("category_openconnect_auth")
+        val currentBean = (proxyEntity?.requireBean() as? OpenConnectBean)
+        if (currentBean?.formEntries?.isNotEmpty() == true) {
+            authCategory?.isVisible = true
+            findPreference<Preference>("clearFormEntries")?.setOnPreferenceClickListener {
+                currentBean.formEntries.clear()
+                authCategory?.isVisible = false
+                Snackbar.make(requireView(), android.R.string.ok, Snackbar.LENGTH_SHORT).show()
+                true
+            }
+        } else {
+            authCategory?.isVisible = false
         }
     }
 }

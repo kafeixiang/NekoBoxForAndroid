@@ -1,0 +1,50 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <EditTextPreference
+        app:icon="@drawable/ic_social_emoji_symbols"
+        app:key="name"
+        app:title="@string/profile_name"
+        app:useSimpleSummaryProvider="true" />
+
+    <PreferenceCategory app:title="@string/proxy_cat">
+        <EditTextPreference
+            app:dialogLayout="@layout/layout_password_dialog"
+            app:icon="@drawable/ic_baseline_vpn_key_24"
+            app:key="privateKey"
+            app:title="@string/ssh_private_key" />
+        <EditTextPreference
+            app:icon="@drawable/ic_action_copyright"
+            app:key="serverPublicKey"
+            app:title="@string/tailcat_server_public_key"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:icon="@drawable/ic_baseline_fingerprint_24"
+            app:key="serverDiscoKey"
+            app:title="@string/tailcat_server_disco_key"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:dialogLayout="@layout/layout_password_dialog"
+            app:icon="@drawable/ic_baseline_vpn_key_24"
+            app:key="preSharedKey"
+            app:title="@string/pre_shared_key" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/tailcat_derp_category">
+        <EditTextPreference
+            app:icon="@drawable/ic_baseline_link_24"
+            app:key="derpMapURL"
+            app:title="@string/tailcat_derp_map_url"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:icon="@drawable/baseline_public_24"
+            app:key="derpRegion"
+            app:title="@string/tailcat_derp_region"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:icon="@drawable/ic_baseline_view_list_24"
+            app:key="derpServers"
+            app:title="@string/tailcat_derp_servers"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

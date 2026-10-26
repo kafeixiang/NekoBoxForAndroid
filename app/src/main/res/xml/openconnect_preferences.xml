@@ -6,6 +6,15 @@
         app:title="@string/profile_name"
         app:useSimpleSummaryProvider="true" />
 
+    <PreferenceCategory
+        app:key="category_openconnect_auth"
+        app:title="@string/openconnect_authentication">
+        <Preference
+            app:icon="@drawable/ic_action_delete"
+            app:key="clearFormEntries"
+            app:title="@string/clear_remembered_authentication_answers" />
+    </PreferenceCategory>
+
     <PreferenceCategory app:title="@string/proxy_cat">
         <EditTextPreference
             app:icon="@drawable/ic_hardware_router"
@@ -35,7 +44,10 @@
             app:key="authGroup"
             app:title="@string/openconnect_auth_group"
             app:useSimpleSummaryProvider="true" />
-        <EditTextPreference
+        <moe.matsuri.nb4a.ui.SimpleMenuPreference
+            app:defaultValue=""
+            app:entries="@array/openconnect_reported_os_entry"
+            app:entryValues="@array/openconnect_reported_os_value"
             app:icon="@drawable/ic_hardware_router"
             app:key="reportedOS"
             app:title="@string/openconnect_reported_os"

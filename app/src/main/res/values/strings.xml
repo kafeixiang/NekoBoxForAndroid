@@ -718,6 +718,8 @@
     <string name="openconnect_mca_certificate">MCA Certificate</string>
     <string name="openconnect_mca_key">MCA Key</string>
     <string name="openconnect_mca_key_password">MCA Key Password</string>
+    <string name="openconnect_authentication">Authentication</string>
+    <string name="clear_remembered_authentication_answers">Clear Remembered Authentication Answers</string>
 
     <!-- Tailscale -->
     <string name="action_tailscale">Tailscale</string>
@@ -730,9 +732,21 @@
     <string name="tailscale_exit_node">Exit Node (IP or Name)</string>
     <string name="tailscale_exit_node_allow_lan">Exit Node Allow LAN Access</string>
     <string name="tailscale_advertise_routes">Advertise Routes</string>
+    <string name="tailscale_advertise_fake_dns_routes">Advertise FakeDNS Routes</string>
+    <string name="tailscale_advertise_fake_dns_routes_summary">Advertise FakeDNS IPv4 and IPv6 routes to other Tailscale devices</string>
     <string name="tailscale_advertise_exit_node">Advertise Exit Node</string>
     <string name="tailscale_advertise_tags">Advertise Tags</string>
     <string name="tailscale_listen_port">Listen Port</string>
+
+    <!-- Tailcat -->
+    <string name="action_tailcat" translatable="false">Tailcat</string>
+    <string name="tailcat_server_public_key">Server Public Key</string>
+    <string name="tailcat_server_disco_key">Server Disco Key</string>
+    <string name="pre_shared_key">Pre-shared Key</string>
+    <string name="tailcat_derp_category">DERP</string>
+    <string name="tailcat_derp_map_url">DERP Map URL</string>
+    <string name="tailcat_derp_region">DERP Region</string>
+    <string name="tailcat_derp_servers">DERP Servers</string>
 
     <!-- Tor -->
     <string name="action_tor">Tor</string>

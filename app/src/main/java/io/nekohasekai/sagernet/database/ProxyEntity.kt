@@ -30,6 +30,7 @@ import io.nekohasekai.sagernet.fmt.masque.toUri
 import io.nekohasekai.sagernet.fmt.openvpn.OpenVPNBean
 import io.nekohasekai.sagernet.fmt.openconnect.OpenConnectBean
 import io.nekohasekai.sagernet.fmt.tailscale.TailscaleBean
+import io.nekohasekai.sagernet.fmt.tailscale.TailcatBean
 import io.nekohasekai.sagernet.fmt.tor.TorBean
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.socks.toUri
@@ -98,6 +99,7 @@ data class ProxyEntity(
     var openvpnBean: OpenVPNBean? = null,
     var openconnectBean: OpenConnectBean? = null,
     var tailscaleBean: TailscaleBean? = null,
+    var tailcatBean: TailcatBean? = null,
     var torBean: TorBean? = null,
 ) : Serializable() {
 
@@ -128,6 +130,7 @@ data class ProxyEntity(
         const val TYPE_TAILSCALE = 29
         const val TYPE_TOR = 30
         const val TYPE_TRUST_TUNNEL = 31
+        const val TYPE_TAILCAT = 32
 
         const val TYPE_CONFIG = 998
         const val TYPE_NEKO = 999
@@ -225,6 +228,7 @@ data class ProxyEntity(
             TYPE_TAILSCALE -> tailscaleBean = KryoConverters.tailscaleDeserialize(byteArray)
             TYPE_TOR -> torBean = KryoConverters.torDeserialize(byteArray)
             TYPE_TRUST_TUNNEL -> trustTunnelBean = KryoConverters.trustTunnelDeserialize(byteArray)
+            TYPE_TAILCAT -> tailcatBean = KryoConverters.tailcatDeserialize(byteArray)
         }
     }
 
@@ -256,6 +260,7 @@ data class ProxyEntity(
         TYPE_TAILSCALE -> "Tailscale"
         TYPE_TOR -> "Tor"
         TYPE_TRUST_TUNNEL -> "TrustTunnel"
+        TYPE_TAILCAT -> "Tailcat"
         else -> "Undefined type $type"
     }
 
@@ -291,6 +296,7 @@ data class ProxyEntity(
             TYPE_TAILSCALE -> tailscaleBean
             TYPE_TOR -> torBean
             TYPE_TRUST_TUNNEL -> trustTunnelBean
+            TYPE_TAILCAT -> tailcatBean
             else -> error("Undefined type $type")
         } ?: error("Null ${displayType()} profile")
     }
@@ -313,6 +319,7 @@ data class ProxyEntity(
             is OpenVPNBean -> false
             is OpenConnectBean -> false
             is TailscaleBean -> false
+            is TailcatBean -> false
             is TorBean -> false
             else -> true
         }
@@ -630,6 +637,11 @@ data class ProxyEntity(
                 tailscaleBean = bean
             }
 
+            is TailcatBean -> {
+                type = TYPE_TAILCAT
+                tailcatBean = bean
+            }
+
             is TorBean -> {
                 type = TYPE_TOR
                 torBean = bean
@@ -669,6 +681,7 @@ data class ProxyEntity(
                 TYPE_TAILSCALE -> TailscaleSettingsActivity::class.java
                 TYPE_TOR -> TorSettingsActivity::class.java
                 TYPE_TRUST_TUNNEL -> TrustTunnelSettingsActivity::class.java
+                TYPE_TAILCAT -> TailcatSettingsActivity::class.java
                 else -> throw IllegalArgumentException()
             }
         ).apply {

@@ -45,12 +45,18 @@
             app:key="dataCiphers"
             app:title="@string/openvpn_data_ciphers"
             app:useSimpleSummaryProvider="true" />
-        <EditTextPreference
+        <moe.matsuri.nb4a.ui.SimpleMenuPreference
+            app:defaultValue=""
+            app:entries="@array/openvpn_auth_entry"
+            app:entryValues="@array/openvpn_auth_value"
             app:icon="@drawable/ic_baseline_security_24"
             app:key="auth"
             app:title="@string/openvpn_auth"
             app:useSimpleSummaryProvider="true" />
-        <EditTextPreference
+        <moe.matsuri.nb4a.ui.SimpleMenuPreference
+            app:defaultValue=""
+            app:entries="@array/openvpn_compression_entry"
+            app:entryValues="@array/openvpn_compression_value"
             app:icon="@drawable/ic_baseline_compare_arrows_24"
             app:key="compression"
             app:title="@string/openvpn_compression"
@@ -72,7 +78,10 @@
             app:key="serverName"
             app:title="@string/sni"
             app:useSimpleSummaryProvider="true" />
-        <EditTextPreference
+        <moe.matsuri.nb4a.ui.SimpleMenuPreference
+            app:defaultValue=""
+            app:entries="@array/openvpn_server_name_type_entry"
+            app:entryValues="@array/openvpn_server_name_type_value"
             app:icon="@drawable/ic_action_copyright"
             app:key="serverNameType"
             app:title="@string/openvpn_server_name_type"
@@ -102,7 +111,10 @@
             app:key="remoteCertificateKU"
             app:title="@string/openvpn_remote_cert_ku"
             app:useSimpleSummaryProvider="true" />
-        <EditTextPreference
+        <moe.matsuri.nb4a.ui.SimpleMenuPreference
+            app:defaultValue=""
+            app:entries="@array/openvpn_remote_cert_eku_entry"
+            app:entryValues="@array/openvpn_remote_cert_eku_value"
             app:icon="@drawable/ic_baseline_security_24"
             app:key="remoteCertificateEKU"
             app:title="@string/openvpn_remote_cert_eku"

@@ -794,19 +794,117 @@
     <string-array name="openconnect_flavor_entry">
         <item>Default (AnyConnect)</item>
         <item>AnyConnect</item>
-        <item>F5</item>
+        <item>GlobalProtect (gp)</item>
         <item>Fortinet</item>
+        <item>F5</item>
         <item>Pulse</item>
+        <item>Juniper Network Connect (nc)</item>
         <item>Array</item>
     </string-array>
 
     <string-array name="openconnect_flavor_value">
         <item></item>
         <item>anyconnect</item>
-        <item>f5</item>
+        <item>gp</item>
         <item>fortinet</item>
+        <item>f5</item>
         <item>pulse</item>
+        <item>nc</item>
         <item>array</item>
+    </string-array>
+
+    <string-array name="openvpn_auth_entry">
+        <item>Auto (Default)</item>
+        <item>SHA1</item>
+        <item>SHA224</item>
+        <item>SHA256</item>
+        <item>SHA384</item>
+        <item>SHA512</item>
+        <item>RIPEMD160</item>
+        <item>MD5</item>
+        <item>NONE</item>
+    </string-array>
+
+    <string-array name="openvpn_auth_value">
+        <item></item>
+        <item>SHA1</item>
+        <item>SHA224</item>
+        <item>SHA256</item>
+        <item>SHA384</item>
+        <item>SHA512</item>
+        <item>RIPEMD160</item>
+        <item>MD5</item>
+        <item>NONE</item>
+    </string-array>
+
+    <string-array name="openvpn_compression_entry">
+        <item>None (Default)</item>
+        <item>none</item>
+        <item>no</item>
+        <item>lz4</item>
+        <item>lz4-v2</item>
+        <item>stub</item>
+        <item>stub-v2</item>
+        <item>disabled</item>
+        <item>off</item>
+    </string-array>
+
+    <string-array name="openvpn_compression_value">
+        <item></item>
+        <item>none</item>
+        <item>no</item>
+        <item>lz4</item>
+        <item>lz4-v2</item>
+        <item>stub</item>
+        <item>stub-v2</item>
+        <item>disabled</item>
+        <item>off</item>
+    </string-array>
+
+    <string-array name="openvpn_server_name_type_entry">
+        <item>Default</item>
+        <item>subject</item>
+        <item>name</item>
+        <item>name-prefix</item>
+    </string-array>
+
+    <string-array name="openvpn_server_name_type_value">
+        <item></item>
+        <item>subject</item>
+        <item>name</item>
+        <item>name-prefix</item>
+    </string-array>
+
+    <string-array name="openvpn_remote_cert_eku_entry">
+        <item>None</item>
+        <item>server</item>
+        <item>client</item>
+    </string-array>
+
+    <string-array name="openvpn_remote_cert_eku_value">
+        <item></item>
+        <item>server</item>
+        <item>client</item>
+    </string-array>
+
+    <string-array name="openconnect_reported_os_entry">
+        <item>@string/auto</item>
+        <item>Linux</item>
+        <item>Linux (64-bit)</item>
+        <item>Windows</item>
+        <item>macOS (Intel)</item>
+        <item>Android</item>
+        <item>Apple iOS</item>
+    </string-array>
+
+    <string-array name="openconnect_reported_os_value">
+        <item></item>
+        <item>linux</item>
+        <item>linux-64</item>
+        <item>win</item>
+        <item>mac-intel</item>
+        <item>android</item>
+        <item>apple-ios</item>
     </string-array>
 
 </resources>

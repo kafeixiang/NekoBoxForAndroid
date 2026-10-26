@@ -632,6 +632,8 @@
     <string name="openconnect_mca_certificate">MCA 证书</string>
     <string name="openconnect_mca_key">MCA 私钥</string>
     <string name="openconnect_mca_key_password">MCA 私钥密码</string>
+    <string name="openconnect_authentication">身份验证</string>
+    <string name="clear_remembered_authentication_answers">清除已记住的身份验证答复</string>
 
     <!-- Tailscale -->
     <string name="action_tailscale">Tailscale</string>
@@ -644,9 +646,21 @@
     <string name="tailscale_exit_node">出口节点 (IP 或主机名)</string>
     <string name="tailscale_exit_node_allow_lan">出口节点允许局域网访问</string>
     <string name="tailscale_advertise_routes">通告子网路由</string>
+    <string name="tailscale_advertise_fake_dns_routes">通告 FakeDNS 路由</string>
+    <string name="tailscale_advertise_fake_dns_routes_summary">向其他 Tailscale 设备通告 FakeDNS IPv4 和 IPv6 路由</string>
     <string name="tailscale_advertise_exit_node">作为出口节点通告</string>
     <string name="tailscale_advertise_tags">通告标签</string>
     <string name="tailscale_listen_port">监听端口</string>
+
+    <!-- Tailcat -->
+    <string name="action_tailcat" translatable="false">Tailcat</string>
+    <string name="tailcat_server_public_key">服务器公钥</string>
+    <string name="tailcat_server_disco_key">服务器 Disco 公钥</string>
+    <string name="pre_shared_key">预共享密钥</string>
+    <string name="tailcat_derp_category">DERP</string>
+    <string name="tailcat_derp_map_url">DERP Map URL</string>
+    <string name="tailcat_derp_region">DERP 区域</string>
+    <string name="tailcat_derp_servers">DERP 服务器</string>
 
     <!-- Tor -->
     <string name="action_tor">Tor</string>
