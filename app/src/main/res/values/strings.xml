@@ -239,6 +239,7 @@
     <string name="action_wireguard" translatable="false">WireGuard</string>
     <string name="action_tuic" translatable="false">TUIC</string>
     <string name="action_juicity" translatable="false">Juicity</string>
+    <string name="action_trusttunnel" translatable="false">TrustTunnel</string>
     <string name="proxy_chain">Proxy Chain</string>
     <string name="custom_config">Custom Config</string>
     <string name="balancer">Balancer</string>

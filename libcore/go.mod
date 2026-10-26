@@ -16,7 +16,10 @@ require (
 	golang.org/x/sys v0.47.0
 )
 
-require github.com/exclavenetwork/sing-juicity v0.3.1
+require (
+	github.com/exclavenetwork/sing-juicity v0.3.1
+	github.com/xchacha20-poly1305/sing-trusttunnel v0.3.3-0.20260928134000-daacc8079caf
+)
 
 require (
 	filippo.io/edwards25519 v1.2.0 // indirect

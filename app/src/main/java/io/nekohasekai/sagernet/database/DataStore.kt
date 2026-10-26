@@ -206,6 +206,8 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverMTU by profileCacheStore.stringToInt(Key.SERVER_MTU)
     var serverHeaders by profileCacheStore.string(Key.SERVER_HEADERS)
     var serverAllowInsecure by profileCacheStore.boolean(Key.SERVER_ALLOW_INSECURE)
+    var serverQuic by profileCacheStore.boolean(Key.SERVER_QUIC)
+    var serverHealthCheck by profileCacheStore.boolean(Key.SERVER_HEALTH_CHECK)
 
     var serverAuthType by profileCacheStore.stringToInt(Key.SERVER_AUTH_TYPE)
     var serverUploadSpeed by profileCacheStore.stringToInt(Key.SERVER_UPLOAD_SPEED)

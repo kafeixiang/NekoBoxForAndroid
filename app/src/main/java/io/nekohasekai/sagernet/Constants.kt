@@ -112,6 +112,8 @@ object Key {
     const val SERVER_SS_CATEGORY = "serverSsCategory"
     const val SERVER_HEADERS = "serverHeaders"
     const val SERVER_ALLOW_INSECURE = "serverAllowInsecure"
+    const val SERVER_QUIC = "serverQuic"
+    const val SERVER_HEALTH_CHECK = "serverHealthCheck"
 
     const val SERVER_AUTH_TYPE = "serverAuthType"
     const val SERVER_UPLOAD_SPEED = "serverUploadSpeed"

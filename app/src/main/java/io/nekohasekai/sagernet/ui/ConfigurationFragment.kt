@@ -86,6 +86,7 @@ import io.nekohasekai.sagernet.ui.profile.DirectSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.HttpSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.HysteriaSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.JuicitySettingsActivity
+import io.nekohasekai.sagernet.ui.profile.TrustTunnelSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.MASQUESettingsActivity
 import io.nekohasekai.sagernet.ui.profile.OpenVPNSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.OpenConnectSettingsActivity
@@ -568,6 +569,10 @@ class ConfigurationFragment @JvmOverloads constructor(
 
             R.id.action_new_juicity -> {
                 startActivity(Intent(requireActivity(), JuicitySettingsActivity::class.java))
+            }
+
+            R.id.action_new_trusttunnel -> {
+                startActivity(Intent(requireActivity(), TrustTunnelSettingsActivity::class.java))
             }
 
             R.id.action_new_ssh -> {

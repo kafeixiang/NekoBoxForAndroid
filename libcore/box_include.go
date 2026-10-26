@@ -15,7 +15,7 @@ import (
 	"github.com/sagernet/sing-box/option"
 	protocolDns "github.com/sagernet/sing-box/protocol/dns"
 
-	"libcore/protocol/juicity"
+	"libcore/plugin"
 
 	_ "github.com/sagernet/sing-box/experimental/clashapi"
 	_ "github.com/sagernet/sing-box/transport/v2rayquic"
@@ -28,7 +28,7 @@ func nekoboxAndroidInboundRegistry() *inbound.Registry {
 func nekoboxAndroidOutboundRegistry() *outbound.Registry {
 	registry := include.OutboundRegistry()
 	protocolDns.RegisterOutbound(registry)
-	juicity.RegisterOutbound(registry)
+	plugin.RegisterPlugins(registry)
 	return registry
 }
 

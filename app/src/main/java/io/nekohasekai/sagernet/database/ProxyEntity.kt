@@ -42,6 +42,8 @@ import io.nekohasekai.sagernet.fmt.tuic.TuicBean
 import io.nekohasekai.sagernet.fmt.tuic.toUri
 import io.nekohasekai.sagernet.fmt.juicity.JuicityBean
 import io.nekohasekai.sagernet.fmt.juicity.toUri
+import io.nekohasekai.sagernet.fmt.trusttunnel.TrustTunnelBean
+import io.nekohasekai.sagernet.fmt.trusttunnel.toUri
 import io.nekohasekai.sagernet.fmt.v2ray.*
 import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
 import io.nekohasekai.sagernet.ktx.app
@@ -82,6 +84,7 @@ data class ProxyEntity(
     var hysteriaBean: HysteriaBean? = null,
     var tuicBean: TuicBean? = null,
     var juicityBean: JuicityBean? = null,
+    var trustTunnelBean: TrustTunnelBean? = null,
     var sshBean: SSHBean? = null,
     var wgBean: WireGuardBean? = null,
     var shadowTLSBean: ShadowTLSBean? = null,
@@ -124,6 +127,7 @@ data class ProxyEntity(
         const val TYPE_OPENCONNECT = 28
         const val TYPE_TAILSCALE = 29
         const val TYPE_TOR = 30
+        const val TYPE_TRUST_TUNNEL = 31
 
         const val TYPE_CONFIG = 998
         const val TYPE_NEKO = 999
@@ -220,6 +224,7 @@ data class ProxyEntity(
             TYPE_OPENCONNECT -> openconnectBean = KryoConverters.openconnectDeserialize(byteArray)
             TYPE_TAILSCALE -> tailscaleBean = KryoConverters.tailscaleDeserialize(byteArray)
             TYPE_TOR -> torBean = KryoConverters.torDeserialize(byteArray)
+            TYPE_TRUST_TUNNEL -> trustTunnelBean = KryoConverters.trustTunnelDeserialize(byteArray)
         }
     }
 
@@ -250,6 +255,7 @@ data class ProxyEntity(
         TYPE_OPENCONNECT -> "OpenConnect"
         TYPE_TAILSCALE -> "Tailscale"
         TYPE_TOR -> "Tor"
+        TYPE_TRUST_TUNNEL -> "TrustTunnel"
         else -> "Undefined type $type"
     }
 
@@ -284,6 +290,7 @@ data class ProxyEntity(
             TYPE_OPENCONNECT -> openconnectBean
             TYPE_TAILSCALE -> tailscaleBean
             TYPE_TOR -> torBean
+            TYPE_TRUST_TUNNEL -> trustTunnelBean
             else -> error("Undefined type $type")
         } ?: error("Null ${displayType()} profile")
     }
@@ -324,6 +331,7 @@ data class ProxyEntity(
             is HysteriaBean -> toUri()
             is TuicBean -> toUri()
             is JuicityBean -> toUri()
+            is TrustTunnelBean -> toUri()
             is AnyTLSBean -> toUri()
             is SnellBean -> toUri()
             is DirectBean -> toUri()
@@ -489,6 +497,7 @@ data class ProxyEntity(
         openconnectBean = null
         tailscaleBean = null
         torBean = null
+        trustTunnelBean = null
 
         when (bean) {
             is SOCKSBean -> {
@@ -559,6 +568,11 @@ data class ProxyEntity(
             is JuicityBean -> {
                 type = TYPE_JUICITY
                 juicityBean = bean
+            }
+
+            is TrustTunnelBean -> {
+                type = TYPE_TRUST_TUNNEL
+                trustTunnelBean = bean
             }
 
             is ShadowTLSBean -> {
@@ -654,6 +668,7 @@ data class ProxyEntity(
                 TYPE_OPENCONNECT -> OpenConnectSettingsActivity::class.java
                 TYPE_TAILSCALE -> TailscaleSettingsActivity::class.java
                 TYPE_TOR -> TorSettingsActivity::class.java
+                TYPE_TRUST_TUNNEL -> TrustTunnelSettingsActivity::class.java
                 else -> throw IllegalArgumentException()
             }
         ).apply {
