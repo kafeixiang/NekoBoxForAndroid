@@ -34,23 +34,34 @@ var mainInstance *BoxInstance
 
 func VersionBox() string {
 	boxVersion := constant.Version
-	if boxVersion == "" || boxVersion == "unknown" {
-		boxVersion = "1.15.0-alpha.13-neko"
-	}
-	version := []string{
-		"sing-box: " + boxVersion,
-		runtime.Version() + "@" + runtime.GOOS + "/" + runtime.GOARCH,
-	}
-
 	var tags string
 	debugInfo, loaded := debug.ReadBuildInfo()
 	if loaded {
+		if boxVersion == "" || boxVersion == "unknown" {
+			for _, setting := range debugInfo.Settings {
+				if setting.Key == "vcs.revision" && setting.Value != "" {
+					rev := setting.Value
+					if len(rev) > 8 {
+						rev = rev[:8]
+					}
+					boxVersion = rev
+					break
+				}
+			}
+		}
 		for _, setting := range debugInfo.Settings {
 			switch setting.Key {
 			case "-tags":
 				tags = setting.Value
 			}
 		}
+	}
+	if boxVersion == "" || boxVersion == "unknown" {
+		boxVersion = "sing-box"
+	}
+	version := []string{
+		"sing-box: " + boxVersion,
+		runtime.Version() + "@" + runtime.GOOS + "/" + runtime.GOARCH,
 	}
 
 	if tags != "" {

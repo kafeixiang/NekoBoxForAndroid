@@ -108,14 +108,15 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                                 .subText(
                                     runCatching {
                                         val raw = Libcore.versionBox()
+                                        val dynamicVer = BuildConfig.SING_BOX_VERSION.takeIf { it.isNotBlank() && it != "unknown" } ?: "1.15.0"
                                         if (raw.isNullOrBlank()) {
-                                            "sing-box: 1.15.0-alpha.13-neko"
+                                            "sing-box: $dynamicVer"
                                         } else if (raw.contains("sing-box: unknown")) {
-                                            raw.replace("sing-box: unknown", "sing-box: 1.15.0-alpha.13-neko")
+                                            raw.replace("sing-box: unknown", "sing-box: $dynamicVer")
                                         } else {
                                             raw
                                         }
-                                    }.getOrElse { "sing-box: 1.15.0-alpha.13-neko" }
+                                    }.getOrElse { "sing-box: ${BuildConfig.SING_BOX_VERSION}" }
                                 )
                                 .setOnClickAction { }
                                 .build())

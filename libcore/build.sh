@@ -15,9 +15,17 @@ if [ -z "$GOPATH" ]; then
   GOPATH=$(go env GOPATH)
 fi
 
-box_version="$(cd ../sing-box 2>/dev/null && git describe --tags --always 2>/dev/null || echo "1.15.0-alpha.13-neko")"
-if [ -z "$box_version" ]; then
-  box_version="1.15.0-alpha.13-neko"
+changelog_version=$(grep -E '^#+ +[0-9]+\.[0-9]+' ../sing-box/docs/changelog.md 2>/dev/null | head -n 1 | sed -E 's/^#+ +//; s/ .*//')
+commit_hash=$(git -C ../sing-box rev-parse --short HEAD 2>/dev/null || true)
+
+if [ -n "$changelog_version" ] && [ -n "$commit_hash" ]; then
+  box_version="${changelog_version} (${commit_hash})"
+elif [ -n "$changelog_version" ]; then
+  box_version="${changelog_version}"
+elif [ -n "$commit_hash" ]; then
+  box_version="${commit_hash}"
+else
+  box_version="$(cd ../sing-box 2>/dev/null && git describe --tags --always 2>/dev/null || echo "unknown")"
 fi
 
 export GOBIND=gobind-matsuri

@@ -6,6 +6,7 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.kotlin.dsl.getByName
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
+import java.io.File
 import java.util.Base64
 import java.util.Properties
 import kotlin.system.exitProcess
@@ -144,12 +145,14 @@ fun Project.setupApp() {
     val pkgName = requireMetadata().getProperty("PACKAGE_NAME")
     val verName = requireMetadata().getProperty("VERSION_NAME")
     val verCode = (requireMetadata().getProperty("VERSION_CODE").toInt()) * 5
+    val singBoxVersion = getSingBoxVersion(rootDir)
     android.apply {
         defaultConfig {
             applicationId = pkgName
             versionCode = verCode
             versionName = verName
             buildConfigField("String", "PRE_VERSION_NAME", "\"\"")
+            buildConfigField("String", "SING_BOX_VERSION", "\"$singBoxVersion\"")
         }
     }
     setupAppCommon()
@@ -216,5 +219,58 @@ fun Project.setupApp() {
         sourceSets.getByName("main").apply {
             jniLibs.srcDir("executableSo")
         }
+    }
+}
+
+fun getSingBoxVersion(rootDir: File): String {
+    // 1. 尝试从 ../sing-box/docs/changelog.md 提取最新版本号（第一行 #### 开头的版本）
+    val changelogFile = File(rootDir.parentFile, "sing-box/docs/changelog.md")
+    var version = ""
+    if (changelogFile.exists()) {
+        try {
+            for (line in changelogFile.readLines()) {
+                val trimmed = line.trim()
+                if (trimmed.startsWith("####") || trimmed.startsWith("###")) {
+                    val candidate = trimmed.trimStart('#').trim().split(" ").firstOrNull() ?: ""
+                    if (candidate.firstOrNull()?.isDigit() == true) {
+                        version = candidate
+                        break
+                    }
+                }
+            }
+        } catch (_: Exception) {}
+    }
+
+    // 2. 尝试从 ../sing-box git 获取最新 commit hash
+    val singBoxDir = File(rootDir.parentFile, "sing-box")
+    var commit = ""
+    if (singBoxDir.exists()) {
+        try {
+            val p = ProcessBuilder("git", "rev-parse", "--short", "HEAD")
+                .directory(singBoxDir)
+                .start()
+            commit = p.inputStream.bufferedReader().readLine()?.trim().orEmpty()
+            p.waitFor()
+        } catch (_: Exception) {}
+    }
+
+    // 3. 回退尝试从 get_source_env.sh 提取已配置的 commit
+    if (commit.isEmpty()) {
+        val envFile = File(rootDir, "buildScript/lib/core/get_source_env.sh")
+        if (envFile.exists()) {
+            try {
+                val match = Regex("""COMMIT_SING_BOX="([a-f0-9]{7,40})"""").find(envFile.readText())
+                if (match != null) {
+                    commit = match.groupValues[1].take(8)
+                }
+            } catch (_: Exception) {}
+        }
+    }
+
+    return when {
+        version.isNotEmpty() && commit.isNotEmpty() -> "$version ($commit)"
+        version.isNotEmpty() -> version
+        commit.isNotEmpty() -> commit
+        else -> "unknown"
     }
 }
