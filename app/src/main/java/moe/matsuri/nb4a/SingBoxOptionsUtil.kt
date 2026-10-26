@@ -167,12 +167,10 @@ fun buildDNSServer(
     tag: String,
     detour: String? = null,
     domainResolver: String? = null,
-    strategy: String? = null,
 ): SingBoxOptions.DNSServerOptions {
     val serverOpt = SingBoxOptions.DNSServerOptions().apply {
         this.tag = tag
         this.detour = detour
-        this.strategy = strategy
     }
 
     if (link == "local") {

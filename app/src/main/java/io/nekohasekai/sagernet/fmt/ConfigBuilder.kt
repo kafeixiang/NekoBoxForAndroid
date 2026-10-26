@@ -194,11 +194,6 @@ fun buildConfig(
             }
         }
 
-        dns = DNSOptions().apply {
-            servers = mutableListOf()
-            rules = mutableListOf()
-        }
-
         fun autoDnsDomainStrategy(s: String): String? {
             if (s.isNotEmpty()) {
                 return s
@@ -215,6 +210,12 @@ fun buildConfig(
         val defaultServerDomainStrategy = SingBoxOptionsUtil.domainStrategy("server")
         val directDnsStrategy = autoDnsDomainStrategy(SingBoxOptionsUtil.domainStrategy("dns-direct"))
         val remoteDnsStrategy = autoDnsDomainStrategy(SingBoxOptionsUtil.domainStrategy("dns-remote"))
+
+        dns = DNSOptions().apply {
+            strategy = if (forTest) directDnsStrategy else remoteDnsStrategy
+            servers = mutableListOf()
+            rules = mutableListOf()
+        }
 
         inbounds = mutableListOf()
 
@@ -434,11 +435,17 @@ fun buildConfig(
                     } catch (_: Exception) {
                     }
 
-                    // 避免链式代理回环解析
+                    // domain_resolver
                     pastEntity?.requireBean()?.apply {
                         if (!serverAddress.isIpAddress()) {
                             domainListDNSDirectForce.add("full:$serverAddress")
                         }
+                    }
+                    if (!forTest && defaultServerDomainStrategy.isNotBlank()) {
+                        _hack_config_map["domain_resolver"] = mapOf(
+                            "server" to "dns-direct",
+                            "strategy" to defaultServerDomainStrategy
+                        )
                     }
 
                     _hack_config_map["tag"] = tagOut
@@ -605,7 +612,7 @@ fun buildConfig(
                         if (useFakeDns) userDNSRuleList += makeDnsRuleObj().apply {
                             server = "dns-fake"
                             inbound = listOf("tun-in")
-                            _hack_config_map["query_type"] = listOf("A", "AAAA")
+                            query_type = listOf("A", "AAAA")
                         }
                         userDNSRuleList += makeDnsRuleObj().apply {
                             server = "dns-remote"
@@ -700,7 +707,6 @@ fun buildConfig(
                     tag = "dns-direct",
                     detour = null,
                     domainResolver = "dns-local",
-                    strategy = null
                 )
             )
         }
@@ -714,7 +720,6 @@ fun buildConfig(
                         tag = "dns-remote",
                         detour = null,
                         domainResolver = "dns-direct",
-                        strategy = null
                     )
                 )
             }
@@ -776,9 +781,9 @@ fun buildConfig(
                 })
                 dns.rules.add(DNSRule_DefaultOptions().apply {
                     inbound = listOf("tun-in")
+                    query_type = listOf("A", "AAAA")
                     server = "dns-fake"
                     disable_cache = true
-                    _hack_config_map["query_type"] = listOf("A", "AAAA")
                 })
             }
             // force bypass (always top DNS rule)
@@ -786,8 +791,8 @@ fun buildConfig(
                 dns.rules.add(0, DNSRule_DefaultOptions().apply {
                     makeSingBoxRule(domainListDNSDirectForce.toHashSet().toList())
                     server = "dns-direct"
-                    strategy = defaultServerDomainStrategy.takeIf { it.isNotEmpty() }
-                        ?: directDnsStrategy
+                    val s = defaultServerDomainStrategy.takeIf { it.isNotEmpty() } ?: directDnsStrategy
+                    if (!s.isNullOrEmpty()) strategy = s
                 })
             }
         }

@@ -369,8 +369,6 @@ public class SingBoxOptions {
 
         public Long address_fallback_delay;
 
-        public String strategy;
-
         public String detour;
 
     }
@@ -1289,6 +1287,8 @@ public class SingBoxOptions {
         public Boolean invert;
 
         public String action;
+
+        public String strategy;
 
         public String server;
 
@@ -4848,6 +4848,8 @@ public class SingBoxOptions {
         public Boolean invert;
 
         public String action;
+
+        public String strategy;
 
         public String server;
 
