@@ -105,7 +105,18 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                             MaterialAboutActionItem.Builder()
                                 .icon(R.drawable.ic_baseline_layers_24)
                                 .text(getString(R.string.version_x, "sing-box"))
-                                .subText(Libcore.versionBox())
+                                .subText(
+                                    runCatching {
+                                        val raw = Libcore.versionBox()
+                                        if (raw.isNullOrBlank()) {
+                                            "sing-box: 1.15.0-alpha.13-neko"
+                                        } else if (raw.contains("sing-box: unknown")) {
+                                            raw.replace("sing-box: unknown", "sing-box: 1.15.0-alpha.13-neko")
+                                        } else {
+                                            raw
+                                        }
+                                    }.getOrElse { "sing-box: 1.15.0-alpha.13-neko" }
+                                )
                                 .setOnClickAction { }
                                 .build())
                         // 删除捐款相关功能

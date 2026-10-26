@@ -33,8 +33,12 @@ func init() {
 var mainInstance *BoxInstance
 
 func VersionBox() string {
+	boxVersion := constant.Version
+	if boxVersion == "" || boxVersion == "unknown" {
+		boxVersion = "1.15.0-alpha.13-neko"
+	}
 	version := []string{
-		"sing-box: " + constant.Version,
+		"sing-box: " + boxVersion,
 		runtime.Version() + "@" + runtime.GOOS + "/" + runtime.GOARCH,
 	}
 
