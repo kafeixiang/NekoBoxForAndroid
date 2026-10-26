@@ -907,4 +907,20 @@
         <item>apple-ios</item>
     </string-array>
 
+    <string-array name="naive_quic_congestion_control_entry">
+        <item>@string/auto</item>
+        <item>bbr</item>
+        <item>bbr2</item>
+        <item>cubic</item>
+        <item>reno</item>
+    </string-array>
+
+    <string-array name="naive_quic_congestion_control_value">
+        <item></item>
+        <item>bbr</item>
+        <item>bbr2</item>
+        <item>cubic</item>
+        <item>reno</item>
+    </string-array>
+
 </resources>

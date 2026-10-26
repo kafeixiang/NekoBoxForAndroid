@@ -27,6 +27,8 @@ import io.nekohasekai.sagernet.fmt.v2ray.StandardV2RayBean
 import io.nekohasekai.sagernet.fmt.v2ray.buildSingBoxOutboundStandardV2RayBean
 import io.nekohasekai.sagernet.fmt.mieru.MieruBean
 import io.nekohasekai.sagernet.fmt.mieru.buildSingBoxOutboundMieruBean
+import io.nekohasekai.sagernet.fmt.naive.NaiveBean
+import io.nekohasekai.sagernet.fmt.naive.buildSingBoxOutboundNaiveBean
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.shadowsocksr.buildSingBoxOutboundShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.snell.SnellBean
@@ -428,6 +430,9 @@ fun buildConfig(
 
                         is TailcatBean ->
                             buildSingBoxOutboundTailcatBean(bean)
+
+                        is NaiveBean ->
+                            buildSingBoxOutboundNaiveBean(bean)
 
                         is TorBean ->
                             buildSingBoxOutboundTorBean(bean)

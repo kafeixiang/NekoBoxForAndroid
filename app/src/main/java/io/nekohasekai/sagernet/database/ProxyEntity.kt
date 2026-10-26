@@ -16,6 +16,7 @@ import io.nekohasekai.sagernet.fmt.mieru.buildMieruConfig
 import io.nekohasekai.sagernet.fmt.mieru.canUseSingBox
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean
 import io.nekohasekai.sagernet.fmt.naive.buildNaiveConfig
+import io.nekohasekai.sagernet.fmt.naive.canUseSingBox
 import io.nekohasekai.sagernet.fmt.naive.toUri
 import io.nekohasekai.sagernet.fmt.shadowsocks.*
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
@@ -393,7 +394,7 @@ data class ProxyEntity(
         return when (type) {
             TYPE_TROJAN_GO -> true
             TYPE_MIERU -> !mieruBean!!.canUseSingBox()
-            TYPE_NAIVE -> true
+            TYPE_NAIVE -> !naiveBean!!.canUseSingBox()
             TYPE_HYSTERIA -> !hysteriaBean!!.canUseSingBox()
             TYPE_NEKO -> true
             else -> false

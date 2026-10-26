@@ -5162,4 +5162,33 @@ public class SingBoxOptions {
         public String traffic_pattern;
     }
 
+    public static class Outbound_NaiveOptions extends Outbound {
+        public String detour;
+        public String bind_interface;
+        public String inet4_bind_address;
+        public String inet6_bind_address;
+        public String protect_path;
+        public Integer routing_mark;
+        public Boolean reuse_addr;
+        public Long connect_timeout;
+        public Boolean tcp_fast_open;
+        public Boolean tcp_multi_path;
+        public Boolean udp_fragment;
+        public String domain_strategy;
+        public Long fallback_delay;
+
+        public String server;
+        public Integer server_port;
+        public String username;
+        public String password;
+        public Integer insecure_concurrency;
+        public Map<String, List<String>> extra_headers;
+        public Long stream_receive_window;
+        public UDPOverTCPOptions udp_over_tcp;
+        public Boolean quic;
+        public String quic_congestion_control;
+        public Long quic_session_receive_window;
+        public OutboundTLSOptions tls;
+    }
+
 }
