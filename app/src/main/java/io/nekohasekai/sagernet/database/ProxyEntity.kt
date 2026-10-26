@@ -43,6 +43,8 @@ import io.nekohasekai.sagernet.fmt.trojan_go.toUri
 import io.nekohasekai.sagernet.fmt.tuic.TuicBean
 import io.nekohasekai.sagernet.fmt.tuic.toUri
 import io.nekohasekai.sagernet.fmt.juicity.JuicityBean
+import io.nekohasekai.sagernet.fmt.juicity.buildJuicityConfig
+import io.nekohasekai.sagernet.fmt.juicity.canUseSingBox
 import io.nekohasekai.sagernet.fmt.juicity.toUri
 import io.nekohasekai.sagernet.fmt.trusttunnel.TrustTunnelBean
 import io.nekohasekai.sagernet.fmt.trusttunnel.toUri
@@ -381,7 +383,16 @@ data class ProxyEntity(
 
                             is HysteriaBean -> {
                                 append("\n\n")
-                                append(bean.buildHysteria1Config(port, null))
+                                if (bean.protocolVersion == 2) {
+                                    append(bean.buildHysteria2Config(port, null))
+                                } else {
+                                    append(bean.buildHysteria1Config(port, null))
+                                }
+                            }
+
+                            is JuicityBean -> {
+                                append("\n\n")
+                                append(bean.buildJuicityConfig(port))
                             }
                         }
                     }
@@ -396,6 +407,7 @@ data class ProxyEntity(
             TYPE_MIERU -> !mieruBean!!.canUseSingBox()
             TYPE_NAIVE -> !naiveBean!!.canUseSingBox()
             TYPE_HYSTERIA -> !hysteriaBean!!.canUseSingBox()
+            TYPE_JUICITY -> !juicityBean!!.canUseSingBox()
             TYPE_NEKO -> true
             else -> false
         }

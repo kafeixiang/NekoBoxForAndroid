@@ -115,6 +115,16 @@ public class OpenVPNBean extends AbstractBean {
         }
     }
 
+    @Override
+    public boolean canTCPing() {
+        return "tcp".equals(network);
+    }
+
+    @Override
+    public boolean canMapping() {
+        return false;
+    }
+
     @NotNull
     @Override
     public OpenVPNBean clone() {

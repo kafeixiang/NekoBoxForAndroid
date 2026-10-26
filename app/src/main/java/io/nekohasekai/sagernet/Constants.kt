@@ -59,6 +59,10 @@ object Key {
 
     // Protocol Settings
     const val GLOBAL_ALLOW_INSECURE = "globalAllowInsecure"
+    const val PROVIDER_NAIVE = "providerNaive"
+    const val PROVIDER_HYSTERIA2 = "providerHysteria2"
+    const val PROVIDER_MIERU = "providerMieru"
+    const val PROVIDER_JUICITY = "providerJuicity"
 
     const val ACQUIRE_WAKE_LOCK = "acquireWakeLock"
     const val HIDE_FROM_RECENT_APPS = "hideFromRecentApps"
@@ -187,6 +191,11 @@ object IPv6Mode {
     const val ENABLE = 1
     const val PREFER = 2
     const val ONLY = 3
+}
+
+object ProtocolProvider {
+    const val CORE = 0
+    const val PLUGIN = 1
 }
 
 object GroupType {

@@ -759,4 +759,12 @@
     <string name="service_oom_killer">OOM Killer</string>
     <string name="service_oom_killer_limit">OOM Memory Limit</string>
 
+    <!-- Protocol Provider -->
+    <string name="protocol_provider">Protocol Provider</string>
+    <string name="provider_core">sing-box</string>
+    <string name="provider_naive">NaïveProxy</string>
+    <string name="hysteria2_provider">Hysteria 2</string>
+    <string name="mieru_provider">Mieru</string>
+    <string name="juicity_provider">Juicity</string>
+
 </resources>

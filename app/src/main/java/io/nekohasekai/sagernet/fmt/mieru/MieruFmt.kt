@@ -18,12 +18,15 @@
 
 package io.nekohasekai.sagernet.fmt.mieru
 
+import io.nekohasekai.sagernet.ProtocolProvider
+import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ktx.toStringPretty
 import moe.matsuri.nb4a.SingBoxOptions
 import org.json.JSONArray
 import org.json.JSONObject
 
 fun MieruBean.canUseSingBox(): Boolean {
+    if (DataStore.providerMieru == ProtocolProvider.PLUGIN) return false
     return true
 }
 

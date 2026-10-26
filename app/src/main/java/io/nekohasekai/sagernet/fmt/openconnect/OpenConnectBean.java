@@ -97,6 +97,7 @@ public class OpenConnectBean extends AbstractBean {
         if (mcaKeyPassword == null) mcaKeyPassword = "";
         if (formEntries == null) formEntries = new ArrayList<>();
         if (serverPort == 0) serverPort = 443;
+        parseServerAddress();
     }
 
     @Override
@@ -166,6 +167,33 @@ public class OpenConnectBean extends AbstractBean {
             tlsServerName = input.readString();
             tlsPeerFingerprint = input.readString();
         }
+        parseServerAddress();
+    }
+
+    public void parseServerAddress() {
+        if (server != null && !server.isEmpty()) {
+            try {
+                String s = server.trim();
+                if (!s.contains("://")) {
+                    s = "https://" + s;
+                }
+                java.net.URI uri = java.net.URI.create(s);
+                if (uri.getHost() != null && !uri.getHost().isEmpty()) {
+                    serverAddress = uri.getHost();
+                }
+                if (uri.getPort() > 0) {
+                    serverPort = uri.getPort();
+                } else {
+                    serverPort = 443;
+                }
+            } catch (Exception ignored) {
+            }
+        }
+    }
+
+    @Override
+    public boolean canTCPing() {
+        return true;
     }
 
     @NotNull

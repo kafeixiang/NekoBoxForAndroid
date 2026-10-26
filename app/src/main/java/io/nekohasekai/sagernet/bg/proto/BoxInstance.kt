@@ -10,6 +10,9 @@ import io.nekohasekai.sagernet.fmt.ConfigBuildResult
 import io.nekohasekai.sagernet.fmt.buildConfig
 import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean
 import io.nekohasekai.sagernet.fmt.hysteria.buildHysteria1Config
+import io.nekohasekai.sagernet.fmt.hysteria.buildHysteria2Config
+import io.nekohasekai.sagernet.fmt.juicity.JuicityBean
+import io.nekohasekai.sagernet.fmt.juicity.buildJuicityConfig
 import io.nekohasekai.sagernet.fmt.mieru.MieruBean
 import io.nekohasekai.sagernet.fmt.mieru.buildMieruConfig
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean
@@ -73,15 +76,32 @@ abstract class BoxInstance(
                     }
 
                     is HysteriaBean -> {
-                        initPlugin("hysteria-plugin")
-                        pluginConfigs[port] = profile.type to bean.buildHysteria1Config(port) {
-                            File(
-                                app.cacheDir, "hysteria_" + SystemClock.elapsedRealtime() + ".ca"
-                            ).apply {
-                                parentFile?.mkdirs()
-                                cacheFiles.add(this)
+                        if (bean.protocolVersion == 2) {
+                            initPlugin("hysteria2-plugin")
+                            pluginConfigs[port] = profile.type to bean.buildHysteria2Config(port) {
+                                File(
+                                    app.cacheDir, "hysteria2_" + SystemClock.elapsedRealtime() + ".ca"
+                                ).apply {
+                                    parentFile?.mkdirs()
+                                    cacheFiles.add(this)
+                                }
+                            }
+                        } else {
+                            initPlugin("hysteria-plugin")
+                            pluginConfigs[port] = profile.type to bean.buildHysteria1Config(port) {
+                                File(
+                                    app.cacheDir, "hysteria_" + SystemClock.elapsedRealtime() + ".ca"
+                                ).apply {
+                                    parentFile?.mkdirs()
+                                    cacheFiles.add(this)
+                                }
                             }
                         }
+                    }
+
+                    is JuicityBean -> {
+                        initPlugin("juicity-plugin")
+                        pluginConfigs[port] = profile.type to bean.buildJuicityConfig(port)
                     }
                 }
             }
@@ -171,29 +191,70 @@ abstract class BoxInstance(
                     }
 
                     bean is HysteriaBean -> {
+                        val isV2 = bean.protocolVersion == 2
+                        val pluginId = if (isV2) "hysteria2-plugin" else "hysteria-plugin"
+                        val prefix = if (isV2) "hysteria2_" else "hysteria_"
                         val configFile = File(
-                            cacheDir, "hysteria_" + SystemClock.elapsedRealtime() + ".json"
+                            cacheDir, prefix + SystemClock.elapsedRealtime() + ".json"
                         )
 
                         configFile.parentFile?.mkdirs()
                         configFile.writeText(config)
                         cacheFiles.add(configFile)
 
-                        val commands = mutableListOf(
-                            initPlugin("hysteria-plugin").path,
-                            "--no-check",
-                            "--config",
-                            configFile.absolutePath,
-                            "--log-level",
-                            if (DataStore.logLevel > 0) "trace" else "warn",
-                            "client"
-                        )
+                        val envMap = mutableMapOf<String, String>()
+                        if (isV2) {
+                            envMap["HYSTERIA_DISABLE_UPDATE_CHECK"] = "1"
+                        }
+
+                        val commands = if (isV2) {
+                            mutableListOf(
+                                initPlugin(pluginId).path,
+                                "client",
+                                "--config",
+                                configFile.absolutePath,
+                                "--log-level",
+                                if (DataStore.logLevel > 0) "warn" else "error"
+                            )
+                        } else {
+                            mutableListOf(
+                                initPlugin(pluginId).path,
+                                "--no-check",
+                                "--config",
+                                configFile.absolutePath,
+                                "--log-level",
+                                if (DataStore.logLevel > 0) "trace" else "warn",
+                                "client"
+                            )
+                        }
 
                         if (bean.protocol == HysteriaBean.PROTOCOL_FAKETCP) {
                             commands.addAll(0, listOf("su", "-c"))
                         }
 
-                        processes.start(commands)
+                        processes.start(commands, envMap)
+                    }
+
+                    bean is JuicityBean -> {
+                        val configFile = File(
+                            cacheDir, "juicity_" + SystemClock.elapsedRealtime() + ".json"
+                        )
+
+                        configFile.parentFile?.mkdirs()
+                        configFile.writeText(config)
+                        cacheFiles.add(configFile)
+
+                        val envMap = mutableMapOf<String, String>()
+                        envMap["QUIC_GO_DISABLE_GSO"] = "1"
+
+                        val commands = mutableListOf(
+                            initPlugin("juicity-plugin").path,
+                            "run",
+                            "-c",
+                            configFile.absolutePath
+                        )
+
+                        processes.start(commands, envMap)
                     }
                 }
             }

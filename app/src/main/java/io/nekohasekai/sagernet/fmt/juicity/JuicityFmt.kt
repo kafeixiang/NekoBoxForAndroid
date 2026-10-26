@@ -1,13 +1,17 @@
 package io.nekohasekai.sagernet.fmt.juicity
 
+import io.nekohasekai.sagernet.ProtocolProvider
 import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.linkBuilder
 import io.nekohasekai.sagernet.ktx.toLink
+import io.nekohasekai.sagernet.ktx.toStringPretty
 import io.nekohasekai.sagernet.ktx.urlSafe
 import moe.matsuri.nb4a.SingBoxOptions
 import moe.matsuri.nb4a.SingBoxOptions.Outbound_JuicityOptions
 import moe.matsuri.nb4a.utils.listByLineOrComma
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import org.json.JSONObject
 import java.util.Base64
 
 fun parseJuicity(url: String): JuicityBean {
@@ -79,6 +83,33 @@ fun buildSingBoxOutboundJuicityBean(bean: JuicityBean): Outbound_JuicityOptions 
             }
         }
     }
+}
+
+fun JuicityBean.canUseSingBox(): Boolean {
+    if (DataStore.providerJuicity == ProtocolProvider.PLUGIN) return false
+    return true
+}
+
+fun JuicityBean.buildJuicityConfig(port: Int): String {
+    return JSONObject().apply {
+        put("listen", "$LOCALHOST:$port")
+        put("server", "$serverAddress:$serverPort")
+        put("uuid", uuid)
+        put("password", password)
+        if (sni.isNotBlank()) {
+            put("sni", sni)
+        }
+        if (allowInsecure) {
+            put("allow_insecure", true)
+        }
+        put("congestion_control", "bbr")
+        if (pinnedCertchainSha256.isNotBlank()) {
+            normalizePinnedCertChainHash(pinnedCertchainSha256.listByLineOrComma().firstOrNull())?.let {
+                put("pinned_certchain_sha256", it)
+            }
+        }
+        put("log_level", if (DataStore.logLevel > 0) "debug" else "error")
+    }.toStringPretty()
 }
 
 private fun normalizePinnedCertChainHash(rawHash: String?): String? {

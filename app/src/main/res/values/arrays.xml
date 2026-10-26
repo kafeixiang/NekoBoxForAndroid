@@ -6,6 +6,11 @@
         <item>1</item>
     </string-array>
 
+    <string-array name="protocol_provider_entry">
+        <item>sing-box</item>
+        <item>@string/plugin</item>
+    </string-array>
+
     <string-array name="int_array_3">
         <item>0</item>
         <item>1</item>

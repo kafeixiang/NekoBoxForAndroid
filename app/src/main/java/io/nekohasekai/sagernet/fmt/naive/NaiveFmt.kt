@@ -1,5 +1,6 @@
 package io.nekohasekai.sagernet.fmt.naive
 
+import io.nekohasekai.sagernet.ProtocolProvider
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.*
@@ -91,6 +92,7 @@ fun NaiveBean.buildNaiveConfig(port: Int): String {
 }
 
 fun NaiveBean.canUseSingBox(): Boolean {
+    if (DataStore.providerNaive == ProtocolProvider.PLUGIN) return false
     return true
 }
 

@@ -264,4 +264,35 @@
             app:key="showBottomBar"
             app:title="@string/show_bottom_bar" />
     </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/protocol_provider">
+        <moe.matsuri.nb4a.ui.SimpleMenuPreference
+            app:defaultValue="0"
+            app:entries="@array/protocol_provider_entry"
+            app:entryValues="@array/int_array_2"
+            app:key="providerNaive"
+            app:title="@string/provider_naive"
+            app:useSimpleSummaryProvider="true" />
+        <moe.matsuri.nb4a.ui.SimpleMenuPreference
+            app:defaultValue="0"
+            app:entries="@array/protocol_provider_entry"
+            app:entryValues="@array/int_array_2"
+            app:key="providerHysteria2"
+            app:title="@string/hysteria2_provider"
+            app:useSimpleSummaryProvider="true" />
+        <moe.matsuri.nb4a.ui.SimpleMenuPreference
+            app:defaultValue="0"
+            app:entries="@array/protocol_provider_entry"
+            app:entryValues="@array/int_array_2"
+            app:key="providerMieru"
+            app:title="@string/mieru_provider"
+            app:useSimpleSummaryProvider="true" />
+        <moe.matsuri.nb4a.ui.SimpleMenuPreference
+            app:defaultValue="0"
+            app:entries="@array/protocol_provider_entry"
+            app:entryValues="@array/int_array_2"
+            app:key="providerJuicity"
+            app:title="@string/juicity_provider"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
 </PreferenceScreen>

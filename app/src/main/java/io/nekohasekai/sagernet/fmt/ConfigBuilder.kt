@@ -273,6 +273,8 @@ fun buildConfig(
             rule_set = mutableListOf()
         }
 
+        val vpnWithPushDNS = mutableMapOf<String, String>() // endpointTag:dnsType
+
         // returns outbound tag
         fun buildChain(
             chainId: Long, entity: ProxyEntity
@@ -413,13 +415,18 @@ fun buildConfig(
                         is MASQUEBean ->
                             buildSingBoxEndpointMASQUEBean(bean)
 
-                        is OpenVPNBean ->
+                        is OpenVPNBean -> {
+                            vpnWithPushDNS[tagOut] = "openvpn"
                             buildSingBoxEndpointOpenVPNBean(bean)
+                        }
 
-                        is OpenConnectBean ->
+                        is OpenConnectBean -> {
+                            vpnWithPushDNS[tagOut] = "openconnect"
                             buildSingBoxEndpointOpenConnectBean(bean)
+                        }
 
                         is TailscaleBean -> {
+                            vpnWithPushDNS[tagOut] = "tailscale"
                             val extraRoutes = if (bean.advertiseFakeDNSRoutes == true && useFakeDns) {
                                 listOf("198.18.0.0/15", "fc00::/18")
                             } else {
@@ -535,7 +542,7 @@ fun buildConfig(
         }
 
         // build outbounds
-        if (buildSelector) {
+        val mainTag = if (buildSelector) {
             val list = group.id.let { SagerDatabase.proxyDao.getByGroup(it) }
             list.forEach {
                 tagMap[it.id] = buildChain(it.id, it)
@@ -546,9 +553,11 @@ fun buildConfig(
                 default_ = tagMap[proxy.id]
                 outbounds = tagMap.values.toList()
             })
+            TAG_PROXY
         } else {
             buildChain(0, proxy)
         }
+        route.final_ = mainTag
         // build outbounds from route item
         extraProxies.forEach { (key, p) ->
             tagMap[key] = buildChain(key, p)
@@ -749,6 +758,23 @@ fun buildConfig(
             }
         }
 
+        if (!forTest) {
+            for ((endpointTag, dnsType) in vpnWithPushDNS) {
+                val dnsTag = "dns-$endpointTag"
+                dns.servers.add(SingBoxOptions.DNSServerOptions().apply {
+                    type = dnsType
+                    tag = dnsTag
+                    endpoint = endpointTag
+                    accept_default_resolvers = true
+                    accept_search_domain = true
+                })
+                dns.rules.add(0, DNSRule_DefaultOptions().apply {
+                    preferred_by = listOf(dnsTag)
+                    server = dnsTag
+                })
+            }
+        }
+
         dns.final_ = if (forTest) "dns-direct" else "dns-remote"
         dns.strategy = if (forTest) directDnsStrategy else remoteDnsStrategy
 
@@ -826,6 +852,15 @@ fun buildConfig(
             endpointTypes.contains(it._hack_config_map["type"])
         }
         if (epList.isNotEmpty()) {
+            if (!forTest && buildSelector) {
+                val activeTag = tagMap[proxy.id]
+                for (ep in epList) {
+                    val epTag = (ep as? Outbound)?.tag ?: ep._hack_config_map["tag"] as? String
+                    if (epTag != null && epTag != activeTag) {
+                        ep._hack_config_map["on_demand"] = true
+                    }
+                }
+            }
             endpoints = epList.toMutableList()
         }
         outbounds = obList.toMutableList()

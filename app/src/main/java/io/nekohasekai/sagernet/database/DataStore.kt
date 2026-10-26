@@ -6,6 +6,7 @@ import io.nekohasekai.sagernet.CONNECTION_TEST_URL
 import io.nekohasekai.sagernet.GroupType
 import io.nekohasekai.sagernet.IPv6Mode
 import io.nekohasekai.sagernet.Key
+import io.nekohasekai.sagernet.ProtocolProvider
 import io.nekohasekai.sagernet.TunImplementation
 import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.bg.VpnService
@@ -93,6 +94,11 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var allowInsecureOnRequest by configurationStore.boolean(Key.ALLOW_INSECURE_ON_REQUEST)
     var networkChangeResetConnections by configurationStore.boolean(Key.NETWORK_CHANGE_RESET_CONNECTIONS) { true }
     var wakeResetConnections by configurationStore.boolean(Key.WAKE_RESET_CONNECTIONS)
+
+    var providerNaive by configurationStore.stringToInt(Key.PROVIDER_NAIVE) { ProtocolProvider.CORE }
+    var providerHysteria2 by configurationStore.stringToInt(Key.PROVIDER_HYSTERIA2) { ProtocolProvider.CORE }
+    var providerMieru by configurationStore.stringToInt(Key.PROVIDER_MIERU) { ProtocolProvider.CORE }
+    var providerJuicity by configurationStore.stringToInt(Key.PROVIDER_JUICITY) { ProtocolProvider.CORE }
 
     //
 

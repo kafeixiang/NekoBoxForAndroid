@@ -371,6 +371,12 @@ public class SingBoxOptions {
 
         public String detour;
 
+        public String endpoint;
+
+        public Boolean accept_default_resolvers;
+
+        public Boolean accept_search_domain;
+
     }
 
     public static class DNSClientOptions extends SingBoxOption {
@@ -4844,6 +4850,9 @@ public class SingBoxOptions {
     }
 
     public static class DNSRule_DefaultOptions extends DNSRule {
+
+        // Generate note: Listable
+        public List<String> preferred_by;
 
         // Generate note: Listable
         public List<String> inbound;

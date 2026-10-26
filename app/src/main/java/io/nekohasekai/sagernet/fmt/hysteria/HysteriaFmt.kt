@@ -1,5 +1,6 @@
 package io.nekohasekai.sagernet.fmt.hysteria
 
+import io.nekohasekai.sagernet.ProtocolProvider
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.*
@@ -256,6 +257,45 @@ fun HysteriaBean.buildHysteria1Config(port: Int, cacheFile: (() -> File)?): Stri
     }.toStringPretty()
 }
 
+fun HysteriaBean.buildHysteria2Config(port: Int, cacheFile: (() -> File)?): String {
+    return JSONObject().apply {
+        put("server", displayAddress())
+        put("auth", authPayload)
+        put("fastOpen", true)
+        put("lazy", true)
+        if (obfuscation.isNotBlank()) {
+            put("obfs", JSONObject().apply {
+                put("type", "salamander")
+                put("salamander", JSONObject().apply {
+                    put("password", obfuscation)
+                })
+            })
+        }
+        put("socks5", JSONObject().apply {
+            put("listen", "$LOCALHOST:$port")
+        })
+        put("tls", JSONObject().apply {
+            if (sni.isNotBlank()) {
+                put("sni", sni)
+            }
+            if (allowInsecure) {
+                put("insecure", true)
+            }
+            if (caText.isNotBlank() && cacheFile != null) {
+                val caFile = cacheFile()
+                caFile.writeText(caText)
+                put("ca", caFile.absolutePath)
+            }
+        })
+        if (uploadMbps > 0 || downloadMbps > 0) {
+            put("bandwidth", JSONObject().apply {
+                if (uploadMbps > 0) put("up", "$uploadMbps mbps")
+                if (downloadMbps > 0) put("down", "$downloadMbps mbps")
+            })
+        }
+    }.toStringPretty()
+}
+
 fun isMultiPort(hyAddr: String): Boolean {
     if (!hyAddr.contains(":")) return false
     val p = hyAddr.substringAfterLast(":")
@@ -268,6 +308,7 @@ fun getFirstPort(portStr: String): Int {
 }
 
 fun HysteriaBean.canUseSingBox(): Boolean {
+    if (protocolVersion == 2 && DataStore.providerHysteria2 == ProtocolProvider.PLUGIN) return false
     if (protocol != HysteriaBean.PROTOCOL_UDP) return false
     return true
 }

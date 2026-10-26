@@ -1,8 +1,10 @@
 package io.nekohasekai.sagernet.fmt.tailscale
 
+import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.ktx.blankAsNull
 import moe.matsuri.nb4a.SingBoxOptions
 import moe.matsuri.nb4a.utils.listByLineOrComma
+import java.io.File
 
 fun buildSingBoxEndpointTailscaleBean(
     bean: TailscaleBean,
@@ -11,6 +13,7 @@ fun buildSingBoxEndpointTailscaleBean(
     return SingBoxOptions.Endpoint_TailscaleOptions().apply {
         type = "tailscale"
         state_directory = bean.stateDirectory.blankAsNull()
+            ?: File(SagerNet.application.filesDir, "tailscale").apply { mkdirs() }.absolutePath
         auth_key = bean.authKey.blankAsNull()
         control_url = bean.controlURL.blankAsNull()
         ephemeral = bean.ephemeral?.takeIf { it }

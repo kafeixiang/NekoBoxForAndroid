@@ -672,4 +672,12 @@
     <!-- Services -->
     <string name="service_oom_killer">OOM 内存保护</string>
     <string name="service_oom_killer_limit">OOM 内存上限</string>
+
+    <!-- Protocol Provider -->
+    <string name="protocol_provider">协议提供者</string>
+    <string name="provider_core">sing-box</string>
+    <string name="provider_naive">NaïveProxy</string>
+    <string name="hysteria2_provider">Hysteria 2</string>
+    <string name="mieru_provider">Mieru</string>
+    <string name="juicity_provider">Juicity</string>
 </resources>
