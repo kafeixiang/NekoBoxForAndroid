@@ -2827,13 +2827,6 @@ public class SingBoxOptions {
 
     public static class WireGuardPeer extends SingBoxOption {
 
-        // Generate note: nested type ServerOptions
-        public String server;
-
-        public Integer server_port;
-
-        // End of public ServerOptions ;
-
         public String address;
 
         public Integer port;
@@ -2847,8 +2840,7 @@ public class SingBoxOptions {
         // Generate note: Listable
         public List<String> allowed_ips;
 
-        // Generate note: Base64 String
-        public String reserved;
+        public List<Integer> reserved;
 
     }
 
@@ -3941,38 +3933,24 @@ public class SingBoxOptions {
 
         // End of public DialerOptions ;
 
-        public Boolean system_interface;
+        public Boolean system;
 
-        public String interface_name;
+        public String name;
 
         // Generate note: Listable
         public List<String> address;
 
-        public List<String> local_address;
-
         public String private_key;
 
+        public Integer listen_port;
+
         public List<WireGuardPeer> peers;
-
-        // Generate note: nested type ServerOptions
-        public String server;
-
-        public Integer server_port;
-
-        // End of public ServerOptions ;
-
-        public String peer_public_key;
-
-        public String pre_shared_key;
-
-        // Generate note: Base64 String
-        public String reserved;
 
         public Integer workers;
 
         public Integer mtu;
 
-        public String network;
+        public Boolean on_demand;
 
     }
 
@@ -5082,8 +5060,6 @@ public class SingBoxOptions {
         public String obfs_host;
 
         public String mode;
-
-        public Boolean quic_proxy_mode;
 
         public Boolean reuse;
 

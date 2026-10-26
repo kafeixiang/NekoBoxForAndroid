@@ -223,7 +223,6 @@ fun buildConfig(
             if (isVPN) inbounds.add(Inbound_TunOptions().apply {
                 type = "tun"
                 tag = "tun-in"
-                endpoint_independent_nat = true
                 mtu = DataStore.mtu
                 auto_route = false
                 strict_route = false
