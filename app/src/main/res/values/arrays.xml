@@ -532,9 +532,17 @@
     </string-array>
 
     <string-array name="tun_implementation">
-        <item>gVisor</item>
-        <item>System</item>
-        <item>Mixed</item>
+        <item>sing-tun (默认 / 推荐)</item>
+        <item>System (旧版)</item>
+        <item>gVisor (旧版)</item>
+        <item>Mixed (旧版)</item>
+    </string-array>
+
+    <string-array name="tun_implementation_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
     </string-array>
 
     <string-array name="hysteria_protocol">

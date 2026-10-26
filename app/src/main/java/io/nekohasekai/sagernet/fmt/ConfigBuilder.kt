@@ -226,6 +226,12 @@ fun buildConfig(
                 mtu = DataStore.mtu
                 auto_route = false
                 strict_route = false
+                when (DataStore.tunImplementation) {
+                    TunImplementation.SYSTEM -> stack = "system"
+                    TunImplementation.GVISOR -> stack = "gvisor"
+                    TunImplementation.MIXED -> stack = "mixed"
+                    else -> {} // 默认使用 sing-tun 自有 TCP/IP stack (省略 stack 字段)
+                }
                 when (ipv6Mode) {
                     IPv6Mode.DISABLE -> {
                         address = listOf(VpnService.PRIVATE_VLAN4_CLIENT + "/28")
