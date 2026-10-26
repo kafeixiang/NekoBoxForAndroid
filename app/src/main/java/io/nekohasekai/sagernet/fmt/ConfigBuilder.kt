@@ -603,7 +603,6 @@ fun buildConfig(
                     -1L -> {
                         userDNSRuleList += makeDnsRuleObj().apply {
                             server = "dns-direct"
-                            strategy = directDnsStrategy
                         }
                     }
 
@@ -615,7 +614,6 @@ fun buildConfig(
                         }
                         userDNSRuleList += makeDnsRuleObj().apply {
                             server = "dns-remote"
-                            strategy = remoteDnsStrategy
                         }
                     }
 
@@ -790,8 +788,6 @@ fun buildConfig(
                 dns.rules.add(0, DNSRule_DefaultOptions().apply {
                     makeSingBoxRule(domainListDNSDirectForce.toHashSet().toList())
                     server = "dns-direct"
-                    val s = defaultServerDomainStrategy.takeIf { it.isNotEmpty() } ?: directDnsStrategy
-                    if (!s.isNullOrEmpty()) strategy = s
                 })
             }
         }

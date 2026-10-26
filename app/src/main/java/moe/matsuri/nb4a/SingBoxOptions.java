@@ -1288,8 +1288,6 @@ public class SingBoxOptions {
 
         public String action;
 
-        public String strategy;
-
         public String server;
 
         public Boolean disable_cache;
@@ -4826,8 +4824,6 @@ public class SingBoxOptions {
         public Boolean invert;
 
         public String action;
-
-        public String strategy;
 
         public String server;
 
