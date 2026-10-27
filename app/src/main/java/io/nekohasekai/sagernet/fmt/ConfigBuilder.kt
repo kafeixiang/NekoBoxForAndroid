@@ -23,6 +23,8 @@ import io.nekohasekai.sagernet.fmt.juicity.JuicityBean
 import io.nekohasekai.sagernet.fmt.juicity.buildSingBoxOutboundJuicityBean
 import io.nekohasekai.sagernet.fmt.trusttunnel.TrustTunnelBean
 import io.nekohasekai.sagernet.fmt.trusttunnel.buildSingBoxOutboundTrustTunnelBean
+import io.nekohasekai.sagernet.fmt.shadowquic.ShadowQUICBean
+import io.nekohasekai.sagernet.fmt.shadowquic.buildSingBoxOutboundShadowQUICBean
 import io.nekohasekai.sagernet.fmt.v2ray.StandardV2RayBean
 import io.nekohasekai.sagernet.fmt.v2ray.buildSingBoxOutboundStandardV2RayBean
 import io.nekohasekai.sagernet.fmt.mieru.MieruBean
@@ -384,6 +386,9 @@ fun buildConfig(
 
                         is TrustTunnelBean ->
                             buildSingBoxOutboundTrustTunnelBean(bean)
+
+                        is ShadowQUICBean ->
+                            buildSingBoxOutboundShadowQUICBean(bean)
 
                         is SOCKSBean ->
                             buildSingBoxOutboundSocksBean(bean)

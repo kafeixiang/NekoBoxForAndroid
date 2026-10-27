@@ -232,6 +232,8 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverCongestionController by profileCacheStore.string(Key.SERVER_CONGESTION_CONTROLLER)
     var serverDisableSNI by profileCacheStore.boolean(Key.SERVER_DISABLE_SNI)
     var serverReduceRTT by profileCacheStore.boolean(Key.SERVER_REDUCE_RTT)
+    var serverUDPOverStream by profileCacheStore.boolean(Key.SERVER_UDP_OVER_STREAM)
+    var serverSunnyQuic by profileCacheStore.boolean(Key.SERVER_SUNNY_QUIC)
 
     var serverUserId by profileCacheStore.string(Key.SERVER_USER_ID)
     var serverPinnedCertChainSha256 by profileCacheStore.string(Key.SERVER_PINNED_CERT_CHAIN_SHA256)

@@ -11,4 +11,5 @@ const (
 	TypeShadowsocksR = "shadowsocksr"
 	TypeMieru        = "mieru"
 	TypeTrojanGo     = "trojan-go"
+	TypeShadowQUIC   = "shadowquic"
 )

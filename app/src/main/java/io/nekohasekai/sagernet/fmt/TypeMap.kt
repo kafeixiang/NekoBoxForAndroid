@@ -28,6 +28,8 @@ object TypeMap : HashMap<String, Int>() {
         this["tailcat"] = ProxyEntity.TYPE_TAILCAT
         this["tor"] = ProxyEntity.TYPE_TOR
         this["trusttunnel"] = ProxyEntity.TYPE_TRUST_TUNNEL
+        this["shadowquic"] = ProxyEntity.TYPE_SHADOWQUIC
+        this["sq"] = ProxyEntity.TYPE_SHADOWQUIC
         this["neko"] = ProxyEntity.TYPE_NEKO
         this["config"] = ProxyEntity.TYPE_CONFIG
     }

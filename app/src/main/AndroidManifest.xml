@@ -134,6 +134,8 @@
                 <data android:scheme="naive+https" />
                 <data android:scheme="naive+quic" />
                 <data android:scheme="hysteria" />
+                <data android:scheme="sq" />
+                <data android:scheme="shadowquic" />
 
             </intent-filter>
 
@@ -192,6 +194,9 @@
             android:configChanges="uiMode" />
         <activity
             android:name="io.nekohasekai.sagernet.ui.profile.TrustTunnelSettingsActivity"
+            android:configChanges="uiMode" />
+        <activity
+            android:name="io.nekohasekai.sagernet.ui.profile.ShadowQUICSettingsActivity"
             android:configChanges="uiMode" />
         <activity
             android:name="io.nekohasekai.sagernet.ui.profile.SnellSettingsActivity"

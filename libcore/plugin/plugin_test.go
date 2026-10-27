@@ -58,6 +58,23 @@ func TestPluginRegistration(t *testing.T) {
 				}
 			]
 		}`,
+		`{
+			"outbounds": [
+				{
+					"type": "shadowquic",
+					"tag": "sq-out",
+					"server": "127.0.0.1",
+					"server_port": 1443,
+					"username": "user",
+					"password": "pass",
+					"server_name": "example.com",
+					"alpn": ["h3"],
+					"congestion_control": "bbr",
+					"udp_over_stream": true,
+					"zero_rtt_handshake": true
+				}
+			]
+		}`,
 	}
 
 	for _, cfg := range configs {

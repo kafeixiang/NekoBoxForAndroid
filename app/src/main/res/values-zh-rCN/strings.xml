@@ -679,4 +679,10 @@
     <string name="provider_naive">NaïveProxy</string>
     <string name="hysteria_provider">Hysteria</string>
     <string name="mieru_provider">Mieru</string>
+
+    <!-- ShadowQUIC -->
+    <string name="action_shadowquic" translatable="false">ShadowQUIC</string>
+    <string name="congestion_control">拥塞控制</string>
+    <string name="udp_over_stream">UDP Over Stream</string>
+    <string name="zero_rtt">0-RTT 握手</string>
 </resources>

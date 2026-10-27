@@ -46,6 +46,7 @@ require (
 	github.com/dgryski/go-metro v0.0.0-20180109044635-280f6062b5bc // indirect
 	github.com/ebitengine/purego v0.10.0 // indirect
 	github.com/enfein/mieru/v3 v3.39.0 // indirect
+	github.com/exclavenetwork/sing-shadowquic v0.0.0-20261025201941-b0544c564b00 // indirect
 	github.com/florianl/go-nfqueue/v2 v2.1.0 // indirect
 	github.com/fsnotify/fsnotify v1.9.0 // indirect
 	github.com/fxamacker/cbor/v2 v2.9.0 // indirect
@@ -87,8 +88,14 @@ require (
 	github.com/mdlayher/netlink v1.11.2 // indirect
 	github.com/mdlayher/socket v0.6.0 // indirect
 	github.com/metacubex/chacha v0.1.5 // indirect
+	github.com/metacubex/cpu v0.1.2 // indirect
+	github.com/metacubex/hkdf v0.1.0 // indirect
+	github.com/metacubex/hpke v0.1.0 // indirect
+	github.com/metacubex/jls-quic-go v0.0.0-20260727080412-732f2fc9a34d // indirect
+	github.com/metacubex/jls-tls v0.0.0-20260723084315-67adc0e2f796 // indirect
 	github.com/metacubex/mihomo v1.19.33 // indirect
-	github.com/metacubex/randv2 v0.2.0 // indirect
+	github.com/metacubex/mlkem v0.1.0 // indirect
+	github.com/metacubex/randv2 v0.2.1-0.20260726125100-81aa96a9b1a5 // indirect
 	github.com/metacubex/sing v0.5.8 // indirect
 	github.com/metacubex/utls v1.8.8 // indirect
 	github.com/mholt/acmez/v3 v3.1.6 // indirect
