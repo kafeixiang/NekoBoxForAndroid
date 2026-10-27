@@ -97,9 +97,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
 
     var providerNaive by configurationStore.stringToInt(Key.PROVIDER_NAIVE) { ProtocolProvider.CORE }
     var providerHysteria by configurationStore.stringToInt(Key.PROVIDER_HYSTERIA) { ProtocolProvider.CORE }
-    var providerHysteria2 by configurationStore.stringToInt(Key.PROVIDER_HYSTERIA2) { ProtocolProvider.CORE }
     var providerMieru by configurationStore.stringToInt(Key.PROVIDER_MIERU) { ProtocolProvider.CORE }
-    var providerJuicity by configurationStore.stringToInt(Key.PROVIDER_JUICITY) { ProtocolProvider.CORE }
 
     //
 

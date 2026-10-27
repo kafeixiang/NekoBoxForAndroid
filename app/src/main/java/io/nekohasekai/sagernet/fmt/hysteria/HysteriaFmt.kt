@@ -309,7 +309,6 @@ fun getFirstPort(portStr: String): Int {
 
 fun HysteriaBean.canUseSingBox(): Boolean {
     if (protocolVersion == 1 && DataStore.providerHysteria == ProtocolProvider.PLUGIN) return false
-    if (protocolVersion == 2 && DataStore.providerHysteria2 == ProtocolProvider.PLUGIN) return false
     if (protocol != HysteriaBean.PROTOCOL_UDP) return false
     return true
 }

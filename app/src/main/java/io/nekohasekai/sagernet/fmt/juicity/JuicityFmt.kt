@@ -86,7 +86,6 @@ fun buildSingBoxOutboundJuicityBean(bean: JuicityBean): Outbound_JuicityOptions 
 }
 
 fun JuicityBean.canUseSingBox(): Boolean {
-    if (DataStore.providerJuicity == ProtocolProvider.PLUGIN) return false
     return true
 }
 

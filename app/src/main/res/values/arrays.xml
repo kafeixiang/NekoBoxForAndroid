@@ -537,10 +537,10 @@
     </string-array>
 
     <string-array name="tun_implementation">
-        <item>sing-tun (默认 / 推荐)</item>
-        <item>System (旧版)</item>
-        <item>gVisor (旧版)</item>
-        <item>Mixed (旧版)</item>
+        <item>sing-tun</item>
+        <item>System</item>
+        <item>gVisor</item>
+        <item>Mixed</item>
     </string-array>
 
     <string-array name="tun_implementation_values">
