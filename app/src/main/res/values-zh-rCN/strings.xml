@@ -685,4 +685,14 @@
     <string name="congestion_control">拥塞控制</string>
     <string name="udp_over_stream">UDP Over Stream</string>
     <string name="zero_rtt">0-RTT 握手</string>
+
+    <!-- Hysteria 2 features -->
+    <string name="bbr_profile">BBR 拥塞控制配置</string>
+    <string name="bbr_profile_default">默认</string>
+    <string name="bbr_profile_standard">标准 (Standard)</string>
+    <string name="bbr_profile_conservative">保守 (Conservative)</string>
+    <string name="bbr_profile_aggressive">激进 (Aggressive)</string>
+    <string name="disable_chrome_parrot">禁用 Chrome 伪装 (Parrot)</string>
+    <string name="certificate_sha256">证书 SHA-256 指纹锁定</string>
+    <string name="hysteria_obfs_type">混淆类型</string>
 </resources>

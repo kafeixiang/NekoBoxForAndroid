@@ -138,6 +138,9 @@ object Key {
 
     const val SERVER_USER_ID = "serverUserId"
     const val SERVER_PINNED_CERT_CHAIN_SHA256 = "serverPinnedCertChainSha256"
+    const val SERVER_HYSTERIA_BBR_PROFILE = "serverHysteriaBbrProfile"
+    const val SERVER_HYSTERIA_DISABLE_CHROME_PARROT = "serverHysteriaDisableChromeParrot"
+    const val SERVER_HYSTERIA_OBFS_TYPE = "serverHysteriaObfsType"
 
     const val ROUTE_NAME = "routeName"
     const val ROUTE_DOMAIN = "routeDomain"

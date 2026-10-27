@@ -32,6 +32,14 @@ public class HysteriaBean extends AbstractBean {
     public Boolean disableMtuDiscovery;
     public Integer hopInterval;
 
+    // HY2 Sing-box 1.15 features
+    public String bbrProfile;
+    public Boolean disableChromeParrot;
+    public String pinSHA256;
+    public String obfsType;
+    public Integer geckoMinPacketSize;
+    public Integer geckoMaxPacketSize;
+
     // HY1
 
     public String alpn;
@@ -78,11 +86,17 @@ public class HysteriaBean extends AbstractBean {
         if (disableMtuDiscovery == null) disableMtuDiscovery = false;
         if (hopInterval == null) hopInterval = 10;
         if (serverPorts == null) serverPorts = "443";
+        if (bbrProfile == null) bbrProfile = "";
+        if (disableChromeParrot == null) disableChromeParrot = false;
+        if (pinSHA256 == null) pinSHA256 = "";
+        if (obfsType == null) obfsType = "salamander";
+        if (geckoMinPacketSize == null) geckoMinPacketSize = 0;
+        if (geckoMaxPacketSize == null) geckoMaxPacketSize = 0;
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(7);
+        output.writeInt(8);
         super.serialize(output);
 
         output.writeInt(protocolVersion);
@@ -104,6 +118,13 @@ public class HysteriaBean extends AbstractBean {
         output.writeBoolean(disableMtuDiscovery);
         output.writeInt(hopInterval);
         output.writeString(serverPorts);
+
+        output.writeString(bbrProfile);
+        output.writeBoolean(disableChromeParrot);
+        output.writeString(pinSHA256);
+        output.writeString(obfsType);
+        output.writeInt(geckoMinPacketSize);
+        output.writeInt(geckoMaxPacketSize);
     }
 
     @Override
@@ -147,6 +168,21 @@ public class HysteriaBean extends AbstractBean {
             } else {
                 serverPorts = serverPort.toString();
             }
+        }
+        if (version >= 8) {
+            bbrProfile = input.readString();
+            disableChromeParrot = input.readBoolean();
+            pinSHA256 = input.readString();
+            obfsType = input.readString();
+            geckoMinPacketSize = input.readInt();
+            geckoMaxPacketSize = input.readInt();
+        } else {
+            bbrProfile = "";
+            disableChromeParrot = false;
+            pinSHA256 = "";
+            obfsType = "salamander";
+            geckoMinPacketSize = 0;
+            geckoMaxPacketSize = 0;
         }
     }
 

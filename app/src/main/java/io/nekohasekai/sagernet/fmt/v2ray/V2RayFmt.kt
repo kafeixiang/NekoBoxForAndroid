@@ -777,7 +777,16 @@ fun buildSingBoxOutboundTLS(bean: StandardV2RayBean): OutboundTLSOptions? {
         insecure = bean.allowInsecure || DataStore.globalAllowInsecure
         if (bean.sni.isNotBlank()) server_name = bean.sni
         if (bean.alpn.isNotBlank()) alpn = bean.alpn.listByLineOrComma()
-        if (bean.certificates.isNotBlank()) certificate = bean.certificates
+        if (bean.certificates.isNotBlank()) {
+            val cert = bean.certificates.trim()
+            if (cert.startsWith("sha256:", ignoreCase = true) || cert.startsWith("sha256/", ignoreCase = true)) {
+                certificate_sha256 = listOf(cert.substring(7).trim())
+            } else if (cert.length == 64 && cert.all { it in "0123456789abcdefABCDEF" }) {
+                certificate_sha256 = listOf(cert)
+            } else {
+                certificate = bean.certificates
+            }
+        }
         var fp = bean.utlsFingerprint
         if (bean.realityPubKey.isNotBlank()) {
             reality = OutboundRealityOptions().apply {

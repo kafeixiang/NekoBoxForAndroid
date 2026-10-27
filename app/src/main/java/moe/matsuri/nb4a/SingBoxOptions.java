@@ -565,6 +565,29 @@ public class SingBoxOptions {
 
         public String hop_interval;
 
+        public String hop_interval_max;
+
+        public String bbr_profile;
+
+        public Boolean brutal_debug;
+
+        public Boolean disable_chrome_parrot;
+
+        // QUICOptions
+        public Long idle_timeout;
+
+        public Long keep_alive_period;
+
+        public Long stream_receive_window;
+
+        public Long connection_receive_window;
+
+        public Integer max_concurrent_streams;
+
+        public Integer initial_packet_size;
+
+        public Boolean disable_path_mtu_discovery;
+
     }
 
     public static class Hysteria2InboundOptions extends SingBoxOption {
@@ -624,6 +647,10 @@ public class SingBoxOptions {
         public String type;
 
         public String password;
+
+        public Integer min_packet_size;
+
+        public Integer max_packet_size;
 
     }
 
@@ -690,6 +717,29 @@ public class SingBoxOptions {
         public List<String> server_ports;
 
         public String hop_interval;
+
+        public String hop_interval_max;
+
+        public String bbr_profile;
+
+        public Boolean brutal_debug;
+
+        public Boolean disable_chrome_parrot;
+
+        // QUICOptions
+        public Long idle_timeout;
+
+        public Long keep_alive_period;
+
+        public Long stream_receive_window;
+
+        public Long connection_receive_window;
+
+        public Integer max_concurrent_streams;
+
+        public Integer initial_packet_size;
+
+        public Boolean disable_path_mtu_discovery;
 
     }
 
@@ -1299,6 +1349,16 @@ public class SingBoxOptions {
         public Boolean disable_cache;
 
         public Integer rewrite_ttl;
+
+        public Boolean rule_set_ip_cidr_match_source;
+
+        public List<String> ip_cidr;
+
+        public Boolean ip_is_private;
+
+        public Boolean ip_accept_any;
+
+        public Boolean race;
 
     }
 
@@ -1941,6 +2001,38 @@ public class SingBoxOptions {
 
         public String certificate_path;
 
+        public String engine;
+
+        public List<String> curve_preferences;
+
+        public List<String> certificate_sha256;
+
+        public List<String> certificate_public_key_sha256;
+
+        public List<String> client_certificate;
+
+        public String client_certificate_path;
+
+        public List<String> client_key;
+
+        public String client_key_path;
+
+        public Boolean fragment;
+
+        public Long fragment_fallback_delay;
+
+        public Boolean record_fragment;
+
+        public String spoof;
+
+        public String spoof_method;
+
+        public Boolean kernel_tx;
+
+        public Boolean kernel_rx;
+
+        public Long handshake_timeout;
+
         public OutboundECHOptions ech;
 
         public OutboundUTLSOptions utls;
@@ -2025,6 +2117,8 @@ public class SingBoxOptions {
         public List<String> config;
 
         public String config_path;
+
+        public String query_server_name;
 
     }
 
@@ -2347,6 +2441,21 @@ public class SingBoxOptions {
         public String network;
 
         public OutboundTLSOptions tls;
+
+        // QUICOptions
+        public Long idle_timeout;
+
+        public Long keep_alive_period;
+
+        public Long stream_receive_window;
+
+        public Long connection_receive_window;
+
+        public Integer max_concurrent_streams;
+
+        public Integer initial_packet_size;
+
+        public Boolean disable_path_mtu_discovery;
 
     }
 
@@ -3956,6 +4065,14 @@ public class SingBoxOptions {
 
         public Boolean on_demand;
 
+        public Long udp_timeout;
+
+        public String udp_mapping;
+
+        public String udp_filtering;
+
+        public Long udp_nat_max;
+
     }
 
     public static class Endpoint_MASQUEClientOptions extends Endpoint {
@@ -4228,6 +4345,29 @@ public class SingBoxOptions {
         public List<String> server_ports;
 
         public String hop_interval;
+
+        public String hop_interval_max;
+
+        public String bbr_profile;
+
+        public Boolean brutal_debug;
+
+        public Boolean disable_chrome_parrot;
+
+        // QUICOptions
+        public Long idle_timeout;
+
+        public Long keep_alive_period;
+
+        public Long stream_receive_window;
+
+        public Long connection_receive_window;
+
+        public Integer max_concurrent_streams;
+
+        public Integer initial_packet_size;
+
+        public Boolean disable_path_mtu_discovery;
 
     }
 
@@ -4548,6 +4688,21 @@ public class SingBoxOptions {
 
         public OutboundTLSOptions tls;
 
+        // QUICOptions
+        public Long idle_timeout;
+
+        public Long keep_alive_period;
+
+        public Long stream_receive_window;
+
+        public Long connection_receive_window;
+
+        public Integer max_concurrent_streams;
+
+        public Integer initial_packet_size;
+
+        public Boolean disable_path_mtu_discovery;
+
     }
 
     public static class Outbound_TrustTunnelOptions extends Outbound {
@@ -4775,6 +4930,29 @@ public class SingBoxOptions {
 
         public String hop_interval;
 
+        public String hop_interval_max;
+
+        public String bbr_profile;
+
+        public Boolean brutal_debug;
+
+        public Boolean disable_chrome_parrot;
+
+        // QUICOptions
+        public Long idle_timeout;
+
+        public Long keep_alive_period;
+
+        public Long stream_receive_window;
+
+        public Long connection_receive_window;
+
+        public Integer max_concurrent_streams;
+
+        public Integer initial_packet_size;
+
+        public Boolean disable_path_mtu_discovery;
+
     }
 
     public static class Outbound_SelectorOptions extends Outbound {
@@ -4877,6 +5055,28 @@ public class SingBoxOptions {
 
         public String outbound;
 
+        public Boolean rule_set_ip_cidr_match_source;
+
+        public List<String> network_type;
+
+        public Boolean network_is_expensive;
+
+        public Boolean network_is_constrained;
+
+        public List<String> wifi_ssid;
+
+        public List<String> wifi_bssid;
+
+        public List<String> sniffer;
+
+        public String override_address;
+
+        public Integer override_port;
+
+        public String method;
+
+        public Boolean no_drop;
+
     }
 
     public static class DNSRule_DefaultOptions extends DNSRule {
@@ -4959,6 +5159,16 @@ public class SingBoxOptions {
         public Boolean disable_cache;
 
         public Integer rewrite_ttl;
+
+        public Boolean rule_set_ip_cidr_match_source;
+
+        public List<String> ip_cidr;
+
+        public Boolean ip_is_private;
+
+        public Boolean ip_accept_any;
+
+        public Boolean race;
 
     }
 

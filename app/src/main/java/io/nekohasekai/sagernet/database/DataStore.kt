@@ -237,6 +237,9 @@ object DataStore : OnPreferenceDataStoreChangeListener {
 
     var serverUserId by profileCacheStore.string(Key.SERVER_USER_ID)
     var serverPinnedCertChainSha256 by profileCacheStore.string(Key.SERVER_PINNED_CERT_CHAIN_SHA256)
+    var serverHysteriaBbrProfile by profileCacheStore.string(Key.SERVER_HYSTERIA_BBR_PROFILE)
+    var serverHysteriaDisableChromeParrot by profileCacheStore.boolean(Key.SERVER_HYSTERIA_DISABLE_CHROME_PARROT)
+    var serverHysteriaObfsType by profileCacheStore.string(Key.SERVER_HYSTERIA_OBFS_TYPE)
 
     var routeName by profileCacheStore.string(Key.ROUTE_NAME)
     var routeDomain by profileCacheStore.string(Key.ROUTE_DOMAIN)

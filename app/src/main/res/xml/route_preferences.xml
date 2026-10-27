@@ -51,6 +51,7 @@
             app:title="network"
             app:useSimpleSummaryProvider="true" />
         <EditTextPreference
+            app:dialogMessage="tls, http, quic, dns, stun, bittorrent, dtls, ssh, rdp, ntp"
             app:icon="@drawable/ic_baseline_layers_24"
             app:key="routeProtocol"
             app:title="protocol"

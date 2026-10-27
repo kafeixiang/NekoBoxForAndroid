@@ -772,4 +772,14 @@
     <string name="udp_over_stream">UDP Over Stream</string>
     <string name="zero_rtt">0-RTT Handshake</string>
 
+    <!-- Hysteria 2 features -->
+    <string name="bbr_profile">BBR Profile</string>
+    <string name="bbr_profile_default">Default</string>
+    <string name="bbr_profile_standard">Standard</string>
+    <string name="bbr_profile_conservative">Conservative</string>
+    <string name="bbr_profile_aggressive">Aggressive</string>
+    <string name="disable_chrome_parrot">Disable Chrome Parrot</string>
+    <string name="certificate_sha256">Certificate SHA-256 Pin</string>
+    <string name="hysteria_obfs_type">Obfuscation Type</string>
+
 </resources>

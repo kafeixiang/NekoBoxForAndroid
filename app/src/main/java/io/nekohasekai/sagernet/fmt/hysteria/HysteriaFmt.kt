@@ -96,9 +96,18 @@ fun parseHysteria2(url: String): HysteriaBean {
         link.queryParameter("obfs-password")?.also {
             obfuscation = it
         }
-//        link.queryParameter("pinSHA256")?.also {
-//            // TODO your box do not support it
-//        }
+        (link.queryParameter("pinSHA256") ?: link.queryParameter("pin-sha256") ?: link.queryParameter("pin_sha256"))?.also {
+            pinSHA256 = it
+        }
+        (link.queryParameter("bbr_profile") ?: link.queryParameter("bbr"))?.also {
+            bbrProfile = it
+        }
+        link.queryParameter("disable_chrome_parrot")?.also {
+            disableChromeParrot = it == "1" || it == "true"
+        }
+        link.queryParameter("obfs")?.also {
+            obfsType = it
+        }
     }
 }
 
@@ -157,8 +166,17 @@ fun HysteriaBean.toUri(): String {
         if (sni.isNotBlank()) {
             builder.addQueryParameter("sni", sni)
         }
+        if (!pinSHA256.isNullOrBlank()) {
+            builder.addQueryParameter("pinSHA256", pinSHA256)
+        }
+        if (!bbrProfile.isNullOrBlank()) {
+            builder.addQueryParameter("bbr_profile", bbrProfile)
+        }
+        if (disableChromeParrot == true) {
+            builder.addQueryParameter("disable_chrome_parrot", "1")
+        }
         if (obfuscation.isNotBlank()) {
-            builder.addQueryParameter("obfs", "salamander")
+            builder.addQueryParameter("obfs", if (!obfsType.isNullOrBlank()) obfsType else "salamander")
             builder.addQueryParameter("obfs-password", obfuscation)
         }
     }
@@ -366,27 +384,53 @@ fun buildSingBoxOutboundHysteriaBean(bean: HysteriaBean): SingBoxOptions.SingBox
             hop_interval = "${bean.hopInterval}s"
             up_mbps = bean.uploadMbps
             down_mbps = bean.downloadMbps
+            if (!bean.bbrProfile.isNullOrBlank()) {
+                bbr_profile = bean.bbrProfile
+            }
+            if (bean.disableChromeParrot == true) {
+                disable_chrome_parrot = true
+            }
+            if (bean.disableMtuDiscovery == true) {
+                disable_path_mtu_discovery = true
+            }
+            if (bean.streamReceiveWindow > 0) {
+                stream_receive_window = bean.streamReceiveWindow.toLong()
+            }
+            if (bean.connectionReceiveWindow > 0) {
+                connection_receive_window = bean.connectionReceiveWindow.toLong()
+            }
             if (bean.obfuscation.isNotBlank()) {
                 obfs = SingBoxOptions.Hysteria2Obfs().apply {
-                    type = "salamander"
+                    type = if (!bean.obfsType.isNullOrBlank()) bean.obfsType else "salamander"
                     password = bean.obfuscation
+                    if (type == "gecko") {
+                        if (bean.geckoMinPacketSize != null && bean.geckoMinPacketSize > 0) {
+                            min_packet_size = bean.geckoMinPacketSize
+                        }
+                        if (bean.geckoMaxPacketSize != null && bean.geckoMaxPacketSize > 0) {
+                            max_packet_size = bean.geckoMaxPacketSize
+                        }
+                    }
                 }
             }
-//            disable_mtu_discovery = bean.disableMtuDiscovery
             password = bean.authPayload
-//            if (bean.streamReceiveWindow > 0) {
-//                recv_window_conn = bean.streamReceiveWindow.toLong()
-//            }
-//            if (bean.connectionReceiveWindow > 0) {
-//                recv_window_conn = bean.connectionReceiveWindow.toLong()
-//            }
             tls = SingBoxOptions.OutboundTLSOptions().apply {
                 if (bean.sni.isNotBlank()) {
                     server_name = bean.sni
                 }
                 alpn = listOf("h3")
                 if (bean.caText.isNotBlank()) {
-                    certificate = bean.caText
+                    val cert = bean.caText.trim()
+                    if (cert.startsWith("sha256:", ignoreCase = true) || cert.startsWith("sha256/", ignoreCase = true)) {
+                        certificate_sha256 = listOf(cert.substring(7).trim())
+                    } else if (cert.length == 64 && cert.all { it in "0123456789abcdefABCDEF" }) {
+                        certificate_sha256 = listOf(cert)
+                    } else {
+                        certificate = bean.caText
+                    }
+                }
+                if (!bean.pinSHA256.isNullOrBlank()) {
+                    certificate_sha256 = bean.pinSHA256.listByLineOrComma()
                 }
                 insecure = bean.allowInsecure || DataStore.globalAllowInsecure
                 enabled = true

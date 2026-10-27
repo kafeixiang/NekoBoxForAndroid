@@ -34,6 +34,14 @@
             app:title="@string/hysteria_obfs"
             app:useSimpleSummaryProvider="true" />
         <moe.matsuri.nb4a.ui.SimpleMenuPreference
+            app:defaultValue="salamander"
+            app:entries="@array/hysteria2_obfs_type"
+            app:entryValues="@array/hysteria2_obfs_type"
+            app:icon="@drawable/ic_baseline_texture_24"
+            app:key="serverHysteriaObfsType"
+            app:title="@string/hysteria_obfs_type"
+            app:useSimpleSummaryProvider="true" />
+        <moe.matsuri.nb4a.ui.SimpleMenuPreference
             app:entries="@array/hysteria_auth_type"
             app:entryValues="@array/int_array_3"
             app:icon="@drawable/ic_baseline_compare_arrows_24"
@@ -68,6 +76,11 @@
             app:key="serverCertificates"
             app:title="@string/certificates"
             app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:icon="@drawable/ic_baseline_fingerprint_24"
+            app:key="serverPinnedCertChainSha256"
+            app:title="@string/certificate_sha256"
+            app:useSimpleSummaryProvider="true" />
         <SwitchPreference
             app:icon="@drawable/ic_notification_enhanced_encryption"
             app:key="serverAllowInsecure"
@@ -97,6 +110,17 @@
             app:icon="@drawable/ic_baseline_multiple_stop_24"
             app:key="serverDisableMtuDiscovery"
             app:title="@string/hysteria_disable_mtu_discovery" />
+        <moe.matsuri.nb4a.ui.SimpleMenuPreference
+            app:entries="@array/hysteria_bbr_profile"
+            app:entryValues="@array/hysteria_bbr_profile_value"
+            app:icon="@drawable/ic_baseline_speed_24"
+            app:key="serverHysteriaBbrProfile"
+            app:title="@string/bbr_profile"
+            app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_security_24"
+            app:key="serverHysteriaDisableChromeParrot"
+            app:title="@string/disable_chrome_parrot" />
         <EditTextPreference
             app:key="hopInterval"
             app:title="@string/hop_interval"

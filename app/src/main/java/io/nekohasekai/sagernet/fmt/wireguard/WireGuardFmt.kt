@@ -12,7 +12,16 @@ fun genReserved(reserved: String): List<Int> {
 }
 
 fun buildSingBoxOutboundWireguardBean(bean: WireGuardBean): SingBoxOptions.Outbound_WireGuardOptions {
-    val addrs = bean.localAddress.listByLineOrComma()
+    val addrs = bean.localAddress.listByLineOrComma().mapNotNull { raw ->
+        val trimmed = raw.trim()
+        if (trimmed.isEmpty()) {
+            null
+        } else if (!trimmed.contains("/")) {
+            if (trimmed.contains(":")) "$trimmed/128" else "$trimmed/32"
+        } else {
+            trimmed
+        }
+    }
     val peer = SingBoxOptions.WireGuardPeer().apply {
         address = bean.serverAddress
         port = bean.serverPort

@@ -502,6 +502,25 @@
         <item>2</item>
     </string-array>
 
+    <string-array name="hysteria_bbr_profile">
+        <item>@string/bbr_profile_default</item>
+        <item>@string/bbr_profile_standard</item>
+        <item>@string/bbr_profile_conservative</item>
+        <item>@string/bbr_profile_aggressive</item>
+    </string-array>
+
+    <string-array name="hysteria_bbr_profile_value">
+        <item />
+        <item>standard</item>
+        <item>conservative</item>
+        <item>aggressive</item>
+    </string-array>
+
+    <string-array name="hysteria2_obfs_type">
+        <item>salamander</item>
+        <item>gecko</item>
+    </string-array>
+
     <string-array name="tuic_version">
         <item>5</item>
         <item>4</item>
