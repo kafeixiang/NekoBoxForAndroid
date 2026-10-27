@@ -47,16 +47,10 @@ fun parseHysteria1(url: String): HysteriaBean {
         link.queryParameter("obfsParam")?.also {
             obfuscation = it
         }
-        link.queryParameter("protocol")?.also {
-            when (it) {
-                "faketcp" -> {
-                    protocol = HysteriaBean.PROTOCOL_FAKETCP
-                }
-
-                "wechat-video" -> {
-                    protocol = HysteriaBean.PROTOCOL_WECHAT_VIDEO
-                }
-            }
+        protocol = when (link.queryParameter("protocol")?.lowercase()) {
+            "faketcp" -> HysteriaBean.PROTOCOL_FAKETCP
+            "wechat-video" -> HysteriaBean.PROTOCOL_WECHAT_VIDEO
+            else -> HysteriaBean.PROTOCOL_UDP
         }
     }
 }
@@ -200,16 +194,10 @@ fun JSONObject.parseHysteria1Json(): HysteriaBean {
             authPayloadType = HysteriaBean.TYPE_STRING
             authPayload = it
         }
-        getStr("protocol")?.also {
-            when (it) {
-                "faketcp" -> {
-                    protocol = HysteriaBean.PROTOCOL_FAKETCP
-                }
-
-                "wechat-video" -> {
-                    protocol = HysteriaBean.PROTOCOL_WECHAT_VIDEO
-                }
-            }
+        protocol = when (getStr("protocol")?.lowercase()) {
+            "faketcp" -> HysteriaBean.PROTOCOL_FAKETCP
+            "wechat-video" -> HysteriaBean.PROTOCOL_WECHAT_VIDEO
+            else -> HysteriaBean.PROTOCOL_UDP
         }
         sni = getStr("server_name")
         getStr("alpn")?.also { if (it != "none") alpn = it }
@@ -326,8 +314,10 @@ fun getFirstPort(portStr: String): Int {
 }
 
 fun HysteriaBean.canUseSingBox(): Boolean {
-    if (protocolVersion == 1 && DataStore.providerHysteria == ProtocolProvider.PLUGIN) return false
-    if (protocol != HysteriaBean.PROTOCOL_UDP) return false
+    val version = protocolVersion ?: 2
+    if (version == 1 && DataStore.providerHysteria == ProtocolProvider.PLUGIN) return false
+    val proto = protocol ?: HysteriaBean.PROTOCOL_UDP
+    if (proto != HysteriaBean.PROTOCOL_UDP) return false
     return true
 }
 
@@ -341,15 +331,21 @@ fun buildSingBoxOutboundHysteriaBean(bean: HysteriaBean): SingBoxOptions.SingBox
                 server_port = port
             } else {
                 server_ports = hopPortsToSingboxList(bean.serverPorts)
+                server_port = getFirstPort(bean.serverPorts)
             }
             hop_interval = "${bean.hopInterval}s"
-            up_mbps = bean.uploadMbps
-            down_mbps = bean.downloadMbps
+            up_mbps = if (bean.uploadMbps != null && bean.uploadMbps > 0) bean.uploadMbps else 10
+            down_mbps = if (bean.downloadMbps != null && bean.downloadMbps > 0) bean.downloadMbps else 50
             obfs = bean.obfuscation
             disable_mtu_discovery = bean.disableMtuDiscovery
             when (bean.authPayloadType) {
                 HysteriaBean.TYPE_BASE64 -> auth = bean.authPayload
                 HysteriaBean.TYPE_STRING -> auth_str = bean.authPayload
+                else -> {
+                    if (bean.authPayload.isNotBlank()) {
+                        auth_str = bean.authPayload
+                    }
+                }
             }
             if (bean.streamReceiveWindow > 0) {
                 recv_window_conn = bean.streamReceiveWindow.toLong()
@@ -360,6 +356,8 @@ fun buildSingBoxOutboundHysteriaBean(bean: HysteriaBean): SingBoxOptions.SingBox
             tls = SingBoxOptions.OutboundTLSOptions().apply {
                 if (bean.sni.isNotBlank()) {
                     server_name = bean.sni
+                } else if (!bean.serverAddress.isIpAddress()) {
+                    server_name = bean.serverAddress
                 }
                 if (bean.alpn.isNotBlank()) {
                     alpn = bean.alpn.listByLineOrComma()

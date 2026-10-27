@@ -23,7 +23,7 @@ class HysteriaSettingsActivity : ProfileSettingsActivity<HysteriaBean>() {
         DataStore.serverPorts = serverPorts
         DataStore.serverObfs = obfuscation
         DataStore.serverAuthType = authPayloadType
-        DataStore.serverProtocolInt = protocol
+        DataStore.serverProtocolInt = protocol ?: HysteriaBean.PROTOCOL_UDP
         DataStore.serverPassword = authPayload
         DataStore.serverSNI = sni
         DataStore.serverALPN = alpn

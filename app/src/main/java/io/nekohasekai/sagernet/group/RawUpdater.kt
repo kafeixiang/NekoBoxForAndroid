@@ -664,6 +664,7 @@ object RawUpdater : GroupUpdater() {
                         "hysteria" -> {
                             val bean = HysteriaBean()
                             bean.protocolVersion = 1
+                            bean.protocol = HysteriaBean.PROTOCOL_UDP
                             var hopPorts = ""
                             for (opt in proxy) {
                                 if (opt.value == null) continue

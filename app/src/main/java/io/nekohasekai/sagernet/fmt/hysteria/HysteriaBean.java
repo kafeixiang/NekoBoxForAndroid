@@ -52,11 +52,11 @@ public class HysteriaBean extends AbstractBean {
     public static final int PROTOCOL_UDP = 0;
     public static final int PROTOCOL_FAKETCP = 1;
     public static final int PROTOCOL_WECHAT_VIDEO = 2;
-    public Integer protocol;
+    public Integer protocol = PROTOCOL_UDP;
 
     @Override
     public boolean canMapping() {
-        return protocol != PROTOCOL_FAKETCP;
+        return (protocol != null ? protocol : PROTOCOL_UDP) != PROTOCOL_FAKETCP;
     }
 
     @Override
@@ -140,6 +140,11 @@ public class HysteriaBean extends AbstractBean {
         authPayload = input.readString();
         if (version >= 3) {
             protocol = input.readInt();
+        } else {
+            protocol = PROTOCOL_UDP;
+        }
+        if (protocol == null) {
+            protocol = PROTOCOL_UDP;
         }
         obfuscation = input.readString();
         sni = input.readString();
