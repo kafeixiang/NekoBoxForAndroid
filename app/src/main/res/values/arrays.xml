@@ -296,6 +296,20 @@
         <item>udp</item>
     </string-array>
 
+    <string-array name="network_type_entries">
+        <item>@string/network_type_all</item>
+        <item>Wi-Fi</item>
+        <item>Cellular</item>
+        <item>Ethernet</item>
+    </string-array>
+
+    <string-array name="network_type_values">
+        <item />
+        <item>wifi</item>
+        <item>cellular</item>
+        <item>ethernet</item>
+    </string-array>
+
     <string-array name="outbound_entry">
         <item>@string/route_proxy</item>
         <item>@string/route_bypass</item>

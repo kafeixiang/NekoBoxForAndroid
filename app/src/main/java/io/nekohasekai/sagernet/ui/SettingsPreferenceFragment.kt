@@ -169,6 +169,12 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         tunImplementation.onPreferenceChangeListener = reloadListener
         acquireWakeLock.onPreferenceChangeListener = reloadListener
         globalCustomConfig.onPreferenceChangeListener = reloadListener
+
+        findPreference<Preference>(Key.OVERRIDE_ANDROID_VPN)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.TCP_MULTI_PATH)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.UDP_FRAGMENT)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.ENABLE_TLS_FRAGMENT)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.TLS_RECORD_FRAGMENT)?.onPreferenceChangeListener = reloadListener
         hideFromRecentApps.setOnPreferenceChangeListener { _, newValue ->
             (activity as? MainActivity)?.applyHideFromRecentApps(newValue as Boolean)
             // needReload()

@@ -273,6 +273,9 @@ fun buildConfig(
             default_domain_resolver = "dns-direct"
             rules = mutableListOf()
             rule_set = mutableListOf()
+            if (DataStore.overrideAndroidVpn) {
+                override_android_vpn = true
+            }
         }
 
         val vpnWithPushDNS = mutableMapOf<String, String>() // endpointTag:dnsType
@@ -488,6 +491,13 @@ fun buildConfig(
 
                     _hack_config_map["tag"] = tagOut
 
+                    if (DataStore.tcpMultiPath) {
+                        _hack_config_map["tcp_multi_path"] = true
+                    }
+                    if (DataStore.udpFragment) {
+                        _hack_config_map["udp_fragment"] = true
+                    }
+
                     _hack_custom_config = bean.customOutboundJson
                 }
 
@@ -598,8 +608,33 @@ fun buildConfig(
                 if (rule.ip.isNotBlank()) {
                     makeSingBoxRule(rule.ip.listByLineOrComma(), true)
                 }
+                if (rule.ruleset.isNotBlank()) {
+                    if (rule_set == null) rule_set = mutableListOf()
+                    rule.ruleset.listByLineOrComma().forEach {
+                        if (it.isNotBlank()) rule_set.add(it)
+                    }
+                }
 
                 if (rule_set != null) generateRuleSet(rule_set, ruleSets)
+
+                if (rule.invert) {
+                    invert = true
+                }
+                if (rule.ipIsPrivate) {
+                    ip_is_private = true
+                }
+                if (rule.sourceIpIsPrivate) {
+                    source_ip_is_private = true
+                }
+                if (rule.networkType.isNotBlank()) {
+                    network_type = listOf(rule.networkType)
+                }
+                if (rule.wifiSsid.isNotBlank()) {
+                    wifi_ssid = rule.wifiSsid.listByLineOrComma()
+                }
+                if (rule.ruleSetIpCIDRMatchSource) {
+                    rule_set_ip_cidr_match_source = true
+                }
 
                 if (rule.port.isNotBlank()) {
                     port = mutableListOf<Int>()
@@ -637,6 +672,15 @@ fun buildConfig(
                     return DNSRule_DefaultOptions().apply {
                         if (uidList.isNotEmpty()) user_id = uidList
                         domainList?.let { makeSingBoxRule(it) }
+                        if (rule.invert) invert = true
+                        if (rule.ruleset.isNotBlank()) {
+                            if (rule_set == null) rule_set = mutableListOf()
+                            rule.ruleset.listByLineOrComma().forEach {
+                                if (it.isNotBlank()) rule_set.add(it)
+                            }
+                        }
+                        if (rule.ipIsPrivate) ip_is_private = true
+                        if (rule.ruleSetIpCIDRMatchSource) rule_set_ip_cidr_match_source = true
                     }
                 }
 
@@ -812,6 +856,7 @@ fun buildConfig(
             if (needSniff) {
                 route.rules.add(0, Rule_DefaultOptions().apply {
                     action = "sniff"
+                    sniffer = listOf("tls", "http", "quic", "dns", "stun", "bittorrent", "dtls", "ssh", "rdp", "ntp")
                 })
             }
             if (DataStore.bypassLanInCore) {

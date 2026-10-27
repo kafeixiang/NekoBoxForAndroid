@@ -249,6 +249,13 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var routeNetwork by profileCacheStore.string(Key.ROUTE_NETWORK)
     var routeSource by profileCacheStore.string(Key.ROUTE_SOURCE)
     var routeProtocol by profileCacheStore.string(Key.ROUTE_PROTOCOL)
+    var routeRuleSet by profileCacheStore.string(Key.ROUTE_RULESET)
+    var routeInvert by profileCacheStore.boolean(Key.ROUTE_INVERT)
+    var routeIpIsPrivate by profileCacheStore.boolean(Key.ROUTE_IP_IS_PRIVATE)
+    var routeSourceIpIsPrivate by profileCacheStore.boolean(Key.ROUTE_SOURCE_IP_IS_PRIVATE)
+    var routeNetworkType by profileCacheStore.string(Key.ROUTE_NETWORK_TYPE)
+    var routeWifiSSID by profileCacheStore.string(Key.ROUTE_WIFI_SSID)
+    var routeRuleSetMatchSource by profileCacheStore.boolean(Key.ROUTE_RULESET_MATCH_SOURCE)
     var routeOutbound by profileCacheStore.stringToInt(Key.ROUTE_OUTBOUND)
     var routeOutboundRule by profileCacheStore.long(Key.ROUTE_OUTBOUND + "Long")
     var routePackages by profileCacheStore.string(Key.ROUTE_PACKAGES)
@@ -279,7 +286,11 @@ object DataStore : OnPreferenceDataStoreChangeListener {
 
     var rulesFirstCreate by profileCacheStore.boolean("rulesFirstCreate")
 
-    // var enableTLSFragment by configurationStore.boolean(Key.ENABLE_TLS_FRAGMENT)
+    var enableTLSFragment by configurationStore.boolean(Key.ENABLE_TLS_FRAGMENT)
+    var tlsRecordFragment by configurationStore.boolean(Key.TLS_RECORD_FRAGMENT)
+    var overrideAndroidVpn by configurationStore.boolean(Key.OVERRIDE_ANDROID_VPN)
+    var tcpMultiPath by configurationStore.boolean(Key.TCP_MULTI_PATH)
+    var udpFragment by configurationStore.boolean(Key.UDP_FRAGMENT)
 
     var webdavServer: String?
         get() = configurationStore.getString("webdavServer")

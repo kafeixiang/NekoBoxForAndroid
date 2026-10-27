@@ -695,4 +695,28 @@
     <string name="disable_chrome_parrot">禁用 Chrome 伪装 (Parrot)</string>
     <string name="certificate_sha256">证书 SHA-256 指纹锁定</string>
     <string name="hysteria_obfs_type">混淆类型</string>
+
+    <!-- Route Matchers & Options -->
+    <string name="route_ruleset">规则集</string>
+    <string name="route_invert">反向匹配</string>
+    <string name="route_invert_summary">对该规则的匹配结果取反（非）</string>
+    <string name="route_ip_is_private">目标 IP 为私有地址</string>
+    <string name="route_source_ip_is_private">来源 IP 为私有地址</string>
+    <string name="route_network_type">网络接口类型</string>
+    <string name="route_wifi_ssid">Wi-Fi SSID (热点名称)</string>
+    <string name="route_ruleset_match_source">规则集匹配来源 IP</string>
+    <string name="route_ruleset_match_source_summary">规则集内的 IP CIDR 匹配来源 IP 而不是目标 IP</string>
+    <string name="network_type_all">全部 / 不限</string>
+
+    <!-- Global Route & Dialer Settings -->
+    <string name="override_android_vpn">覆盖 Android VPN</string>
+    <string name="override_android_vpn_summary">允许核心直接接管并覆盖系统 VPN 路由</string>
+    <string name="tcp_multi_path">多路径 TCP (MPTCP)</string>
+    <string name="tcp_multi_path_summary">出站连接启用多路径 TCP (需系统内核支持)</string>
+    <string name="udp_fragment">UDP 分片</string>
+    <string name="udp_fragment_summary">出站连接启用 UDP 分片</string>
+    <string name="enable_tls_fragment">TLS 客户端分片</string>
+    <string name="enable_tls_fragment_summary">分片 TLS ClientHello 握手报文，绕过基于 SNI 的审查和阻断</string>
+    <string name="tls_record_fragment">TLS 记录层分片</string>
+    <string name="tls_record_fragment_summary">分片 TLS 记录层报文</string>
 </resources>

@@ -775,6 +775,12 @@ fun buildSingBoxOutboundTLS(bean: StandardV2RayBean): OutboundTLSOptions? {
     return OutboundTLSOptions().apply {
         enabled = true
         insecure = bean.allowInsecure || DataStore.globalAllowInsecure
+        if (DataStore.enableTLSFragment) {
+            fragment = true
+        }
+        if (DataStore.tlsRecordFragment) {
+            record_fragment = true
+        }
         if (bean.sni.isNotBlank()) server_name = bean.sni
         if (bean.alpn.isNotBlank()) alpn = bean.alpn.listByLineOrComma()
         if (bean.certificates.isNotBlank()) {

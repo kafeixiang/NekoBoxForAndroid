@@ -782,4 +782,28 @@
     <string name="certificate_sha256">Certificate SHA-256 Pin</string>
     <string name="hysteria_obfs_type">Obfuscation Type</string>
 
+    <!-- Route Matchers & Options -->
+    <string name="route_ruleset">Rule Set</string>
+    <string name="route_invert">Invert Match</string>
+    <string name="route_invert_summary">Invert match results for this rule (NOT)</string>
+    <string name="route_ip_is_private">Destination IP is Private</string>
+    <string name="route_source_ip_is_private">Source IP is Private</string>
+    <string name="route_network_type">Network Interface Type</string>
+    <string name="route_wifi_ssid">Wi-Fi SSID</string>
+    <string name="route_ruleset_match_source">Rule Set Matches Source IP</string>
+    <string name="route_ruleset_match_source_summary">Match rule set IP CIDR against source IP instead of destination IP</string>
+    <string name="network_type_all">Any</string>
+
+    <!-- Global Route & Dialer Settings -->
+    <string name="override_android_vpn">Override Android VPN</string>
+    <string name="override_android_vpn_summary">Bypass and take over Android VPN routing directly in core</string>
+    <string name="tcp_multi_path">TCP MultiPath (MPTCP)</string>
+    <string name="tcp_multi_path_summary">Enable TCP MultiPath on outbound connections (requires kernel support)</string>
+    <string name="udp_fragment">UDP Fragment</string>
+    <string name="udp_fragment_summary">Enable UDP fragmentation on outbound connections</string>
+    <string name="enable_tls_fragment">TLS Client Fragment</string>
+    <string name="enable_tls_fragment_summary">Fragment TLS ClientHello to bypass SNI inspection and blocking</string>
+    <string name="tls_record_fragment">TLS Record Fragment</string>
+    <string name="tls_record_fragment_summary">Fragment TLS record layer packets</string>
+
 </resources>

@@ -135,6 +135,8 @@ fun buildSingBoxOutboundNaiveBean(bean: NaiveBean): SingBoxOptions.Outbound_Naiv
             if (bean.certificates.isNotBlank()) {
                 certificate = bean.certificates
             }
+            if (DataStore.enableTLSFragment) fragment = true
+            if (DataStore.tlsRecordFragment) record_fragment = true
         }
     }
 }

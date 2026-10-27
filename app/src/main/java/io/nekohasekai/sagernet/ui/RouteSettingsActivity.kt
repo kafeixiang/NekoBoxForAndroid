@@ -66,6 +66,13 @@ class RouteSettingsActivity(
         DataStore.routeNetwork = network
         DataStore.routeSource = source
         DataStore.routeProtocol = protocol
+        DataStore.routeRuleSet = ruleset
+        DataStore.routeInvert = invert
+        DataStore.routeIpIsPrivate = ipIsPrivate
+        DataStore.routeSourceIpIsPrivate = sourceIpIsPrivate
+        DataStore.routeNetworkType = networkType
+        DataStore.routeWifiSSID = wifiSsid
+        DataStore.routeRuleSetMatchSource = ruleSetIpCIDRMatchSource
         DataStore.routeOutboundRule = outbound
         DataStore.routeOutbound = when (outbound) {
             0L -> 0
@@ -86,6 +93,13 @@ class RouteSettingsActivity(
         network = DataStore.routeNetwork
         source = DataStore.routeSource
         protocol = DataStore.routeProtocol
+        ruleset = DataStore.routeRuleSet
+        invert = DataStore.routeInvert
+        ipIsPrivate = DataStore.routeIpIsPrivate
+        sourceIpIsPrivate = DataStore.routeSourceIpIsPrivate
+        networkType = DataStore.routeNetworkType
+        wifiSsid = DataStore.routeWifiSSID
+        ruleSetIpCIDRMatchSource = DataStore.routeRuleSetMatchSource
         outbound = when (DataStore.routeOutbound) {
             0 -> 0L
             1 -> -1L

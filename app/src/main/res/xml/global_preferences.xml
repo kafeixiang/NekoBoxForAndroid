@@ -142,6 +142,21 @@
             app:key="rulesProvider"
             app:title="@string/route_rules_provider"
             app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:icon="@drawable/ic_action_settings"
+            app:key="overrideAndroidVpn"
+            app:summary="@string/override_android_vpn_summary"
+            app:title="@string/override_android_vpn" />
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_compare_arrows_24"
+            app:key="tcpMultiPath"
+            app:summary="@string/tcp_multi_path_summary"
+            app:title="@string/tcp_multi_path" />
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_compare_arrows_24"
+            app:key="udpFragment"
+            app:summary="@string/udp_fragment_summary"
+            app:title="@string/udp_fragment" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/cag_dns">
@@ -260,6 +275,16 @@
             app:key="appTLSVersion"
             app:title="@string/app_tls_version"
             app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:icon="@drawable/ic_action_lock"
+            app:key="enableTLSFragment"
+            app:summary="@string/enable_tls_fragment_summary"
+            app:title="@string/enable_tls_fragment" />
+        <SwitchPreference
+            app:icon="@drawable/ic_action_lock"
+            app:key="tlsRecordFragment"
+            app:summary="@string/tls_record_fragment_summary"
+            app:title="@string/tls_record_fragment" />
         <SwitchPreference
             app:key="showBottomBar"
             app:title="@string/show_bottom_bar" />

@@ -17,6 +17,12 @@
             app:key="routePackages"
             app:title="@string/apps" />
         <EditTextPreference
+            app:dialogMessage="geosite:category-ads-all, geoip:cn"
+            app:icon="@drawable/ic_baseline_rule_folder_24"
+            app:key="routeRuleSet"
+            app:title="@string/route_ruleset"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
             app:icon="@drawable/ic_baseline_domain_24"
             app:key="routeDomain"
             app:title="domain"
@@ -56,6 +62,36 @@
             app:key="routeProtocol"
             app:title="protocol"
             app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_security_24"
+            app:key="routeIpIsPrivate"
+            app:title="@string/route_ip_is_private" />
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_security_24"
+            app:key="routeSourceIpIsPrivate"
+            app:title="@string/route_source_ip_is_private" />
+        <moe.matsuri.nb4a.ui.SimpleMenuPreference
+            app:entries="@array/network_type_entries"
+            app:entryValues="@array/network_type_values"
+            app:icon="@drawable/ic_baseline_compare_arrows_24"
+            app:key="routeNetworkType"
+            app:title="@string/route_network_type"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:icon="@drawable/ic_hardware_router"
+            app:key="routeWifiSSID"
+            app:title="@string/route_wifi_ssid"
+            app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_rule_folder_24"
+            app:key="routeRuleSetMatchSource"
+            app:summary="@string/route_ruleset_match_source_summary"
+            app:title="@string/route_ruleset_match_source" />
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_flip_camera_android_24"
+            app:key="routeInvert"
+            app:summary="@string/route_invert_summary"
+            app:title="@string/route_invert" />
         <io.nekohasekai.sagernet.widget.OutboundPreference
             app:icon="@drawable/ic_hardware_router"
             app:key="routeOutbound"
