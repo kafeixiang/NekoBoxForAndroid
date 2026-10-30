@@ -203,8 +203,6 @@ github.com/metacubex/mihomo v1.19.33 h1:hwqYMItk3Jaeq8Sw2PBAtyHQh157ccUtWS7rXrBO
 github.com/metacubex/mihomo v1.19.33/go.mod h1:bzTZ70b83bz4enuwxrjHYg1Iqze8XqTP72OHmulMhYA=
 github.com/metacubex/mlkem v0.1.0 h1:wFClitonSFcmipzzQvax75beLQU+D7JuC+VK1RzSL8I=
 github.com/metacubex/mlkem v0.1.0/go.mod h1:amhaXZVeYNShuy9BILcR7P0gbeo/QLZsnqCdL8U2PDQ=
-github.com/metacubex/randv2 v0.2.0 h1:uP38uBvV2SxYfLj53kuvAjbND4RUDfFJjwr4UigMiLs=
-github.com/metacubex/randv2 v0.2.0/go.mod h1:kFi2SzrQ5WuneuoLLCMkABtiBu6VRrMrWFqSPyj2cxY=
 github.com/metacubex/randv2 v0.2.1-0.20260726125100-81aa96a9b1a5 h1:DZld5uIHc1YJ9AL0BpCiRZUZIgz03DreMgfC2sM0afg=
 github.com/metacubex/randv2 v0.2.1-0.20260726125100-81aa96a9b1a5/go.mod h1:kFi2SzrQ5WuneuoLLCMkABtiBu6VRrMrWFqSPyj2cxY=
 github.com/metacubex/sing v0.5.8 h1:OwJDSPP+pza6Ywt7NMR4kEYq+UNrsIywSk/eAMlqxz8=
@@ -343,14 +341,14 @@ github.com/sagernet/sing-shadowtls v0.2.2-0.20260928201441-a9c0127d5c99 h1:l/tdZ
 github.com/sagernet/sing-shadowtls v0.2.2-0.20260928201441-a9c0127d5c99/go.mod h1:sWqKnGlMipCHaGsw1sTTlimyUpgzP4WP3pjhCsYt9oA=
 github.com/sagernet/sing-snell v0.0.0-20260904135315-bc5a12ac736f h1:tbTCI+iis5sTmua7a6Q7vebcSRURok/LGgnEafnQAsc=
 github.com/sagernet/sing-snell v0.0.0-20260904135315-bc5a12ac736f/go.mod h1:et8Lws4f5QbOrY65DmjevHGup3mijJkhswkto6cwciM=
-github.com/sagernet/sing-tun v0.9.7-0.20261023115453-611d83b7a57b h1:GJhvtWFcBCBvvTqg1u9mL3f2yFo1kwPHglgdEjVtPEo=
-github.com/sagernet/sing-tun v0.9.7-0.20261023115453-611d83b7a57b/go.mod h1:liMb9HPIWcFWqF6VJ/ttIY8fTSRPdRltBeSeEcXt1Dk=
+github.com/sagernet/sing-tun v0.9.7-0.20261028024126-5b0a1a7a394e h1:EskUGh4C8U4VJdkvpoU95hLTxkmU6uyUkvU+ZDj4f6k=
+github.com/sagernet/sing-tun v0.9.7-0.20261028024126-5b0a1a7a394e/go.mod h1:liMb9HPIWcFWqF6VJ/ttIY8fTSRPdRltBeSeEcXt1Dk=
 github.com/sagernet/sing-usbip v0.0.0-20260817040617-28bd42667eca h1:5wA+IE0Fq1CGVLOgSpm0gKKZ03HzugcJ2JyhmDqeX6A=
 github.com/sagernet/sing-usbip v0.0.0-20260817040617-28bd42667eca/go.mod h1:ADAZZU85MnM91XNhd2TdZRTaIbA7RjTZuQ1KCHcUbNg=
 github.com/sagernet/smux v1.5.50-sing-box-mod.1 h1:XkJcivBC9V4wBjiGXIXZ229aZCU1hzcbp6kSkkyQ478=
 github.com/sagernet/smux v1.5.50-sing-box-mod.1/go.mod h1:NjhsCEWedJm7eFLyhuBgIEzwfhRmytrUoiLluxs5Sk8=
-github.com/sagernet/tailscale v1.102.1-sing-box-1.14-mod.5.0.20261022222424-1688b52f8204 h1:k25hl6yegTD3I3UEp95ZF09KDBiFsutUawV7vjRjQsg=
-github.com/sagernet/tailscale v1.102.1-sing-box-1.14-mod.5.0.20261022222424-1688b52f8204/go.mod h1:Z8Eql5l0q6mQ+etunojfaZxNJVhEkpbKGS/nnx9ZQpE=
+github.com/sagernet/tailscale v1.102.1-sing-box-1.14-mod.5.0.20261028024127-670967df7dbf h1:59b83P3sRDWJcTifDZpeVn4gZFropKsNdYWuPfhqI1w=
+github.com/sagernet/tailscale v1.102.1-sing-box-1.14-mod.5.0.20261028024127-670967df7dbf/go.mod h1:Z8Eql5l0q6mQ+etunojfaZxNJVhEkpbKGS/nnx9ZQpE=
 github.com/sagernet/wireguard-go v0.0.8-0.20261022215849-fdf0ad046586 h1:lssrGZJRiO6s2ShbBjchpFsNml9cj/7G+aeEL57ZvVc=
 github.com/sagernet/wireguard-go v0.0.8-0.20261022215849-fdf0ad046586/go.mod h1:er10sELpmzLXq7S7Pbc1Zsbyapcr+/gxNAHKTo6fzVA=
 github.com/sagernet/ws v0.0.0-20231204124109-acfe8907c854 h1:6uUiZcDRnZSAegryaUGwPC/Fj13JSHwiTftrXhMmYOc=
@@ -431,6 +429,8 @@ go.opentelemetry.io/otel/trace v1.39.0 h1:2d2vfpEDmCJ5zVYz7ijaJdOF59xLomrvj7bjt6
 go.opentelemetry.io/otel/trace v1.39.0/go.mod h1:88w4/PnZSazkGzz/w84VHpQafiU4EtqqlVdxWy+rNOA=
 go.uber.org/goleak v1.3.0 h1:2K3zAYmnTNqV73imy9J1T3WC+gmCePx2hEGkimedGto=
 go.uber.org/goleak v1.3.0/go.mod h1:CoHD4mav9JJNrW/WLlf7HGZPjdw8EucARQHekz1X6bE=
+go.uber.org/mock v0.5.2 h1:LbtPTcP8A5k9WPXj54PPPbjcI4Y6lhyOZXn+VS7wNko=
+go.uber.org/mock v0.5.2/go.mod h1:wLlUxC2vVTPTaE3UD51E0BGOAElKrILxhVSDYQLld5o=
 go.uber.org/multierr v1.11.0 h1:blXXJkSxSSfBVBlC76pxqeO+LN3aDfLQo+309xJstO0=
 go.uber.org/multierr v1.11.0/go.mod h1:20+QtiLqy0Nd6FdQB9TLXag12DsQkrbs3htMFfDN80Y=
 go.uber.org/zap v1.27.1 h1:08RqriUEv8+ArZRYSTXy1LeBScaMpVSTBhCeaZYfMYc=
