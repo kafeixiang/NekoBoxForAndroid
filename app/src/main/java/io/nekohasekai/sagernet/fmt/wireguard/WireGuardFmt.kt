@@ -23,14 +23,14 @@ fun parseWireGuardLink(url: String): WireGuardBean {
     return WireGuardBean().apply {
         serverAddress = link.host
         serverPort = if (link.port > 0) link.port else 51820
-        privateKey = link.username
+        privateKey = link.username.replace(" ", "+")
         name = link.fragment
 
         (link.queryParameter("publickey") ?: link.queryParameter("public-key") ?: link.queryParameter("public_key"))?.let {
-            peerPublicKey = it
+            peerPublicKey = it.replace(" ", "+")
         }
         (link.queryParameter("presharedkey") ?: link.queryParameter("preshared-key") ?: link.queryParameter("preshared_key"))?.let {
-            peerPreSharedKey = it
+            peerPreSharedKey = it.replace(" ", "+")
         }
         (link.queryParameter("address") ?: link.queryParameter("ip"))?.let {
             localAddress = it.replace(",", "\n")

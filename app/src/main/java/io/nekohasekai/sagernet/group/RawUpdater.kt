@@ -252,14 +252,14 @@ object RawUpdater : GroupUpdater() {
 
             try {
 
-                val yaml = Yaml(SafeConstructor(LoaderOptions())).apply {
-                    addTypeDescription(TypeDescription(String::class.java, "str"))
-                }.loadAs(text, Map::class.java)
+                val yaml = (Yaml(SafeConstructor(LoaderOptions())).load(text) as? Map<String, Any?>) ?: error(
+                    try { app.getString(R.string.no_proxies_found_in_file) } catch (_: Throwable) { "No proxies found in file" }
+                )
 
                 val globalClientFingerprint = yaml["global-client-fingerprint"]?.toString() ?: ""
 
                 val proxyList = yaml["proxies"] as? (List<Map<String, Any?>>) ?: error(
-                    app.getString(R.string.no_proxies_found_in_file)
+                    try { app.getString(R.string.no_proxies_found_in_file) } catch (_: Throwable) { "No proxies found in file" }
                 )
 
                 for (proxy in proxyList) {

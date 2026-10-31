@@ -377,7 +377,7 @@ fun buildSingBoxOutboundHysteriaBean(bean: HysteriaBean): SingBoxOptions.SingBox
                 if (bean.caText.isNotBlank()) {
                     certificate = bean.caText
                 }
-                insecure = bean.allowInsecure || DataStore.globalAllowInsecure
+                insecure = bean.allowInsecure == true || (try { DataStore.globalAllowInsecure } catch (_: Throwable) { false })
                 enabled = true
             }
         }
@@ -406,13 +406,13 @@ fun buildSingBoxOutboundHysteriaBean(bean: HysteriaBean): SingBoxOptions.SingBox
             if (bean.disableMtuDiscovery == true) {
                 disable_path_mtu_discovery = true
             }
-            if (bean.streamReceiveWindow > 0) {
+            if (bean.streamReceiveWindow != null && bean.streamReceiveWindow > 0) {
                 stream_receive_window = bean.streamReceiveWindow.toLong()
             }
-            if (bean.connectionReceiveWindow > 0) {
+            if (bean.connectionReceiveWindow != null && bean.connectionReceiveWindow > 0) {
                 connection_receive_window = bean.connectionReceiveWindow.toLong()
             }
-            if (bean.obfuscation.isNotBlank()) {
+            if (!bean.obfuscation.isNullOrBlank()) {
                 obfs = SingBoxOptions.Hysteria2Obfs().apply {
                     type = if (!bean.obfsType.isNullOrBlank()) bean.obfsType else "salamander"
                     password = bean.obfuscation
@@ -428,11 +428,11 @@ fun buildSingBoxOutboundHysteriaBean(bean: HysteriaBean): SingBoxOptions.SingBox
             }
             password = bean.authPayload
             tls = SingBoxOptions.OutboundTLSOptions().apply {
-                if (bean.sni.isNotBlank()) {
+                if (!bean.sni.isNullOrBlank()) {
                     server_name = bean.sni
                 }
                 alpn = listOf("h3")
-                if (bean.caText.isNotBlank()) {
+                if (!bean.caText.isNullOrBlank()) {
                     val cert = bean.caText.trim()
                     if (cert.startsWith("sha256:", ignoreCase = true) || cert.startsWith("sha256/", ignoreCase = true)) {
                         certificate_sha256 = listOf(cert.substring(7).trim())
@@ -445,7 +445,7 @@ fun buildSingBoxOutboundHysteriaBean(bean: HysteriaBean): SingBoxOptions.SingBox
                 if (!bean.pinSHA256.isNullOrBlank()) {
                     certificate_sha256 = bean.pinSHA256.listByLineOrComma()
                 }
-                insecure = bean.allowInsecure || DataStore.globalAllowInsecure
+                insecure = bean.allowInsecure == true || (try { DataStore.globalAllowInsecure } catch (_: Throwable) { false })
                 enabled = true
             }
         }

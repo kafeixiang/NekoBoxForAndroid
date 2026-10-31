@@ -97,17 +97,17 @@ fun buildSingBoxOutboundTuicBean(bean: TuicBean): SingBoxOptions.Outbound_TUICOp
         }
         zero_rtt_handshake = bean.reduceRTT
         tls = SingBoxOptions.OutboundTLSOptions().apply {
-            if (bean.sni.isNotBlank()) {
+            if (!bean.sni.isNullOrBlank()) {
                 server_name = bean.sni
             }
-            if (bean.alpn.isNotBlank()) {
+            if (!bean.alpn.isNullOrBlank()) {
                 alpn = bean.alpn.listByLineOrComma()
             }
-            if (bean.caText.isNotBlank()) {
+            if (!bean.caText.isNullOrBlank()) {
                 certificate = bean.caText
             }
-            disable_sni = bean.disableSNI
-            insecure = bean.allowInsecure || DataStore.globalAllowInsecure
+            disable_sni = bean.disableSNI == true
+            insecure = bean.allowInsecure == true || (try { DataStore.globalAllowInsecure } catch (_: Throwable) { false })
             enabled = true
         }
     }
