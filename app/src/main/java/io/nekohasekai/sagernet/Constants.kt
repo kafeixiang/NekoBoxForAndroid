@@ -187,6 +187,8 @@ object Key {
     const val STRICT_ROUTE = "strictRoute"
     const val TUN_UDP_TIMEOUT = "tunUdpTimeout"
     const val TUN_UDP_MAPPING = "tunUdpMapping"
+    const val TUN_UDP_FILTERING = "tunUdpFiltering"
+    const val TUN_EXCLUDE_MPTCP = "tunExcludeMptcp"
     const val ENABLE_NTP = "enableNTP"
     const val NTP_SERVER = "ntpServer"
     const val USE_SINGBOX_NATIVE_MODE = "useSingBoxNativeMode"

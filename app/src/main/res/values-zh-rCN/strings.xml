@@ -816,4 +816,9 @@
     <string name="hop_interval_max">最大跳跃间隔（秒）</string>
     <string name="tuic_heartbeat">心跳间隔（秒）</string>
     <string name="wireguard_system_interface">系统内核接口 (WireGuard Kernel)</string>
+
+    <string name="tun_udp_filtering">TUN UDP 过滤策略</string>
+    <string name="udp_filtering_address_dependent">受限锥形 (Address Dependent)</string>
+    <string name="tun_exclude_mptcp">排除多路径 TCP (Exclude MPTCP)</string>
+    <string name="tun_exclude_mptcp_summary">从 TUN 虚拟网卡中排除 MPTCP 流量，防止多路径流量绕过代理或连接异常</string>
 </resources>

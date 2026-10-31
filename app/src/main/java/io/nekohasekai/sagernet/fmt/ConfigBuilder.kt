@@ -276,14 +276,26 @@ fun buildConfig(
                 mtu = DataStore.mtu
                 auto_route = false
                 strict_route = DataStore.strictRoute
+                if (DataStore.tunExcludeMptcp) {
+                    exclude_mptcp = true
+                }
                 if (DataStore.tunUdpTimeout > 0) {
                     udp_timeout = DataStore.tunUdpTimeout.toLong()
                 }
                 if (DataStore.tunUdpMapping.isNotBlank()) {
-                    udp_mapping = DataStore.tunUdpMapping
-                    if (DataStore.tunUdpMapping == "full_cone") {
+                    val mappingVal = when (DataStore.tunUdpMapping) {
+                        "full_cone", "endpoint_independent" -> "endpoint_independent"
+                        "symmetric", "address_and_port_dependent" -> "address_and_port_dependent"
+                        "address_dependent" -> "address_dependent"
+                        else -> DataStore.tunUdpMapping
+                    }
+                    udp_mapping = mappingVal
+                    if (mappingVal == "endpoint_independent") {
                         endpoint_independent_nat = true
                     }
+                }
+                if (DataStore.tunUdpFiltering.isNotBlank()) {
+                    udp_filtering = DataStore.tunUdpFiltering
                 }
                 when (DataStore.tunImplementation) {
                     TunImplementation.SYSTEM -> stack = "system"
@@ -321,6 +333,7 @@ fun buildConfig(
         // init routing object
         route = RouteOptions().apply {
             auto_detect_interface = true
+            find_process = true
             default_domain_resolver = "dns-direct"
             rules = mutableListOf()
             rule_set = mutableListOf()

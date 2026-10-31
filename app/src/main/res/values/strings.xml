@@ -903,4 +903,9 @@
     <string name="tuic_heartbeat">Heartbeat Interval (s)</string>
     <string name="wireguard_system_interface">System Kernel Interface</string>
 
+    <string name="tun_udp_filtering">TUN UDP Filtering</string>
+    <string name="udp_filtering_address_dependent">Address Dependent</string>
+    <string name="tun_exclude_mptcp">Exclude MPTCP</string>
+    <string name="tun_exclude_mptcp_summary">Exclude Multipath TCP traffic to prevent tunnel leaks or connection interruptions</string>
+
 </resources>

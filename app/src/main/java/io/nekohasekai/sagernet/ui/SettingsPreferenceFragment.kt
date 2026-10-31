@@ -187,6 +187,8 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         findPreference<Preference>(Key.DNS_REVERSE_MAPPING)?.onPreferenceChangeListener = reloadListener
         findPreference<Preference>(Key.STRICT_ROUTE)?.onPreferenceChangeListener = reloadListener
         findPreference<Preference>(Key.TUN_UDP_TIMEOUT)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.TUN_UDP_FILTERING)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.TUN_EXCLUDE_MPTCP)?.onPreferenceChangeListener = reloadListener
         findPreference<Preference>(Key.STORE_CACHE_FILE)?.onPreferenceChangeListener = reloadListener
         findPreference<Preference>(Key.ENABLE_NTP)?.onPreferenceChangeListener = reloadListener
         findPreference<Preference>(Key.NTP_SERVER)?.onPreferenceChangeListener = reloadListener

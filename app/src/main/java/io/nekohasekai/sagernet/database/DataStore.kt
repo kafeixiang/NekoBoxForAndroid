@@ -313,6 +313,8 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var strictRoute by configurationStore.boolean(Key.STRICT_ROUTE) { false }
     var tunUdpTimeout by configurationStore.int(Key.TUN_UDP_TIMEOUT) { 300 }
     var tunUdpMapping by configurationStore.string(Key.TUN_UDP_MAPPING)
+    var tunUdpFiltering by configurationStore.string(Key.TUN_UDP_FILTERING)
+    var tunExcludeMptcp by configurationStore.boolean(Key.TUN_EXCLUDE_MPTCP) { false }
     var enableNTP by configurationStore.boolean(Key.ENABLE_NTP)
     var ntpServer by configurationStore.string(Key.NTP_SERVER) { "time.apple.com" }
     var useSingBoxNativeMode by configurationStore.boolean(Key.USE_SINGBOX_NATIVE_MODE)

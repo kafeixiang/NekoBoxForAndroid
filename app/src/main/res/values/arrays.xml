@@ -334,6 +334,20 @@
         <item>symmetric</item>
     </string-array>
 
+    <string-array name="udp_filtering_entries">
+        <item>@string/auto</item>
+        <item>@string/udp_mapping_full_cone</item>
+        <item>@string/udp_filtering_address_dependent</item>
+        <item>@string/udp_mapping_symmetric</item>
+    </string-array>
+
+    <string-array name="udp_filtering_values">
+        <item />
+        <item>endpoint_independent</item>
+        <item>address_dependent</item>
+        <item>address_and_port_dependent</item>
+    </string-array>
+
     <string-array name="outbound_entry">
         <item>@string/route_proxy</item>
         <item>@string/route_bypass</item>

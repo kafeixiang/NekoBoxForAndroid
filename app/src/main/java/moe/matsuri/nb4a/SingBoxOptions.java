@@ -2493,6 +2493,8 @@ public class SingBoxOptions {
 
         public Boolean strict_route;
 
+        public Boolean exclude_mptcp;
+
         // Generate note: Listable
         public List<String> inet4_route_address;
 
@@ -2997,6 +2999,8 @@ public class SingBoxOptions {
         public Boolean auto_route;
 
         public Boolean strict_route;
+
+        public Boolean exclude_mptcp;
 
         // Generate note: Listable
         public List<String> inet4_route_address;
