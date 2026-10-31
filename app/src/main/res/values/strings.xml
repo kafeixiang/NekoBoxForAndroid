@@ -869,4 +869,10 @@
     <string name="tls_spoof_summary">Inject fake ClientHello with whitelist SNI before real handshake (requires root/elevated)</string>
     <string name="tls_spoof_method">Spoof Method</string>
 
+    <string name="connections_count">Total: %d</string>
+    <string name="no_active_connections">No active connections</string>
+    <string name="close_all_connections">Close All Connections</string>
+    <string name="confirm_close_all_connections">Are you sure you want to close all active connections?</string>
+    <string name="close">Close</string>
+
 </resources>

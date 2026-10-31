@@ -782,4 +782,10 @@
     <string name="tls_spoof">TLS ClientHello 伪造 (Spoof SNI)</string>
     <string name="tls_spoof_summary">在真实握手前注入伪造 SNI 报文绕过白名单阻断 (需要 Root 权限)</string>
     <string name="tls_spoof_method">伪造拒绝策略 (Spoof Method)</string>
+
+    <string name="connections_count">共 %d 条</string>
+    <string name="no_active_connections">暂无活跃连接</string>
+    <string name="close_all_connections">断开全部连接</string>
+    <string name="confirm_close_all_connections">确定要关闭并断开所有活跃连接吗？</string>
+    <string name="close">关闭</string>
 </resources>

@@ -5,13 +5,20 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.databinding.LayoutSingboxDashboardBinding
@@ -52,6 +59,13 @@ class SingBoxDashboardActivity : ThemedActivity() {
 
         binding.swipeRefresh.setOnRefreshListener {
             refreshProxies()
+        }
+
+        binding.btnConnections.setOnClickListener {
+            showConnectionsDialog()
+        }
+        binding.textConnections.setOnClickListener {
+            showConnectionsDialog()
         }
 
         updateCoreStatus()
@@ -358,15 +372,283 @@ class SingBoxDashboardActivity : ThemedActivity() {
     }
 
     private fun formatBytes(bytes: Long): String {
-        if (bytes <= 0) return "0 B"
-        val units = arrayOf("B", "KB", "MB", "GB", "TB")
-        val digitGroups = (Math.log10(bytes.toDouble()) / Math.log10(1024.0)).toInt()
-        val index = digitGroups.coerceIn(0, units.size - 1)
-        return String.format(Locale.US, "%.1f %s", bytes / Math.pow(1024.0, index.toDouble()), units[index])
+        return formatBytesInternal(bytes)
+    }
+
+    private fun showConnectionsDialog() {
+        if (!DataStore.serviceState.connected) {
+            Toast.makeText(this, R.string.dashboard_service_not_running, Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val dialog = BottomSheetDialog(this)
+        val dialogView = layoutInflater.inflate(R.layout.layout_dialog_connections, null)
+        dialog.setContentView(dialogView)
+
+        val bottomSheet = dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+        if (bottomSheet != null) {
+            val behavior = BottomSheetBehavior.from(bottomSheet)
+            behavior.state = BottomSheetBehavior.STATE_EXPANDED
+            behavior.skipCollapsed = true
+            val displayMetrics = resources.displayMetrics
+            bottomSheet.layoutParams.height = (displayMetrics.heightPixels * 0.85).toInt()
+        }
+
+        val textCount = dialogView.findViewById<TextView>(R.id.text_connections_count)
+        val btnCloseAll = dialogView.findViewById<ImageButton>(R.id.btn_close_all)
+        val btnDismiss = dialogView.findViewById<ImageButton>(R.id.btn_dismiss)
+        val textEmpty = dialogView.findViewById<TextView>(R.id.text_empty_connections)
+        val recyclerView = dialogView.findViewById<RecyclerView>(R.id.recycler_connections)
+
+        btnDismiss.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        val adapter = ConnectionsAdapter(
+            onKillClick = { conn ->
+                closeConnection(conn.id) {
+                    refreshConnectionsList(textCount, textEmpty, recyclerView)
+                }
+            }
+        )
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = adapter
+
+        btnCloseAll.setOnClickListener {
+            MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.close_all_connections)
+                .setMessage(R.string.confirm_close_all_connections)
+                .setPositiveButton(android.R.string.ok) { _, _ ->
+                    closeAllConnections {
+                        refreshConnectionsList(textCount, textEmpty, recyclerView)
+                    }
+                }
+                .setNegativeButton(android.R.string.cancel, null)
+                .show()
+        }
+
+        refreshConnectionsList(textCount, textEmpty, recyclerView)
+
+        var dialogJob: Job? = null
+        dialog.setOnShowListener {
+            dialogJob = lifecycleScope.launch {
+                while (isActive && dialog.isShowing) {
+                    delay(2000)
+                    if (dialog.isShowing) {
+                        refreshConnectionsList(textCount, textEmpty, recyclerView)
+                    }
+                }
+            }
+        }
+        dialog.setOnDismissListener {
+            dialogJob?.cancel()
+        }
+
+        dialog.show()
+    }
+
+    private fun refreshConnectionsList(
+        textCount: TextView,
+        textEmpty: TextView,
+        recyclerView: RecyclerView,
+    ) {
+        runOnDefaultDispatcher {
+            val list = mutableListOf<ConnectionItem>()
+            try {
+                val req = Request.Builder().url("$apiBaseUrl/connections").build()
+                httpClient.newCall(req).execute().use { response ->
+                    if (response.isSuccessful) {
+                        val body = response.body?.string() ?: return@use
+                        val json = JSONObject(body)
+                        val connArr = json.optJSONArray("connections")
+                        if (connArr != null) {
+                            for (i in 0 until connArr.length()) {
+                                val connObj = connArr.optJSONObject(i) ?: continue
+                                val id = connObj.optString("id")
+                                val meta = connObj.optJSONObject("metadata")
+                                val network = meta?.optString("network") ?: "tcp"
+                                val host = meta?.optString("host") ?: ""
+                                val destIP = meta?.optString("destinationIP") ?: ""
+                                val destPort = meta?.optString("destinationPort") ?: ""
+                                val process = meta?.optString("processPath") ?: ""
+                                val up = connObj.optLong("upload", 0L)
+                                val down = connObj.optLong("download", 0L)
+                                val rule = connObj.optString("rule") ?: ""
+                                val chainsArr = connObj.optJSONArray("chains")
+                                val chainsList = mutableListOf<String>()
+                                if (chainsArr != null) {
+                                    for (j in 0 until chainsArr.length()) {
+                                        val chain = chainsArr.optString(j)
+                                        if (chain.isNotBlank()) chainsList.add(chain)
+                                    }
+                                }
+                                list.add(
+                                    ConnectionItem(
+                                        id = id,
+                                        network = network.uppercase(Locale.ROOT),
+                                        host = host,
+                                        destinationIP = destIP,
+                                        destinationPort = destPort,
+                                        processPath = process,
+                                        upload = up,
+                                        download = down,
+                                        rule = rule,
+                                        chains = chainsList
+                                    )
+                                )
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Logs.w(e)
+            }
+
+            onMainDispatcher {
+                textCount.text = getString(R.string.connections_count, list.size)
+                if (list.isEmpty()) {
+                    textEmpty.visibility = View.VISIBLE
+                    recyclerView.visibility = View.GONE
+                } else {
+                    textEmpty.visibility = View.GONE
+                    recyclerView.visibility = View.VISIBLE
+                    (recyclerView.adapter as? ConnectionsAdapter)?.submitList(list)
+                }
+            }
+        }
+    }
+
+    private fun closeConnection(id: String, onClosed: () -> Unit) {
+        runOnDefaultDispatcher {
+            try {
+                val req = Request.Builder()
+                    .url("$apiBaseUrl/connections/$id")
+                    .delete()
+                    .build()
+                httpClient.newCall(req).execute().close()
+                onMainDispatcher {
+                    onClosed()
+                }
+            } catch (e: Exception) {
+                Logs.w(e)
+            }
+        }
+    }
+
+    private fun closeAllConnections(onClosed: () -> Unit) {
+        runOnDefaultDispatcher {
+            try {
+                val req = Request.Builder()
+                    .url("$apiBaseUrl/connections")
+                    .delete()
+                    .build()
+                httpClient.newCall(req).execute().close()
+                onMainDispatcher {
+                    onClosed()
+                }
+            } catch (e: Exception) {
+                Logs.w(e)
+            }
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         stopPolling()
+    }
+}
+
+internal fun formatBytesInternal(bytes: Long): String {
+    if (bytes <= 0) return "0 B"
+    val units = arrayOf("B", "KB", "MB", "GB", "TB")
+    val digitGroups = (Math.log10(bytes.toDouble()) / Math.log10(1024.0)).toInt()
+    val index = digitGroups.coerceIn(0, units.size - 1)
+    return String.format(Locale.US, "%.1f %s", bytes / Math.pow(1024.0, index.toDouble()), units[index])
+}
+
+data class ConnectionItem(
+    val id: String,
+    val network: String,
+    val host: String,
+    val destinationIP: String,
+    val destinationPort: String,
+    val processPath: String,
+    val upload: Long,
+    val download: Long,
+    val rule: String,
+    val chains: List<String>
+) {
+    val displayTarget: String
+        get() {
+            val dest = if (host.isNotBlank()) host else destinationIP
+            return if (destinationPort.isNotBlank()) "$dest:$destinationPort" else dest
+        }
+
+    val displayRuleChain: String
+        get() {
+            return if (chains.isNotEmpty()) {
+                chains.joinToString(" → ")
+            } else if (rule.isNotBlank()) {
+                rule
+            } else {
+                "DIRECT"
+            }
+        }
+}
+
+class ConnectionsAdapter(
+    private val onKillClick: (ConnectionItem) -> Unit,
+) : RecyclerView.Adapter<ConnectionsAdapter.ViewHolder>() {
+
+    private val items = ArrayList<ConnectionItem>()
+
+    fun submitList(newItems: List<ConnectionItem>) {
+        items.clear()
+        items.addAll(newItems)
+        notifyDataSetChanged()
+    }
+
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val textNetwork: TextView = view.findViewById(R.id.text_conn_network)
+        val textHost: TextView = view.findViewById(R.id.text_conn_host)
+        val textProcess: TextView = view.findViewById(R.id.text_conn_process)
+        val textTraffic: TextView = view.findViewById(R.id.text_conn_traffic)
+        val textRuleChain: TextView = view.findViewById(R.id.text_conn_rule_chain)
+        val btnKill: ImageButton = view.findViewById(R.id.btn_kill_conn)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_connection_item, parent, false)
+        return ViewHolder(view)
+    }
+
+    override fun getItemCount() = items.size
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val item = items[position]
+        holder.textNetwork.text = item.network
+        if (item.network == "UDP") {
+            holder.textNetwork.setTextColor(Color.parseColor("#FF9800"))
+            holder.textNetwork.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#20FF9800"))
+        } else {
+            holder.textNetwork.setTextColor(Color.parseColor("#2196F3"))
+            holder.textNetwork.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#202196F3"))
+        }
+
+        holder.textHost.text = item.displayTarget
+
+        if (item.processPath.isNotBlank()) {
+            holder.textProcess.text = item.processPath
+            holder.textProcess.visibility = View.VISIBLE
+        } else {
+            holder.textProcess.visibility = View.GONE
+        }
+
+        holder.textTraffic.text = "↑ ${formatBytesInternal(item.upload)}  ↓ ${formatBytesInternal(item.download)}"
+        holder.textRuleChain.text = item.displayRuleChain
+
+        holder.btnKill.setOnClickListener {
+            onKillClick(item)
+        }
     }
 }
