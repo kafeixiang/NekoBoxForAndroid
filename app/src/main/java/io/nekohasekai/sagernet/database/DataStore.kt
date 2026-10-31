@@ -302,6 +302,14 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var optimisticDns by configurationStore.boolean(Key.OPTIMISTIC_DNS)
     var fakeDnsExclude by configurationStore.string(Key.FAKE_DNS_EXCLUDE)
     var dnsClientSubnet by configurationStore.string(Key.DNS_CLIENT_SUBNET)
+    var dnsCacheCapacity by configurationStore.int(Key.DNS_CACHE_CAPACITY) { 1024 }
+    var dnsDisableCache by configurationStore.boolean(Key.DNS_DISABLE_CACHE) { false }
+    var dnsDisableExpire by configurationStore.boolean(Key.DNS_DISABLE_EXPIRE) { false }
+    var dnsIndependentCache by configurationStore.boolean(Key.DNS_INDEPENDENT_CACHE) { false }
+    var dnsReverseMapping by configurationStore.boolean(Key.DNS_REVERSE_MAPPING) { false }
+
+    var strictRoute by configurationStore.boolean(Key.STRICT_ROUTE) { false }
+    var tunUdpTimeout by configurationStore.int(Key.TUN_UDP_TIMEOUT) { 300 }
     var tunUdpMapping by configurationStore.string(Key.TUN_UDP_MAPPING)
     var enableNTP by configurationStore.boolean(Key.ENABLE_NTP)
     var ntpServer by configurationStore.string(Key.NTP_SERVER) { "time.apple.com" }

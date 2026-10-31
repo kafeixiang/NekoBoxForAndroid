@@ -180,6 +180,13 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         findPreference<Preference>(Key.OPTIMISTIC_DNS)?.onPreferenceChangeListener = reloadListener
         findPreference<Preference>(Key.FAKE_DNS_EXCLUDE)?.onPreferenceChangeListener = reloadListener
         findPreference<Preference>(Key.DNS_CLIENT_SUBNET)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.DNS_CACHE_CAPACITY)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.DNS_DISABLE_CACHE)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.DNS_DISABLE_EXPIRE)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.DNS_INDEPENDENT_CACHE)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.DNS_REVERSE_MAPPING)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.STRICT_ROUTE)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.TUN_UDP_TIMEOUT)?.onPreferenceChangeListener = reloadListener
         findPreference<Preference>(Key.STORE_CACHE_FILE)?.onPreferenceChangeListener = reloadListener
         findPreference<Preference>(Key.ENABLE_NTP)?.onPreferenceChangeListener = reloadListener
         findPreference<Preference>(Key.NTP_SERVER)?.onPreferenceChangeListener = reloadListener

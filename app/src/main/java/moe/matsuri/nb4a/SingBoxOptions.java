@@ -337,6 +337,8 @@ public class SingBoxOptions {
 
         public Boolean independent_cache;
 
+        public Integer cache_capacity;
+
         // End of public DNSClientOptions ;
 
     }
@@ -392,6 +394,8 @@ public class SingBoxOptions {
         public Boolean disable_expire;
 
         public Boolean independent_cache;
+
+        public Integer cache_capacity;
 
     }
 

@@ -875,4 +875,20 @@
     <string name="confirm_close_all_connections">Are you sure you want to close all active connections?</string>
     <string name="close">Close</string>
 
+    <string name="strict_route">Strict Route</string>
+    <string name="strict_route_summary">Enforce strict routing in TUN mode to prevent IPv4/IPv6 traffic leakage</string>
+    <string name="tun_udp_timeout">TUN UDP Timeout</string>
+    <string name="tun_udp_timeout_summary">UDP NAT session timeout in TUN interface (in seconds, default 300)</string>
+
+    <string name="dns_cache_capacity">DNS Cache Capacity</string>
+    <string name="dns_cache_capacity_summary">Maximum number of DNS responses to cache (default 1024)</string>
+    <string name="dns_disable_cache">Disable DNS Cache</string>
+    <string name="dns_disable_cache_summary">Never cache DNS query responses locally</string>
+    <string name="dns_disable_expire">Disable DNS Expire</string>
+    <string name="dns_disable_expire_summary">Disable TTL expiration to keep DNS responses cached indefinitely</string>
+    <string name="dns_independent_cache">Independent DNS Cache</string>
+    <string name="dns_independent_cache_summary">Isolate DNS caches individually for each DNS server tag</string>
+    <string name="dns_reverse_mapping">DNS Reverse Mapping</string>
+    <string name="dns_reverse_mapping_summary">Store reverse IP-to-domain mapping to help routing and sniffing</string>
+
 </resources>

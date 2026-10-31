@@ -250,6 +250,21 @@ fun buildConfig(
             if (DataStore.dnsClientSubnet.isNotBlank()) {
                 client_subnet = DataStore.dnsClientSubnet.trim()
             }
+            if (DataStore.dnsDisableCache) {
+                disable_cache = true
+            }
+            if (DataStore.dnsDisableExpire) {
+                disable_expire = true
+            }
+            if (DataStore.dnsIndependentCache) {
+                independent_cache = true
+            }
+            if (DataStore.dnsReverseMapping) {
+                reverse_mapping = true
+            }
+            if (DataStore.dnsCacheCapacity > 0) {
+                cache_capacity = DataStore.dnsCacheCapacity
+            }
         }
 
         inbounds = mutableListOf()
@@ -260,7 +275,10 @@ fun buildConfig(
                 tag = "tun-in"
                 mtu = DataStore.mtu
                 auto_route = false
-                strict_route = false
+                strict_route = DataStore.strictRoute
+                if (DataStore.tunUdpTimeout > 0) {
+                    udp_timeout = DataStore.tunUdpTimeout.toLong()
+                }
                 if (DataStore.tunUdpMapping.isNotBlank()) {
                     udp_mapping = DataStore.tunUdpMapping
                     if (DataStore.tunUdpMapping == "full_cone") {
