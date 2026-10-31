@@ -762,4 +762,11 @@
     <string name="dashboard_testing">测速中...</string>
     <string name="dashboard_service_not_running">服务未运行，请先启动 VPN 连接</string>
     <string name="dashboard_switched_to">已切换到 %s</string>
+
+    <string name="fake_dns_exclude">FakeIP 排除列表 (过滤)</string>
+    <string name="fake_dns_exclude_summary">匹配该列表的域名将跳过 FakeIP 分配，直接解析为真实 IP</string>
+    <string name="fake_dns_exclude_dialog_message">每行或逗号分隔一个域名或规则（例如 *.lan, *.local, geosite:cn，或指定 remote:example.com）</string>
+    <string name="dns_client_subnet">EDNS 客户端子网 (ECS)</string>
+    <string name="dns_client_subnet_summary">在 DNS 查询中附加客户端 IP 子网前缀，使 CDN 精准调度最优就近节点</string>
+    <string name="dns_client_subnet_dialog_message">例如 1.2.3.0/24 或 2001:da8::/48（留空表示不启用）</string>
 </resources>

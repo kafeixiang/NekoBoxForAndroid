@@ -247,6 +247,9 @@ fun buildConfig(
                 // sing-box optimistic dns
                 _hack_config_map["optimistic"] = mapOf("enabled" to true)
             }
+            if (DataStore.dnsClientSubnet.isNotBlank()) {
+                client_subnet = DataStore.dnsClientSubnet.trim()
+            }
         }
 
         inbounds = mutableListOf()
@@ -968,6 +971,23 @@ fun buildConfig(
                     makeSingBoxRule(domainListDNSDirectForce.toHashSet().toList())
                     server = "dns-direct"
                 })
+            }
+            // FakeIP exclude filter rules
+            if (useFakeDns && DataStore.fakeDnsExclude.isNotBlank()) {
+                val fakeExcludes = DataStore.fakeDnsExclude.listByLineOrComma()
+                val (remoteExcludes, directExcludes) = fakeExcludes.partition { it.startsWith("remote:") }
+                if (directExcludes.isNotEmpty()) {
+                    dns.rules.add(0, DNSRule_DefaultOptions().apply {
+                        makeSingBoxRule(directExcludes.map { it.removePrefix("direct:") })
+                        server = "dns-direct"
+                    })
+                }
+                if (remoteExcludes.isNotEmpty()) {
+                    dns.rules.add(0, DNSRule_DefaultOptions().apply {
+                        makeSingBoxRule(remoteExcludes.map { it.removePrefix("remote:") })
+                        server = "dns-remote"
+                    })
+                }
             }
         }
 

@@ -324,6 +324,8 @@ public class SingBoxOptions {
 
         public Boolean reverse_mapping;
 
+        public String client_subnet;
+
         public DNSFakeIPOptions fakeip;
 
         // Generate note: nested type DNSClientOptions
@@ -376,6 +378,8 @@ public class SingBoxOptions {
         public Boolean accept_default_resolvers;
 
         public Boolean accept_search_domain;
+
+        public String client_subnet;
 
     }
 
@@ -1351,6 +1355,8 @@ public class SingBoxOptions {
         public Boolean disable_cache;
 
         public Integer rewrite_ttl;
+
+        public String client_subnet;
 
         public Boolean rule_set_ip_cidr_match_source;
 
@@ -5173,6 +5179,8 @@ public class SingBoxOptions {
         public Boolean disable_cache;
 
         public Integer rewrite_ttl;
+
+        public String client_subnet;
 
         public Boolean rule_set_ip_cidr_match_source;
 

@@ -296,6 +296,8 @@ object DataStore : OnPreferenceDataStoreChangeListener {
 
     var storeCacheFile by configurationStore.boolean(Key.STORE_CACHE_FILE) { true }
     var optimisticDns by configurationStore.boolean(Key.OPTIMISTIC_DNS)
+    var fakeDnsExclude by configurationStore.string(Key.FAKE_DNS_EXCLUDE)
+    var dnsClientSubnet by configurationStore.string(Key.DNS_CLIENT_SUBNET)
     var tunUdpMapping by configurationStore.string(Key.TUN_UDP_MAPPING)
     var enableNTP by configurationStore.boolean(Key.ENABLE_NTP)
     var ntpServer by configurationStore.string(Key.NTP_SERVER) { "time.apple.com" }

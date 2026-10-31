@@ -178,6 +178,8 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         findPreference<Preference>(Key.TCP_FAST_OPEN)?.onPreferenceChangeListener = reloadListener
         findPreference<Preference>(Key.TUN_UDP_MAPPING)?.onPreferenceChangeListener = reloadListener
         findPreference<Preference>(Key.OPTIMISTIC_DNS)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.FAKE_DNS_EXCLUDE)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.DNS_CLIENT_SUBNET)?.onPreferenceChangeListener = reloadListener
         findPreference<Preference>(Key.STORE_CACHE_FILE)?.onPreferenceChangeListener = reloadListener
         findPreference<Preference>(Key.ENABLE_NTP)?.onPreferenceChangeListener = reloadListener
         findPreference<Preference>(Key.NTP_SERVER)?.onPreferenceChangeListener = reloadListener

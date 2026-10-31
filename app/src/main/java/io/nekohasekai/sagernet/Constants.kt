@@ -170,6 +170,8 @@ object Key {
 
     const val STORE_CACHE_FILE = "storeCacheFile"
     const val OPTIMISTIC_DNS = "optimisticDns"
+    const val FAKE_DNS_EXCLUDE = "fakeDnsExclude"
+    const val DNS_CLIENT_SUBNET = "dnsClientSubnet"
     const val TUN_UDP_MAPPING = "tunUdpMapping"
     const val ENABLE_NTP = "enableNTP"
     const val NTP_SERVER = "ntpServer"

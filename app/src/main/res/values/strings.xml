@@ -849,4 +849,11 @@
     <string name="dashboard_service_not_running">Service is not connected, please connect first</string>
     <string name="dashboard_switched_to">Switched to %s</string>
 
+    <string name="fake_dns_exclude">FakeIP Filter (Exclude List)</string>
+    <string name="fake_dns_exclude_summary">Domains matching this list will bypass FakeIP and resolve to real IPs</string>
+    <string name="fake_dns_exclude_dialog_message">Enter domains or rules separated by line or comma (e.g. *.lan, *.local, geosite:cn, or remote:example.com)</string>
+    <string name="dns_client_subnet">EDNS Client Subnet (ECS)</string>
+    <string name="dns_client_subnet_summary">Attach client subnet IP prefix to DNS queries for optimal CDN geo-routing</string>
+    <string name="dns_client_subnet_dialog_message">e.g. 1.2.3.0/24 or 2001:da8::/48 (leave empty to disable)</string>
+
 </resources>
