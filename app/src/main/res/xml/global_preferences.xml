@@ -182,6 +182,22 @@
             app:key="overrideAndroidVpn"
             app:summary="@string/override_android_vpn_summary"
             app:title="@string/override_android_vpn" />
+        <moe.matsuri.nb4a.ui.SimpleMenuPreference
+            app:defaultValue=""
+            app:entries="@array/network_strategy_entries"
+            app:entryValues="@array/network_strategy_values"
+            app:icon="@drawable/ic_baseline_compare_arrows_24"
+            app:key="defaultNetworkStrategy"
+            app:summary="@string/default_network_strategy_summary"
+            app:title="@string/default_network_strategy"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:defaultValue="300"
+            app:icon="@drawable/ic_baseline_shutter_speed_24"
+            app:key="defaultFallbackDelay"
+            app:summary="@string/default_fallback_delay_summary"
+            app:title="@string/default_fallback_delay"
+            app:useSimpleSummaryProvider="true" />
         <SwitchPreference
             app:icon="@drawable/ic_baseline_compare_arrows_24"
             app:key="tcpMultiPath"
@@ -401,6 +417,21 @@
             app:key="useSingBoxNativeMode"
             app:summary="@string/use_singbox_native_mode_summary"
             app:title="@string/use_singbox_native_mode" />
+        <EditTextPreference
+            app:defaultValue="50"
+            app:dependency="useSingBoxNativeMode"
+            app:icon="@drawable/ic_baseline_tune_24"
+            app:key="urlTestTolerance"
+            app:summary="@string/urltest_tolerance_summary"
+            app:title="@string/urltest_tolerance"
+            app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:defaultValue="false"
+            app:dependency="useSingBoxNativeMode"
+            app:icon="@drawable/ic_navigation_close"
+            app:key="urlTestInterrupt"
+            app:summary="@string/urltest_interrupt_summary"
+            app:title="@string/urltest_interrupt" />
         <SwitchPreference
             app:key="showBottomBar"
             app:title="@string/show_bottom_bar" />

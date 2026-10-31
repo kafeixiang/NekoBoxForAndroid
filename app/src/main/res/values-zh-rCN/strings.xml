@@ -821,4 +821,16 @@
     <string name="udp_filtering_address_dependent">受限锥形 (Address Dependent)</string>
     <string name="tun_exclude_mptcp">排除多路径 TCP (Exclude MPTCP)</string>
     <string name="tun_exclude_mptcp_summary">从 TUN 虚拟网卡中排除 MPTCP 流量，防止多路径流量绕过代理或连接异常</string>
+
+    <string name="default_word">默认</string>
+    <string name="default_network_strategy">网络接口调度策略</string>
+    <string name="default_network_strategy_summary">设置多网卡调度：混合加速 (WiFi + 蜂窝并发) 或 故障快速回退</string>
+    <string name="network_strategy_hybrid">混合模式 (WiFi + 蜂窝并发加速)</string>
+    <string name="network_strategy_fallback">回退模式 (优先 WiFi，弱网故障秒切蜂窝)</string>
+    <string name="default_fallback_delay">回退等待超时 (毫秒)</string>
+    <string name="default_fallback_delay_summary">首选网络无响应时回退备用网络的超时时间（默认 300ms）</string>
+    <string name="urltest_tolerance">URLTest 切换容差 (毫秒)</string>
+    <string name="urltest_tolerance_summary">自动优选节点判定的延迟容差阈值（默认 50ms）</string>
+    <string name="urltest_interrupt">节点切换时中断连接</string>
+    <string name="urltest_interrupt_summary">自动优选切换到更优节点时，主动断开当前活跃旧连接</string>
 </resources>

@@ -190,6 +190,8 @@ fun buildConfig(
                     clash_api = ClashAPIOptions().apply {
                         external_controller = "127.0.0.1:9090"
                         external_ui = "../files/yacd"
+                        access_control_allow_origin = listOf("*")
+                        access_control_allow_private_network = true
                     }
                 }
                 if (DataStore.storeCacheFile) {
@@ -197,6 +199,7 @@ fun buildConfig(
                         enabled = true
                         path = "cache.db"
                         store_fakeip = true
+                        store_dns = true
                         store_rdrc = true
                     }
                 }
@@ -339,6 +342,16 @@ fun buildConfig(
             rule_set = mutableListOf()
             if (DataStore.overrideAndroidVpn) {
                 override_android_vpn = true
+            }
+            if (DataStore.defaultNetworkStrategy.isNotBlank() && DataStore.defaultNetworkStrategy != "default") {
+                default_network_strategy = DataStore.defaultNetworkStrategy
+                if (DataStore.defaultNetworkStrategy == "fallback") {
+                    default_network_type = listOf("wifi")
+                    default_fallback_network_type = listOf("cellular")
+                    if (DataStore.defaultFallbackDelay > 0) {
+                        default_fallback_delay = "${DataStore.defaultFallbackDelay}ms"
+                    }
+                }
             }
         }
 
@@ -655,7 +668,10 @@ fun buildConfig(
                 outbounds = candidateTags
                 url = DataStore.connectionTestURL.ifBlank { "http://cp.cloudflare.com/" }
                 interval = 180000000000L // 3 分钟 (ns)
-                tolerance = 50
+                tolerance = if (DataStore.urlTestTolerance > 0) DataStore.urlTestTolerance else 50
+                if (DataStore.urlTestInterrupt) {
+                    interrupt_exist_connections = true
+                }
             })
 
             // 2. Selector 手动/自动切换策略组

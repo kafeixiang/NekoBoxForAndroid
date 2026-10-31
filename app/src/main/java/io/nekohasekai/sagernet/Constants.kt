@@ -192,6 +192,10 @@ object Key {
     const val ENABLE_NTP = "enableNTP"
     const val NTP_SERVER = "ntpServer"
     const val USE_SINGBOX_NATIVE_MODE = "useSingBoxNativeMode"
+    const val DEFAULT_NETWORK_STRATEGY = "defaultNetworkStrategy"
+    const val DEFAULT_FALLBACK_DELAY = "defaultFallbackDelay"
+    const val URLTEST_TOLERANCE = "urlTestTolerance"
+    const val URLTEST_INTERRUPT = "urlTestInterrupt"
 
     const val WIREGUARD_WORKERS = "wireguardWorkers"
     const val WIREGUARD_PERSISTENT_KEEPALIVE = "wireguardPersistentKeepalive"

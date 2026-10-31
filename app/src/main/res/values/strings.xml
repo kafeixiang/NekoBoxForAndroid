@@ -908,4 +908,16 @@
     <string name="tun_exclude_mptcp">Exclude MPTCP</string>
     <string name="tun_exclude_mptcp_summary">Exclude Multipath TCP traffic to prevent tunnel leaks or connection interruptions</string>
 
+    <string name="default_word">Default</string>
+    <string name="default_network_strategy">Network Interface Strategy</string>
+    <string name="default_network_strategy_summary">Configure multi-interface behavior: Hybrid (WiFi + Cellular concurrent) or Fallback</string>
+    <string name="network_strategy_hybrid">Hybrid (WiFi + Cellular Concurrent)</string>
+    <string name="network_strategy_fallback">Fallback (WiFi with Cellular Fallback)</string>
+    <string name="default_fallback_delay">Fallback Delay (ms)</string>
+    <string name="default_fallback_delay_summary">Connection timeout before falling back to cellular network (default 300ms)</string>
+    <string name="urltest_tolerance">URLTest Tolerance (ms)</string>
+    <string name="urltest_tolerance_summary">Tolerance threshold in milliseconds for optimal node switching (default 50)</string>
+    <string name="urltest_interrupt">URLTest Interrupt Connections</string>
+    <string name="urltest_interrupt_summary">Interrupt existing active connections when optimal node switches</string>
+
 </resources>

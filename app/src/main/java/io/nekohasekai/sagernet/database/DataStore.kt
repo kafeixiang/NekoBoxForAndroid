@@ -318,6 +318,10 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var enableNTP by configurationStore.boolean(Key.ENABLE_NTP)
     var ntpServer by configurationStore.string(Key.NTP_SERVER) { "time.apple.com" }
     var useSingBoxNativeMode by configurationStore.boolean(Key.USE_SINGBOX_NATIVE_MODE)
+    var defaultNetworkStrategy by configurationStore.string(Key.DEFAULT_NETWORK_STRATEGY)
+    var defaultFallbackDelay by configurationStore.int(Key.DEFAULT_FALLBACK_DELAY) { 300 }
+    var urlTestTolerance by configurationStore.int(Key.URLTEST_TOLERANCE) { 50 }
+    var urlTestInterrupt by configurationStore.boolean(Key.URLTEST_INTERRUPT) { false }
 
     var webdavServer: String?
         get() = configurationStore.getString("webdavServer")

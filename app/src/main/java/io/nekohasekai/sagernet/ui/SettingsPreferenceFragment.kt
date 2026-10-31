@@ -193,6 +193,10 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         findPreference<Preference>(Key.ENABLE_NTP)?.onPreferenceChangeListener = reloadListener
         findPreference<Preference>(Key.NTP_SERVER)?.onPreferenceChangeListener = reloadListener
         findPreference<Preference>(Key.USE_SINGBOX_NATIVE_MODE)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.DEFAULT_NETWORK_STRATEGY)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.DEFAULT_FALLBACK_DELAY)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.URLTEST_TOLERANCE)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.URLTEST_INTERRUPT)?.onPreferenceChangeListener = reloadListener
         hideFromRecentApps.setOnPreferenceChangeListener { _, newValue ->
             (activity as? MainActivity)?.applyHideFromRecentApps(newValue as Boolean)
             // needReload()

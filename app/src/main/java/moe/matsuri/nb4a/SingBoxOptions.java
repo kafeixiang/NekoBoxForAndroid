@@ -141,6 +141,10 @@ public class SingBoxOptions {
 
         public String default_mode;
 
+        public List<String> access_control_allow_origin;
+
+        public Boolean access_control_allow_private_network;
+
         // Generate note: option type:  public List<String> ModeList;
 
     }
@@ -428,6 +432,8 @@ public class SingBoxOptions {
         public Boolean store_fakeip;
 
         public Boolean store_rdrc;
+
+        public Boolean store_dns;
 
         public String path;
 
@@ -1173,6 +1179,14 @@ public class SingBoxOptions {
         public String default_interface;
 
         public Integer default_mark;
+
+        public String default_network_strategy;
+
+        public List<String> default_network_type;
+
+        public List<String> default_fallback_network_type;
+
+        public String default_fallback_delay;
 
     }
 
