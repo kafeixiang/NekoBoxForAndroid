@@ -26,6 +26,7 @@ class WireGuardSettingsActivity : ProfileSettingsActivity<WireGuardBean>() {
     private val reserved = pbm.add(PreferenceBinding(Type.Text, "reserved"))
     private val workers = pbm.add(PreferenceBinding(Type.TextToInt, "workers"))
     private val persistentKeepalive = pbm.add(PreferenceBinding(Type.TextToInt, "persistentKeepalive"))
+    private val systemInterface = pbm.add(PreferenceBinding(Type.Bool, "systemInterface"))
 
     override fun WireGuardBean.init() {
         pbm.writeToCacheAll(this)

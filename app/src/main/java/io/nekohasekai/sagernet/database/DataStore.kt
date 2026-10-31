@@ -221,6 +221,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverConnectionReceiveWindow by profileCacheStore.stringToIntIfExists(Key.SERVER_CONNECTION_RECEIVE_WINDOW)
     var serverDisableMtuDiscovery by profileCacheStore.boolean(Key.SERVER_DISABLE_MTU_DISCOVERY)
     var serverHopInterval by profileCacheStore.stringToInt(Key.SERVER_HOP_INTERVAL) { 10 }
+    var serverHopIntervalMax by profileCacheStore.stringToInt(Key.SERVER_HOP_INTERVAL_MAX) { 0 }
 
     var protocolVersion by profileCacheStore.stringToInt(Key.PROTOCOL_VERSION) { 2 } // default is SOCKS5
 
@@ -233,6 +234,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverDisableSNI by profileCacheStore.boolean(Key.SERVER_DISABLE_SNI)
     var serverReduceRTT by profileCacheStore.boolean(Key.SERVER_REDUCE_RTT)
     var serverUDPOverStream by profileCacheStore.boolean(Key.SERVER_UDP_OVER_STREAM)
+    var serverTuicHeartbeat by profileCacheStore.stringToInt(Key.SERVER_TUIC_HEARTBEAT) { 10 }
     var serverSunnyQuic by profileCacheStore.boolean(Key.SERVER_SUNNY_QUIC)
 
     var serverUserId by profileCacheStore.string(Key.SERVER_USER_ID)

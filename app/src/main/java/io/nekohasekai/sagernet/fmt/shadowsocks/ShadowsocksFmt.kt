@@ -122,5 +122,11 @@ fun buildSingBoxOutboundShadowsocksBean(bean: ShadowsocksBean): SingBoxOptions.O
                 plugin_opts = null
             }
         }
+        if (bean.sUoT == true) {
+            udp_over_tcp = SingBoxOptions.UDPOverTCPOptions().apply {
+                enabled = true
+                version = bean.sUoTVersion ?: 2
+            }
+        }
     }
 }

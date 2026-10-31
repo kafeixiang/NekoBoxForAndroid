@@ -522,7 +522,12 @@ fun buildConfig(
                     try {
                         val sUoT = bean.javaClass.getField("sUoT").get(bean)
                         if (sUoT is Boolean && sUoT) {
-                            _hack_config_map["udp_over_tcp"] = true
+                            val uotVer = try {
+                                bean.javaClass.getField("sUoTVersion").get(bean) as? Int ?: 2
+                            } catch (_: Exception) {
+                                2
+                            }
+                            _hack_config_map["udp_over_tcp"] = mapOf("enabled" to true, "version" to uotVer)
                         }
                     } catch (_: Exception) {
                     }

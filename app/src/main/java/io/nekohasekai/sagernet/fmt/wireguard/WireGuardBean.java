@@ -20,6 +20,7 @@ public class WireGuardBean extends AbstractBean {
     public String reserved;
     public Integer workers;
     public Integer persistentKeepalive;
+    public Boolean systemInterface;
 
     @Override
     public void initializeDefaultValues() {
@@ -32,11 +33,12 @@ public class WireGuardBean extends AbstractBean {
         if (reserved == null) reserved = "";
         if (workers == null) workers = 0;
         if (persistentKeepalive == null) persistentKeepalive = 0;
+        if (systemInterface == null) systemInterface = false;
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(3);
+        output.writeInt(4);
         super.serialize(output);
         output.writeString(localAddress);
         output.writeString(privateKey);
@@ -46,6 +48,8 @@ public class WireGuardBean extends AbstractBean {
         output.writeString(reserved);
         output.writeInt(workers != null ? workers : 0);
         output.writeInt(persistentKeepalive != null ? persistentKeepalive : 0);
+        // v4
+        output.writeBoolean(systemInterface != null ? systemInterface : false);
     }
 
     @Override
@@ -61,6 +65,11 @@ public class WireGuardBean extends AbstractBean {
         if (version >= 3) {
             workers = input.readInt();
             persistentKeepalive = input.readInt();
+        }
+        if (version >= 4) {
+            systemInterface = input.readBoolean();
+        } else {
+            systemInterface = false;
         }
     }
 

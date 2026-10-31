@@ -31,6 +31,7 @@ public class HysteriaBean extends AbstractBean {
     public Integer connectionReceiveWindow;
     public Boolean disableMtuDiscovery;
     public Integer hopInterval;
+    public Integer hopIntervalMax;
 
     // HY2 Sing-box 1.15 features
     public String bbrProfile;
@@ -85,6 +86,7 @@ public class HysteriaBean extends AbstractBean {
         if (connectionReceiveWindow == null) connectionReceiveWindow = 0;
         if (disableMtuDiscovery == null) disableMtuDiscovery = false;
         if (hopInterval == null) hopInterval = 10;
+        if (hopIntervalMax == null) hopIntervalMax = 0;
         if (serverPorts == null) serverPorts = "443";
         if (bbrProfile == null) bbrProfile = "";
         if (disableChromeParrot == null) disableChromeParrot = false;
@@ -96,7 +98,7 @@ public class HysteriaBean extends AbstractBean {
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(8);
+        output.writeInt(9);
         super.serialize(output);
 
         output.writeInt(protocolVersion);
@@ -125,6 +127,8 @@ public class HysteriaBean extends AbstractBean {
         output.writeString(obfsType);
         output.writeInt(geckoMinPacketSize);
         output.writeInt(geckoMaxPacketSize);
+        // v9
+        output.writeInt(hopIntervalMax != null ? hopIntervalMax : 0);
     }
 
     @Override
@@ -188,6 +192,11 @@ public class HysteriaBean extends AbstractBean {
             obfsType = "salamander";
             geckoMinPacketSize = 0;
             geckoMaxPacketSize = 0;
+        }
+        if (version >= 9) {
+            hopIntervalMax = input.readInt();
+        } else {
+            hopIntervalMax = 0;
         }
     }
 

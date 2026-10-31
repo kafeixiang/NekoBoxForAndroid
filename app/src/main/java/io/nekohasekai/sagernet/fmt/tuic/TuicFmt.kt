@@ -80,6 +80,12 @@ fun buildSingBoxOutboundTuicBean(bean: TuicBean): SingBoxOptions.Outbound_TUICOp
         when (bean.udpRelayMode) {
             "quic" -> udp_relay_mode = "quic"
         }
+        if (bean.udpOverStream == true) {
+            udp_over_stream = true
+        }
+        if (bean.heartbeat != null && bean.heartbeat > 0) {
+            _hack_config_map["heartbeat"] = "${bean.heartbeat}s"
+        }
         zero_rtt_handshake = bean.reduceRTT
         tls = SingBoxOptions.OutboundTLSOptions().apply {
             if (bean.sni.isNotBlank()) {

@@ -43,6 +43,9 @@ fun buildSingBoxOutboundWireguardBean(bean: WireGuardBean): SingBoxOptions.Outbo
 
     return SingBoxOptions.Outbound_WireGuardOptions().apply {
         type = "wireguard"
+        if (bean.systemInterface == true) {
+            system = true
+        }
         peers = mutableListOf(peer)
         address = addrs
         private_key = bean.privateKey

@@ -125,6 +125,11 @@
             app:key="hopInterval"
             app:title="@string/hop_interval"
             app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:defaultValue="0"
+            app:key="hopIntervalMax"
+            app:title="@string/hop_interval_max"
+            app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
 </PreferenceScreen> 

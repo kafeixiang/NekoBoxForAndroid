@@ -35,6 +35,7 @@ class HysteriaSettingsActivity : ProfileSettingsActivity<HysteriaBean>() {
         DataStore.serverConnectionReceiveWindow = connectionReceiveWindow
         DataStore.serverDisableMtuDiscovery = disableMtuDiscovery
         DataStore.serverHopInterval = hopInterval
+        DataStore.serverHopIntervalMax = hopIntervalMax ?: 0
         DataStore.serverPinnedCertChainSha256 = pinSHA256
         DataStore.serverHysteriaBbrProfile = bbrProfile
         DataStore.serverHysteriaDisableChromeParrot = disableChromeParrot
@@ -60,6 +61,7 @@ class HysteriaSettingsActivity : ProfileSettingsActivity<HysteriaBean>() {
         connectionReceiveWindow = DataStore.serverConnectionReceiveWindow
         disableMtuDiscovery = DataStore.serverDisableMtuDiscovery
         hopInterval = DataStore.serverHopInterval
+        hopIntervalMax = DataStore.serverHopIntervalMax
         pinSHA256 = DataStore.serverPinnedCertChainSha256
         bbrProfile = DataStore.serverHysteriaBbrProfile
         disableChromeParrot = DataStore.serverHysteriaDisableChromeParrot
@@ -101,6 +103,7 @@ class HysteriaSettingsActivity : ProfileSettingsActivity<HysteriaBean>() {
             findPreference<SimpleMenuPreference>(Key.SERVER_HYSTERIA_BBR_PROFILE)?.isVisible = isV2
             findPreference<SwitchPreference>(Key.SERVER_HYSTERIA_DISABLE_CHROME_PARROT)?.isVisible = isV2
             findPreference<SimpleMenuPreference>(Key.SERVER_HYSTERIA_OBFS_TYPE)?.isVisible = isV2
+            findPreference<EditTextPreference>(Key.SERVER_HOP_INTERVAL_MAX)?.isVisible = isV2
         }
         findPreference<SimpleMenuPreference>(Key.PROTOCOL_VERSION)!!.setOnPreferenceChangeListener { _, newValue ->
             updateVersion(newValue.toString().toIntOrNull() ?: 1)
@@ -129,6 +132,9 @@ class HysteriaSettingsActivity : ProfileSettingsActivity<HysteriaBean>() {
         }
 
         findPreference<EditTextPreference>(Key.SERVER_HOP_INTERVAL)!!.apply {
+            setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
+        }
+        findPreference<EditTextPreference>(Key.SERVER_HOP_INTERVAL_MAX)?.apply {
             setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
         }
     }

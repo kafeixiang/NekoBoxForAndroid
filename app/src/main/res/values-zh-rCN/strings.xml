@@ -811,4 +811,9 @@
     <string name="tls_cipher_suites_summary">自定义密码套件列表，支持逗号或换行分隔（留空使用默认）</string>
     <string name="tls_handshake_timeout">TLS 握手超时时间</string>
     <string name="tls_handshake_timeout_summary">TLS 握手超时限制（秒，0 表示使用默认）</string>
+
+    <string name="uot_version">UDP over TCP 版本</string>
+    <string name="hop_interval_max">最大跳跃间隔（秒）</string>
+    <string name="tuic_heartbeat">心跳间隔（秒）</string>
+    <string name="wireguard_system_interface">系统内核接口 (WireGuard Kernel)</string>
 </resources>

@@ -898,4 +898,9 @@
     <string name="tls_handshake_timeout">TLS Handshake Timeout</string>
     <string name="tls_handshake_timeout_summary">Handshake timeout in seconds (0 for default)</string>
 
+    <string name="uot_version">UDP over TCP Version</string>
+    <string name="hop_interval_max">Max Hop Interval (s)</string>
+    <string name="tuic_heartbeat">Heartbeat Interval (s)</string>
+    <string name="wireguard_system_interface">System Kernel Interface</string>
+
 </resources>

@@ -31,6 +31,7 @@ class ShadowsocksSettingsActivity : ProfileSettingsActivity<ShadowsocksBean>() {
     private val pluginName = pbm.add(PreferenceBinding(Type.Text, "pluginName"))
     private val pluginConfig = pbm.add(PreferenceBinding(Type.Text, "pluginConfig"))
     private val sUoT = pbm.add(PreferenceBinding(Type.Bool, "sUoT"))
+    private val sUoTVersion = pbm.add(PreferenceBinding(Type.TextToInt, "sUoTVersion"))
     private val enableMux = pbm.add(PreferenceBinding(Type.Bool, "enableMux"))
     private val muxType = pbm.add(PreferenceBinding(Type.TextToInt, "muxType"))
     private val muxConcurrency = pbm.add(PreferenceBinding(Type.TextToInt, "muxConcurrency"))

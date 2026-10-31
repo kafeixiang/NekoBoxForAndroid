@@ -18,6 +18,7 @@ public class ShadowsocksBean extends AbstractBean {
     public String plugin;
 
     public Boolean sUoT;
+    public Integer sUoTVersion;
 
     public Boolean enableMux;
     public Boolean muxPadding;
@@ -39,6 +40,7 @@ public class ShadowsocksBean extends AbstractBean {
         if (password == null) password = "";
         if (plugin == null) plugin = "";
         if (sUoT == null) sUoT = false;
+        if (sUoTVersion == null) sUoTVersion = 2;
 
         if (enableMux == null) enableMux = false;
         if (muxPadding == null) muxPadding = false;
@@ -54,7 +56,7 @@ public class ShadowsocksBean extends AbstractBean {
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(5);
+        output.writeInt(6);
         super.serialize(output);
         output.writeString(method);
         output.writeString(password);
@@ -73,6 +75,8 @@ public class ShadowsocksBean extends AbstractBean {
         output.writeBoolean(muxBrutal);
         output.writeInt(muxBrutalUpMbps);
         output.writeInt(muxBrutalDownMbps);
+        // v6
+        output.writeInt(sUoTVersion != null ? sUoTVersion : 2);
     }
 
     @Override
@@ -101,6 +105,10 @@ public class ShadowsocksBean extends AbstractBean {
             muxBrutal = input.readBoolean();
             muxBrutalUpMbps = input.readInt();
             muxBrutalDownMbps = input.readInt();
+        }
+        // v6
+        if (version >= 6) {
+            sUoTVersion = input.readInt();
         }
     }
 

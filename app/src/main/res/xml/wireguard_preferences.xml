@@ -60,6 +60,11 @@
             app:key="persistentKeepalive"
             app:title="@string/wireguard_persistent_keepalive"
             app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:defaultValue="false"
+            app:icon="@drawable/ic_baseline_tune_24"
+            app:key="systemInterface"
+            app:title="@string/wireguard_system_interface" />
     </PreferenceCategory>
 
 </PreferenceScreen>

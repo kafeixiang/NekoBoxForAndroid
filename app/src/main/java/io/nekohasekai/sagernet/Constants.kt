@@ -125,6 +125,7 @@ object Key {
     const val SERVER_CONNECTION_RECEIVE_WINDOW = "serverConnectionReceiveWindow"
     const val SERVER_DISABLE_MTU_DISCOVERY = "serverDisableMtuDiscovery"
     const val SERVER_HOP_INTERVAL = "hopInterval"
+    const val SERVER_HOP_INTERVAL_MAX = "hopIntervalMax"
 
     const val SERVER_PRIVATE_KEY = "serverPrivateKey"
     const val SERVER_INSECURE_CONCURRENCY = "serverInsecureConcurrency"
@@ -134,6 +135,7 @@ object Key {
     const val SERVER_DISABLE_SNI = "serverDisableSNI"
     const val SERVER_REDUCE_RTT = "serverReduceRTT"
     const val SERVER_UDP_OVER_STREAM = "serverUDPOverStream"
+    const val SERVER_TUIC_HEARTBEAT = "serverTuicHeartbeat"
     const val SERVER_SUNNY_QUIC = "serverSunnyQuic"
 
     const val SERVER_USER_ID = "serverUserId"

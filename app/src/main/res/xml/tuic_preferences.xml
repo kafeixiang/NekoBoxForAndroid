@@ -64,6 +64,16 @@
             app:title="@string/sni"
             app:useSimpleSummaryProvider="true" />
         <SwitchPreference
+            app:icon="@drawable/ic_baseline_stream_24"
+            app:key="serverUDPOverStream"
+            app:title="@string/udp_over_stream" />
+        <EditTextPreference
+            app:defaultValue="10"
+            app:icon="@drawable/ic_baseline_shutter_speed_24"
+            app:key="serverTuicHeartbeat"
+            app:title="@string/tuic_heartbeat"
+            app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
             app:icon="@drawable/baseline_flight_takeoff_24"
             app:key="serverReduceRTT"
             app:title="@string/tuic_reduce_rtt" />
