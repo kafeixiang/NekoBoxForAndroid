@@ -34,6 +34,10 @@ public abstract class StandardV2RayBean extends AbstractBean {
 
     public Boolean allowInsecure;
 
+    public String tlsSpoof;
+
+    public String tlsSpoofMethod;
+
     // --------------------------------------- reality
 
 
@@ -117,6 +121,9 @@ public abstract class StandardV2RayBean extends AbstractBean {
         if (JavaUtil.isNullOrBlank(earlyDataHeaderName)) earlyDataHeaderName = "";
         if (JavaUtil.isNullOrBlank(utlsFingerprint)) utlsFingerprint = "";
 
+        if (JavaUtil.isNullOrBlank(tlsSpoof)) tlsSpoof = "";
+        if (JavaUtil.isNullOrBlank(tlsSpoofMethod)) tlsSpoofMethod = "wrong-sequence";
+
         if (wsMaxEarlyData == null) wsMaxEarlyData = 0;
         if (allowInsecure == null) allowInsecure = false;
         if (packetEncoding == null) packetEncoding = 0;
@@ -148,7 +155,7 @@ public abstract class StandardV2RayBean extends AbstractBean {
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(10);
+        output.writeInt(11);
         super.serialize(output);
         output.writeString(uuid);
         output.writeString(encryption);
@@ -225,6 +232,10 @@ public abstract class StandardV2RayBean extends AbstractBean {
         output.writeBoolean(muxBrutal);
         output.writeInt(muxBrutalUpMbps);
         output.writeInt(muxBrutalDownMbps);
+
+        // v11
+        output.writeString(tlsSpoof == null ? "" : tlsSpoof);
+        output.writeString(tlsSpoofMethod == null ? "" : tlsSpoofMethod);
     }
 
     @Override
@@ -358,6 +369,12 @@ public abstract class StandardV2RayBean extends AbstractBean {
             muxBrutal = input.readBoolean();
             muxBrutalUpMbps = input.readInt();
             muxBrutalDownMbps = input.readInt();
+        }
+
+        // v11
+        if (version >= 11) {
+            tlsSpoof = input.readString();
+            tlsSpoofMethod = input.readString();
         }
 
         // Note: xhttp fields are read in the switch case above when version >= 4

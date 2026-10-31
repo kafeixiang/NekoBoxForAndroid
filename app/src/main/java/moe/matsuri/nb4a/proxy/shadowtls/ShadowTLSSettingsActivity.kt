@@ -25,6 +25,8 @@ class ShadowTLSSettingsActivity : ProfileSettingsActivity<ShadowTLSBean>() {
     private val certificates = pbm.add(PreferenceBinding(Type.Text, "certificates"))
     private val allowInsecure = pbm.add(PreferenceBinding(Type.Bool, "allowInsecure"))
     private val utlsFingerprint = pbm.add(PreferenceBinding(Type.Text, "utlsFingerprint"))
+    private val tlsSpoof = pbm.add(PreferenceBinding(Type.Text, "tlsSpoof"))
+    private val tlsSpoofMethod = pbm.add(PreferenceBinding(Type.Text, "tlsSpoofMethod"))
 
     override fun ShadowTLSBean.init() {
         pbm.writeToCacheAll(this)

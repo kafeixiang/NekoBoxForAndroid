@@ -314,6 +314,12 @@ fun StandardV2RayBean.parseDuckSoft(url: HttpUrl) {
     url.queryParameter("fp")?.let {
         utlsFingerprint = it
     }
+    url.queryParameter("spoof")?.let {
+        tlsSpoof = it
+    }
+    url.queryParameter("spoof_method")?.let {
+        tlsSpoofMethod = it
+    }
 }
 
 // 不确定是谁的格式
@@ -600,6 +606,12 @@ fun StandardV2RayBean.toUriVMessVLESSTrojan(isTrojan: Boolean): String {
                     builder.addQueryParameter("pbk", realityPubKey)
                     builder.addQueryParameter("sid", realityShortId)
                 }
+                if (!tlsSpoof.isNullOrBlank()) {
+                    builder.addQueryParameter("spoof", tlsSpoof)
+                    if (!tlsSpoofMethod.isNullOrBlank() && tlsSpoofMethod != "wrong-sequence") {
+                        builder.addQueryParameter("spoof_method", tlsSpoofMethod)
+                    }
+                }
             }
         }
     }
@@ -815,6 +827,10 @@ fun buildSingBoxOutboundTLS(bean: StandardV2RayBean): OutboundTLSOptions? {
                     config = bean.echConfig.lines()
                 }
             }
+        }
+        if (!bean.tlsSpoof.isNullOrBlank()) {
+            spoof = bean.tlsSpoof.trim()
+            spoof_method = bean.tlsSpoofMethod.takeIf { !it.isNullOrBlank() } ?: "wrong-sequence"
         }
     }
 }

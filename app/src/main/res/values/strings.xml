@@ -865,4 +865,8 @@
     <string name="route_network_is_constrained">Constrained Network</string>
     <string name="route_network_is_constrained_summary">Match network in Data Saver / low data mode</string>
 
+    <string name="tls_spoof">TLS ClientHello Spoof (SNI)</string>
+    <string name="tls_spoof_summary">Inject fake ClientHello with whitelist SNI before real handshake (requires root/elevated)</string>
+    <string name="tls_spoof_method">Spoof Method</string>
+
 </resources>

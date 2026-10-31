@@ -997,4 +997,20 @@
         <item>6</item>
     </string-array>
 
+    <string-array name="tls_spoof_method_entries">
+        <item>Wrong Sequence (默认 / Default)</item>
+        <item>Wrong Checksum</item>
+        <item>Wrong ACK</item>
+        <item>Wrong MD5</item>
+        <item>Wrong Timestamp</item>
+    </string-array>
+
+    <string-array name="tls_spoof_method_values">
+        <item>wrong-sequence</item>
+        <item>wrong-checksum</item>
+        <item>wrong-ack</item>
+        <item>wrong-md5</item>
+        <item>wrong-timestamp</item>
+    </string-array>
+
 </resources>

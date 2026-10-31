@@ -197,6 +197,20 @@
             app:key="realityShortId"
             app:title="Reality ShortId"
             app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:icon="@drawable/ic_baseline_security_24"
+            app:key="tlsSpoof"
+            app:title="@string/tls_spoof"
+            app:summary="@string/tls_spoof_summary"
+            app:useSimpleSummaryProvider="true" />
+        <moe.matsuri.nb4a.ui.SimpleMenuPreference
+            app:defaultValue="wrong-sequence"
+            app:entries="@array/tls_spoof_method_entries"
+            app:entryValues="@array/tls_spoof_method_values"
+            app:icon="@drawable/ic_baseline_tune_24"
+            app:key="tlsSpoofMethod"
+            app:title="@string/tls_spoof_method"
+            app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
     <PreferenceCategory
