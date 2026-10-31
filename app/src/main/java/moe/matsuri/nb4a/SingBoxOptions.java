@@ -419,6 +419,8 @@ public class SingBoxOptions {
 
         public Boolean store_fakeip;
 
+        public Boolean store_rdrc;
+
         public String path;
 
         public String cache_id;
@@ -2510,6 +2512,10 @@ public class SingBoxOptions {
 
         public Boolean endpoint_independent_nat;
 
+        public String udp_mapping;
+
+        public String udp_filtering;
+
         public Long udp_timeout;
 
         public String stack;
@@ -3010,6 +3016,10 @@ public class SingBoxOptions {
         public List<String> exclude_package;
 
         public Boolean endpoint_independent_nat;
+
+        public String udp_mapping;
+
+        public String udp_filtering;
 
         public Long udp_timeout;
 
@@ -4973,6 +4983,10 @@ public class SingBoxOptions {
         public Long interval;
 
         public Integer tolerance;
+
+        public Long idle_timeout;
+
+        public Boolean interrupt_exist_connections;
 
     }
 

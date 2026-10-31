@@ -36,6 +36,9 @@ fun buildSingBoxOutboundWireguardBean(bean: WireGuardBean): SingBoxOptions.Outbo
                 reserved = list
             }
         }
+        if (bean.persistentKeepalive != null && bean.persistentKeepalive > 0) {
+            persistent_keepalive_interval = bean.persistentKeepalive
+        }
     }
 
     return SingBoxOptions.Outbound_WireGuardOptions().apply {
@@ -44,5 +47,8 @@ fun buildSingBoxOutboundWireguardBean(bean: WireGuardBean): SingBoxOptions.Outbo
         address = addrs
         private_key = bean.privateKey
         mtu = bean.mtu
+        if (bean.workers != null && bean.workers > 0) {
+            workers = bean.workers
+        }
     }
 }

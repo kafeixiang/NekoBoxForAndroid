@@ -317,6 +317,7 @@ class ConfigurationFragment @JvmOverloads constructor(
         if (!select) {
             toolbar.inflateMenu(R.menu.add_profile_menu)
             toolbar.setOnMenuItemClickListener(this)
+            toolbar.menu.findItem(R.id.action_singbox_dashboard)?.isVisible = DataStore.useSingBoxNativeMode
         } else {
             toolbar.setTitle(titleRes)
             toolbar.setNavigationIcon(R.drawable.ic_navigation_close)
@@ -401,6 +402,9 @@ class ConfigurationFragment @JvmOverloads constructor(
                         adapter.reload()
                     }
                 }
+            }
+            if (key == Key.USE_SINGBOX_NATIVE_MODE) {
+                toolbar.menu.findItem(R.id.action_singbox_dashboard)?.isVisible = DataStore.useSingBoxNativeMode
             }
         }
     }
@@ -489,6 +493,10 @@ class ConfigurationFragment @JvmOverloads constructor(
 
     override fun onMenuItemClick(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.action_singbox_dashboard -> {
+                startActivity(Intent(requireActivity(), SingBoxDashboardActivity::class.java))
+            }
+
             R.id.action_scan_qr_code -> {
                 startActivity(Intent(context, ScannerActivity::class.java))
             }

@@ -157,6 +157,7 @@ object Key {
     const val ROUTE_NETWORK_TYPE = "routeNetworkType"
     const val ROUTE_WIFI_SSID = "routeWifiSSID"
     const val ROUTE_RULESET_MATCH_SOURCE = "routeRuleSetMatchSource"
+    const val ROUTE_REJECT_METHOD = "routeRejectMethod"
     const val ROUTE_OUTBOUND = "routeOutbound"
     const val ROUTE_PACKAGES = "routePackages"
 
@@ -165,6 +166,17 @@ object Key {
     const val OVERRIDE_ANDROID_VPN = "overrideAndroidVpn"
     const val TCP_MULTI_PATH = "tcpMultiPath"
     const val UDP_FRAGMENT = "udpFragment"
+    const val TCP_FAST_OPEN = "tcpFastOpen"
+
+    const val STORE_CACHE_FILE = "storeCacheFile"
+    const val OPTIMISTIC_DNS = "optimisticDns"
+    const val TUN_UDP_MAPPING = "tunUdpMapping"
+    const val ENABLE_NTP = "enableNTP"
+    const val NTP_SERVER = "ntpServer"
+    const val USE_SINGBOX_NATIVE_MODE = "useSingBoxNativeMode"
+
+    const val WIREGUARD_WORKERS = "wireguardWorkers"
+    const val WIREGUARD_PERSISTENT_KEEPALIVE = "wireguardPersistentKeepalive"
 
     const val GROUP_NAME = "groupName"
     const val GROUP_TYPE = "groupType"

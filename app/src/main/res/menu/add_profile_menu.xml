@@ -2,6 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/action_singbox_dashboard"
+        android:icon="@drawable/ic_hardware_router"
+        android:title="@string/singbox_dashboard"
+        app:showAsAction="always"
+        android:visible="false" />
+
+    <item
         android:id="@+id/action_search"
         android:title="@android:string/search_go"
         app:actionViewClass="androidx.appcompat.widget.SearchView"

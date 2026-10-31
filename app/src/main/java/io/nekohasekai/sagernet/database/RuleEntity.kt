@@ -39,6 +39,8 @@ data class RuleEntity(
     var wifiSsid: String = "",
     @ColumnInfo(defaultValue = "0")
     var ruleSetIpCIDRMatchSource: Boolean = false,
+    @ColumnInfo(defaultValue = "")
+    var rejectMethod: String = "",
 ) : Parcelable {
 
     fun displayName(): String {
@@ -60,6 +62,7 @@ data class RuleEntity(
         if (protocol.isNotBlank()) summary += "protocol: $protocol\n"
         if (ipIsPrivate) summary += "dst: private\n"
         if (sourceIpIsPrivate) summary += "src: private\n"
+        if (rejectMethod.isNotBlank()) summary += "reject: $rejectMethod\n"
         if (invert) summary += "[invert]\n"
         if (packages.isNotEmpty()) summary += app.getString(
             R.string.apps_message, packages.size

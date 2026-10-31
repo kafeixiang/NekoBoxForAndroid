@@ -310,6 +310,30 @@
         <item>ethernet</item>
     </string-array>
 
+    <string-array name="reject_method_entries">
+        <item>@string/reject_method_default</item>
+        <item>@string/reject_method_drop</item>
+        <item>@string/reject_method_reply</item>
+    </string-array>
+
+    <string-array name="reject_method_values">
+        <item />
+        <item>drop</item>
+        <item>reply</item>
+    </string-array>
+
+    <string-array name="udp_mapping_entries">
+        <item>@string/udp_mapping_default</item>
+        <item>@string/udp_mapping_full_cone</item>
+        <item>@string/udp_mapping_symmetric</item>
+    </string-array>
+
+    <string-array name="udp_mapping_values">
+        <item />
+        <item>full_cone</item>
+        <item>symmetric</item>
+    </string-array>
+
     <string-array name="outbound_entry">
         <item>@string/route_proxy</item>
         <item>@string/route_bypass</item>

@@ -48,6 +48,18 @@
             app:key="reserved"
             app:title="Reserved"
             app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:defaultValue="0"
+            app:icon="@drawable/baseline_developer_board_24"
+            app:key="workers"
+            app:title="@string/wireguard_workers"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:defaultValue="0"
+            app:icon="@drawable/ic_baseline_shutter_speed_24"
+            app:key="persistentKeepalive"
+            app:title="@string/wireguard_persistent_keepalive"
+            app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
 </PreferenceScreen>

@@ -322,6 +322,13 @@
             android:configChanges="uiMode"
             android:theme="@style/Theme.SagerNet" />
 
+        <activity
+            android:name="io.nekohasekai.sagernet.ui.SingBoxDashboardActivity"
+            android:configChanges="uiMode"
+            android:label="@string/singbox_dashboard"
+            android:launchMode="singleTask"
+            android:parentActivityName="io.nekohasekai.sagernet.ui.MainActivity" />
+
         <service
             android:name="io.nekohasekai.sagernet.bg.ProxyService"
             android:exported="false"

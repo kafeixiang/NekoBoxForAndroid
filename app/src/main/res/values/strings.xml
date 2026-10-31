@@ -806,4 +806,47 @@
     <string name="tls_record_fragment">TLS Record Fragment</string>
     <string name="tls_record_fragment_summary">Fragment TLS record layer packets</string>
 
+    <!-- Reject Method -->
+    <string name="route_reject_method">Reject Mode</string>
+    <string name="route_reject_method_summary">Action behavior when reject/block matches</string>
+    <string name="reject_method_default">Default</string>
+    <string name="reject_method_drop">Drop (Silent Blackhole)</string>
+    <string name="reject_method_reply">Reply (Immediate RST/Unreachable)</string>
+
+    <!-- Tun & DNS & Dial -->
+    <string name="tun_udp_mapping">TUN UDP Mapping Mode</string>
+    <string name="udp_mapping_default">Default</string>
+    <string name="udp_mapping_full_cone">FullCone NAT (Endpoint Independent)</string>
+    <string name="udp_mapping_symmetric">Symmetric NAT</string>
+
+    <string name="optimistic_dns">Optimistic DNS</string>
+    <string name="optimistic_dns_summary">Serve expired DNS cache immediately and refresh in background to reduce latency</string>
+
+    <string name="store_cache_file">Persist Cache File</string>
+    <string name="store_cache_file_summary">Save FakeIP mappings and DNS cache to disk to preserve mappings across reconnections</string>
+
+    <string name="enable_ntp">Kernel NTP Time Sync</string>
+    <string name="enable_ntp_summary">Synchronize time with NTP server inside core to prevent handshake errors caused by system clock drift</string>
+    <string name="ntp_server">NTP Server</string>
+
+    <string name="tcp_fast_open">TCP Fast Open (TFO)</string>
+    <string name="tcp_fast_open_summary">Enable TFO on outbound connections to reduce handshake latency</string>
+
+    <string name="wireguard_workers">Workers</string>
+    <string name="wireguard_persistent_keepalive">Persistent Keepalive (Seconds)</string>
+
+    <!-- sing-box Native & Dashboard -->
+    <string name="use_singbox_native_mode">sing-box Native Auto-URLTest Mode</string>
+    <string name="use_singbox_native_mode_summary">Drive URLTest group for automatic optimal node selection with native group management and dashboard</string>
+    <string name="singbox_dashboard">Dashboard &amp; Groups</string>
+    <string name="dashboard_speed">Current Speed</string>
+    <string name="dashboard_traffic">Total Traffic</string>
+    <string name="dashboard_connections">Active Connections</string>
+    <string name="dashboard_memory">Memory Usage</string>
+    <string name="dashboard_groups">Outbound Groups</string>
+    <string name="dashboard_test_all">Test Latency</string>
+    <string name="dashboard_testing">Testing...</string>
+    <string name="dashboard_service_not_running">Service is not connected, please connect first</string>
+    <string name="dashboard_switched_to">Switched to %s</string>
+
 </resources>

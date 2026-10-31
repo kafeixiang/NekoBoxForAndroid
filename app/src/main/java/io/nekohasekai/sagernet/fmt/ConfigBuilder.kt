@@ -184,10 +184,30 @@ fun buildConfig(
     }
 
     return MyOptions().apply {
-        if (!forTest && DataStore.enableClashAPI) experimental = ExperimentalOptions().apply {
-            clash_api = ClashAPIOptions().apply {
-                external_controller = "127.0.0.1:9090"
-                external_ui = "../files/yacd"
+        if (!forTest && (DataStore.enableClashAPI || DataStore.useSingBoxNativeMode || DataStore.storeCacheFile)) {
+            experimental = ExperimentalOptions().apply {
+                if (DataStore.enableClashAPI || DataStore.useSingBoxNativeMode) {
+                    clash_api = ClashAPIOptions().apply {
+                        external_controller = "127.0.0.1:9090"
+                        external_ui = "../files/yacd"
+                    }
+                }
+                if (DataStore.storeCacheFile) {
+                    cache_file = SingBoxOptions.CacheFile().apply {
+                        enabled = true
+                        path = "cache.db"
+                        store_fakeip = true
+                        store_rdrc = true
+                    }
+                }
+            }
+        }
+
+        if (DataStore.enableNTP) {
+            ntp = SingBoxOptions.NTPOptions().apply {
+                enabled = true
+                server = DataStore.ntpServer.ifBlank { "time.apple.com" }
+                server_port = 123
             }
         }
 
@@ -223,6 +243,10 @@ fun buildConfig(
             strategy = if (forTest) directDnsStrategy else remoteDnsStrategy
             servers = mutableListOf()
             rules = mutableListOf()
+            if (DataStore.optimisticDns) {
+                // sing-box optimistic dns
+                _hack_config_map["optimistic"] = mapOf("enabled" to true)
+            }
         }
 
         inbounds = mutableListOf()
@@ -234,6 +258,12 @@ fun buildConfig(
                 mtu = DataStore.mtu
                 auto_route = false
                 strict_route = false
+                if (DataStore.tunUdpMapping.isNotBlank()) {
+                    udp_mapping = DataStore.tunUdpMapping
+                    if (DataStore.tunUdpMapping == "full_cone") {
+                        endpoint_independent_nat = true
+                    }
+                }
                 when (DataStore.tunImplementation) {
                     TunImplementation.SYSTEM -> stack = "system"
                     TunImplementation.GVISOR -> stack = "gvisor"
@@ -497,6 +527,9 @@ fun buildConfig(
                     if (DataStore.udpFragment) {
                         _hack_config_map["udp_fragment"] = true
                     }
+                    if (DataStore.tcpFastOpen) {
+                        _hack_config_map["tcp_fast_open"] = true
+                    }
 
                     _hack_custom_config = bean.customOutboundJson
                 }
@@ -557,7 +590,47 @@ fun buildConfig(
         }
 
         // build outbounds
-        val mainTag = if (buildSelector) {
+        val isNativeMode = !forTest && DataStore.useSingBoxNativeMode
+        val mainTag = if (isNativeMode) {
+            val candidateList = if (group != null && group.id > 0) {
+                SagerDatabase.proxyDao.getByGroup(group.id)
+            } else {
+                SagerDatabase.proxyDao.getAll()
+            }.filter { it.type != 0 }
+
+            val candidateEntities = if (candidateList.isNotEmpty()) candidateList else listOf(proxy)
+            val candidateTags = mutableListOf<String>()
+
+            candidateEntities.forEach { p ->
+                val tag = buildChain(p.id, p)
+                tagMap[p.id] = tag
+                if (!candidateTags.contains(tag)) {
+                    candidateTags.add(tag)
+                }
+            }
+
+            // 1. URLTest 自动延迟优选策略组
+            outbounds.add(0, SingBoxOptions.Outbound_URLTestOptions().apply {
+                type = "urltest"
+                tag = "auto"
+                outbounds = candidateTags
+                url = DataStore.connectionTestURL.ifBlank { "http://cp.cloudflare.com/" }
+                interval = 180000000000L // 3 分钟 (ns)
+                tolerance = 50
+            })
+
+            // 2. Selector 手动/自动切换策略组
+            val selectorOutbounds = mutableListOf("auto")
+            selectorOutbounds.addAll(candidateTags)
+            outbounds.add(0, Outbound_SelectorOptions().apply {
+                type = "selector"
+                tag = TAG_PROXY
+                default_ = "auto"
+                outbounds = selectorOutbounds
+            })
+
+            TAG_PROXY
+        } else if (buildSelector) {
             val list = group.id.let { SagerDatabase.proxyDao.getByGroup(it) }
             list.forEach {
                 tagMap[it.id] = buildChain(it.id, it)
@@ -731,6 +804,9 @@ fun buildConfig(
                     if (ruleObj.outbound == TAG_BLOCK) {
                         ruleObj.outbound = null
                         ruleObj.action = "reject"
+                        if (rule.rejectMethod.isNotBlank()) {
+                            ruleObj.method = rule.rejectMethod
+                        }
                     }
                     route.rules.add(ruleObj)
                     route.rule_set.addAll(ruleSets)

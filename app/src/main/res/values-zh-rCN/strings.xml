@@ -719,4 +719,47 @@
     <string name="enable_tls_fragment_summary">分片 TLS ClientHello 握手报文，绕过基于 SNI 的审查和阻断</string>
     <string name="tls_record_fragment">TLS 记录层分片</string>
     <string name="tls_record_fragment_summary">分片 TLS 记录层报文</string>
+
+    <!-- Reject Method -->
+    <string name="route_reject_method">阻断拒绝模式</string>
+    <string name="route_reject_method_summary">指定命中阻断规则时的网络拒绝行为</string>
+    <string name="reject_method_default">默认</string>
+    <string name="reject_method_drop">丢弃 (Drop / 静默黑洞防探测)</string>
+    <string name="reject_method_reply">拒绝 (Reply / 主动回复重置)</string>
+
+    <!-- Tun & DNS & Dial -->
+    <string name="tun_udp_mapping">TUN UDP 映射模式</string>
+    <string name="udp_mapping_default">系统默认</string>
+    <string name="udp_mapping_full_cone">全锥型 (FullCone NAT / 提升联机兼容性)</string>
+    <string name="udp_mapping_symmetric">对称型 (Symmetric NAT)</string>
+
+    <string name="optimistic_dns">乐观 DNS 缓存 (Optimistic DNS)</string>
+    <string name="optimistic_dns_summary">DNS 记录到期时直接复用过期缓存实现秒开，并在后台异步刷新，降低首包延迟</string>
+
+    <string name="store_cache_file">持久化缓存落盘</string>
+    <string name="store_cache_file_summary">将 FakeIP 映射表和 DNS 缓存保存至磁盘，核心重启或网络切换时不丢映射</string>
+
+    <string name="enable_ntp">内核级时间同步 (NTP)</string>
+    <string name="enable_ntp_summary">在内核中向 NTP 服务器校准时间，解决系统时间漂移导致证书/协议握手失败</string>
+    <string name="ntp_server">NTP 服务器</string>
+
+    <string name="tcp_fast_open">TCP 快速打开 (TCP Fast Open / TFO)</string>
+    <string name="tcp_fast_open_summary">出站连接尝试启用 TFO 减少握手延迟 (需系统和节点支持)</string>
+
+    <string name="wireguard_workers">工作线程数 (Workers)</string>
+    <string name="wireguard_persistent_keepalive">保活周期 (秒, Keepalive)</string>
+
+    <!-- sing-box Native & Dashboard -->
+    <string name="use_singbox_native_mode">sing-box 原生自动延迟优选模式</string>
+    <string name="use_singbox_native_mode_summary">由内核驱动 URLTest 策略组并发测速自动选择最优节点，并提供原生策略组管理与仪表盘</string>
+    <string name="singbox_dashboard">仪表盘与策略组</string>
+    <string name="dashboard_speed">当前网速</string>
+    <string name="dashboard_traffic">累计流量</string>
+    <string name="dashboard_connections">活跃连接</string>
+    <string name="dashboard_memory">内存占用</string>
+    <string name="dashboard_groups">策略组列表</string>
+    <string name="dashboard_test_all">一键测速</string>
+    <string name="dashboard_testing">测速中...</string>
+    <string name="dashboard_service_not_running">服务未运行，请先启动 VPN 连接</string>
+    <string name="dashboard_switched_to">已切换到 %s</string>
 </resources>

@@ -175,6 +175,13 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         findPreference<Preference>(Key.UDP_FRAGMENT)?.onPreferenceChangeListener = reloadListener
         findPreference<Preference>(Key.ENABLE_TLS_FRAGMENT)?.onPreferenceChangeListener = reloadListener
         findPreference<Preference>(Key.TLS_RECORD_FRAGMENT)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.TCP_FAST_OPEN)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.TUN_UDP_MAPPING)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.OPTIMISTIC_DNS)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.STORE_CACHE_FILE)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.ENABLE_NTP)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.NTP_SERVER)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.USE_SINGBOX_NATIVE_MODE)?.onPreferenceChangeListener = reloadListener
         hideFromRecentApps.setOnPreferenceChangeListener { _, newValue ->
             (activity as? MainActivity)?.applyHideFromRecentApps(newValue as Boolean)
             // needReload()

@@ -256,6 +256,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var routeNetworkType by profileCacheStore.string(Key.ROUTE_NETWORK_TYPE)
     var routeWifiSSID by profileCacheStore.string(Key.ROUTE_WIFI_SSID)
     var routeRuleSetMatchSource by profileCacheStore.boolean(Key.ROUTE_RULESET_MATCH_SOURCE)
+    var routeRejectMethod by profileCacheStore.string(Key.ROUTE_REJECT_METHOD)
     var routeOutbound by profileCacheStore.stringToInt(Key.ROUTE_OUTBOUND)
     var routeOutboundRule by profileCacheStore.long(Key.ROUTE_OUTBOUND + "Long")
     var routePackages by profileCacheStore.string(Key.ROUTE_PACKAGES)
@@ -291,6 +292,14 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var overrideAndroidVpn by configurationStore.boolean(Key.OVERRIDE_ANDROID_VPN)
     var tcpMultiPath by configurationStore.boolean(Key.TCP_MULTI_PATH)
     var udpFragment by configurationStore.boolean(Key.UDP_FRAGMENT)
+    var tcpFastOpen by configurationStore.boolean(Key.TCP_FAST_OPEN)
+
+    var storeCacheFile by configurationStore.boolean(Key.STORE_CACHE_FILE) { true }
+    var optimisticDns by configurationStore.boolean(Key.OPTIMISTIC_DNS)
+    var tunUdpMapping by configurationStore.string(Key.TUN_UDP_MAPPING)
+    var enableNTP by configurationStore.boolean(Key.ENABLE_NTP)
+    var ntpServer by configurationStore.string(Key.NTP_SERVER) { "time.apple.com" }
+    var useSingBoxNativeMode by configurationStore.boolean(Key.USE_SINGBOX_NATIVE_MODE)
 
     var webdavServer: String?
         get() = configurationStore.getString("webdavServer")

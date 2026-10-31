@@ -92,6 +92,14 @@
             app:key="routeInvert"
             app:summary="@string/route_invert_summary"
             app:title="@string/route_invert" />
+        <moe.matsuri.nb4a.ui.SimpleMenuPreference
+            app:entries="@array/reject_method_entries"
+            app:entryValues="@array/reject_method_values"
+            app:icon="@drawable/ic_baseline_warning_24"
+            app:key="routeRejectMethod"
+            app:summary="@string/route_reject_method_summary"
+            app:title="@string/route_reject_method"
+            app:useSimpleSummaryProvider="true" />
         <io.nekohasekai.sagernet.widget.OutboundPreference
             app:icon="@drawable/ic_hardware_router"
             app:key="routeOutbound"
