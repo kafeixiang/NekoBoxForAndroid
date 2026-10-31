@@ -704,6 +704,7 @@
     <string name="route_source_ip_is_private">来源 IP 为私有地址</string>
     <string name="route_network_type">网络接口类型</string>
     <string name="route_wifi_ssid">Wi-Fi SSID (热点名称)</string>
+    <string name="route_wifi_bssid">Wi-Fi BSSID (MAC 地址)</string>
     <string name="route_ruleset_match_source">规则集匹配来源 IP</string>
     <string name="route_ruleset_match_source_summary">规则集内的 IP CIDR 匹配来源 IP 而不是目标 IP</string>
     <string name="network_type_all">全部 / 不限</string>

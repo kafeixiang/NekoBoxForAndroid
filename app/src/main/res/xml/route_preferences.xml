@@ -107,6 +107,11 @@
             app:key="routeWifiSSID"
             app:title="@string/route_wifi_ssid"
             app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:icon="@drawable/ic_hardware_router"
+            app:key="routeWifiBSSID"
+            app:title="@string/route_wifi_bssid"
+            app:useSimpleSummaryProvider="true" />
         <SwitchPreference
             app:icon="@drawable/ic_baseline_rule_folder_24"
             app:key="routeRuleSetMatchSource"

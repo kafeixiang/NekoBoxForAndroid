@@ -760,6 +760,9 @@ fun buildConfig(
                 if (rule.wifiSsid.isNotBlank()) {
                     wifi_ssid = rule.wifiSsid.listByLineOrComma()
                 }
+                if (rule.wifiBssid.isNotBlank()) {
+                    wifi_bssid = rule.wifiBssid.listByLineOrComma()
+                }
                 if (rule.ruleSetIpCIDRMatchSource) {
                     rule_set_ip_cidr_match_source = true
                 }

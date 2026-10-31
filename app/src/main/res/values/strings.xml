@@ -790,6 +790,7 @@
     <string name="route_source_ip_is_private">Source IP is Private</string>
     <string name="route_network_type">Network Interface Type</string>
     <string name="route_wifi_ssid">Wi-Fi SSID</string>
+    <string name="route_wifi_bssid">Wi-Fi BSSID</string>
     <string name="route_ruleset_match_source">Rule Set Matches Source IP</string>
     <string name="route_ruleset_match_source_summary">Match rule set IP CIDR against source IP instead of destination IP</string>
     <string name="network_type_all">Any</string>

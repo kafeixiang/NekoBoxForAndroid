@@ -158,6 +158,7 @@ object Key {
     const val ROUTE_SOURCE_IP_IS_PRIVATE = "routeSourceIpIsPrivate"
     const val ROUTE_NETWORK_TYPE = "routeNetworkType"
     const val ROUTE_WIFI_SSID = "routeWifiSSID"
+    const val ROUTE_WIFI_BSSID = "routeWifiBSSID"
     const val ROUTE_RULESET_MATCH_SOURCE = "routeRuleSetMatchSource"
     const val ROUTE_REJECT_METHOD = "routeRejectMethod"
     const val ROUTE_IP_VERSION = "routeIpVersion"

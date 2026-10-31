@@ -257,6 +257,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var routeSourceIpIsPrivate by profileCacheStore.boolean(Key.ROUTE_SOURCE_IP_IS_PRIVATE)
     var routeNetworkType by profileCacheStore.string(Key.ROUTE_NETWORK_TYPE)
     var routeWifiSSID by profileCacheStore.string(Key.ROUTE_WIFI_SSID)
+    var routeWifiBSSID by profileCacheStore.string(Key.ROUTE_WIFI_BSSID)
     var routeRuleSetMatchSource by profileCacheStore.boolean(Key.ROUTE_RULESET_MATCH_SOURCE)
     var routeRejectMethod by profileCacheStore.string(Key.ROUTE_REJECT_METHOD)
     var routeIpVersion by profileCacheStore.stringToInt(Key.ROUTE_IP_VERSION)

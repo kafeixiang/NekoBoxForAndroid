@@ -72,6 +72,7 @@ class RouteSettingsActivity(
         DataStore.routeSourceIpIsPrivate = sourceIpIsPrivate
         DataStore.routeNetworkType = networkType
         DataStore.routeWifiSSID = wifiSsid
+        DataStore.routeWifiBSSID = wifiBssid
         DataStore.routeRuleSetMatchSource = ruleSetIpCIDRMatchSource
         DataStore.routeRejectMethod = rejectMethod
         DataStore.routeIpVersion = ipVersion
@@ -104,6 +105,7 @@ class RouteSettingsActivity(
         sourceIpIsPrivate = DataStore.routeSourceIpIsPrivate
         networkType = DataStore.routeNetworkType
         wifiSsid = DataStore.routeWifiSSID
+        wifiBssid = DataStore.routeWifiBSSID
         ruleSetIpCIDRMatchSource = DataStore.routeRuleSetMatchSource
         rejectMethod = DataStore.routeRejectMethod
         ipVersion = DataStore.routeIpVersion

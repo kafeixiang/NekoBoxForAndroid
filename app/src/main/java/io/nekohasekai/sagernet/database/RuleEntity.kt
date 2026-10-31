@@ -37,6 +37,8 @@ data class RuleEntity(
     var networkType: String = "",
     @ColumnInfo(defaultValue = "")
     var wifiSsid: String = "",
+    @ColumnInfo(defaultValue = "")
+    var wifiBssid: String = "",
     @ColumnInfo(defaultValue = "0")
     var ruleSetIpCIDRMatchSource: Boolean = false,
     @ColumnInfo(defaultValue = "")
@@ -67,6 +69,7 @@ data class RuleEntity(
         if (network.isNotBlank()) summary += "network: $network\n"
         if (networkType.isNotBlank()) summary += "net type: $networkType\n"
         if (wifiSsid.isNotBlank()) summary += "ssid: $wifiSsid\n"
+        if (wifiBssid.isNotBlank()) summary += "bssid: $wifiBssid\n"
         if (protocol.isNotBlank()) summary += "protocol: $protocol\n"
         if (ipIsPrivate) summary += "dst: private\n"
         if (sourceIpIsPrivate) summary += "src: private\n"

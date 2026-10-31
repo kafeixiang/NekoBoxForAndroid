@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 
 @Database(
     entities = [ProxyGroup::class, ProxyEntity::class, RuleEntity::class],
-    version = 16,
+    version = 17,
     autoMigrations = [
         AutoMigration(from = 3, to = 4),
         AutoMigration(from = 4, to = 5),
@@ -30,7 +30,8 @@ import kotlinx.coroutines.launch
         AutoMigration(from = 12, to = 13),
         AutoMigration(from = 13, to = 14),
         AutoMigration(from = 14, to = 15),
-        AutoMigration(from = 15, to = 16)
+        AutoMigration(from = 15, to = 16),
+        AutoMigration(from = 16, to = 17)
     ]
 )
 @TypeConverters(value = [KryoConverters::class, GsonConverters::class])
