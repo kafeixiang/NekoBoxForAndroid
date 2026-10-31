@@ -804,4 +804,11 @@
     <string name="dns_independent_cache_summary">使不同 DNS 服务器标签拥有隔离的独立缓存池，互不干扰</string>
     <string name="dns_reverse_mapping">DNS 反向地址映射</string>
     <string name="dns_reverse_mapping_summary">在内存中存储 IP 到域名的反向映射关系，辅助嗅探与路由决策</string>
+
+    <string name="tls_min_version">TLS 最低协议版本</string>
+    <string name="tls_max_version">TLS 最高协议版本</string>
+    <string name="tls_cipher_suites">TLS 自定义加密套件</string>
+    <string name="tls_cipher_suites_summary">自定义密码套件列表，支持逗号或换行分隔（留空使用默认）</string>
+    <string name="tls_handshake_timeout">TLS 握手超时时间</string>
+    <string name="tls_handshake_timeout_summary">TLS 握手超时限制（秒，0 表示使用默认）</string>
 </resources>

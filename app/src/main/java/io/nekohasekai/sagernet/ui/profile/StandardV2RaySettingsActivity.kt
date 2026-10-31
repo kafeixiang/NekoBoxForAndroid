@@ -47,6 +47,10 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
     private val realityShortId = pbm.add(PreferenceBinding(Type.Text, "realityShortId"))
     private val tlsSpoof = pbm.add(PreferenceBinding(Type.Text, "tlsSpoof"))
     private val tlsSpoofMethod = pbm.add(PreferenceBinding(Type.Text, "tlsSpoofMethod"))
+    private val tlsMinVersion = pbm.add(PreferenceBinding(Type.Text, "tlsMinVersion"))
+    private val tlsMaxVersion = pbm.add(PreferenceBinding(Type.Text, "tlsMaxVersion"))
+    private val tlsCipherSuites = pbm.add(PreferenceBinding(Type.Text, "tlsCipherSuites"))
+    private val tlsHandshakeTimeout = pbm.add(PreferenceBinding(Type.TextToInt, "tlsHandshakeTimeout"))
 
     private val enableECH = pbm.add(PreferenceBinding(Type.Bool, "enableECH"))
     private val echConfig = pbm.add(PreferenceBinding(Type.Text, "echConfig"))

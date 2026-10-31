@@ -38,6 +38,14 @@ public abstract class StandardV2RayBean extends AbstractBean {
 
     public String tlsSpoofMethod;
 
+    public String tlsMinVersion;
+
+    public String tlsMaxVersion;
+
+    public String tlsCipherSuites;
+
+    public Integer tlsHandshakeTimeout;
+
     // --------------------------------------- reality
 
 
@@ -124,6 +132,11 @@ public abstract class StandardV2RayBean extends AbstractBean {
         if (JavaUtil.isNullOrBlank(tlsSpoof)) tlsSpoof = "";
         if (JavaUtil.isNullOrBlank(tlsSpoofMethod)) tlsSpoofMethod = "wrong-sequence";
 
+        if (JavaUtil.isNullOrBlank(tlsMinVersion)) tlsMinVersion = "";
+        if (JavaUtil.isNullOrBlank(tlsMaxVersion)) tlsMaxVersion = "";
+        if (JavaUtil.isNullOrBlank(tlsCipherSuites)) tlsCipherSuites = "";
+        if (tlsHandshakeTimeout == null) tlsHandshakeTimeout = 0;
+
         if (wsMaxEarlyData == null) wsMaxEarlyData = 0;
         if (allowInsecure == null) allowInsecure = false;
         if (packetEncoding == null) packetEncoding = 0;
@@ -155,7 +168,7 @@ public abstract class StandardV2RayBean extends AbstractBean {
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(11);
+        output.writeInt(12);
         super.serialize(output);
         output.writeString(uuid);
         output.writeString(encryption);
@@ -236,6 +249,12 @@ public abstract class StandardV2RayBean extends AbstractBean {
         // v11
         output.writeString(tlsSpoof == null ? "" : tlsSpoof);
         output.writeString(tlsSpoofMethod == null ? "" : tlsSpoofMethod);
+
+        // v12
+        output.writeString(tlsMinVersion == null ? "" : tlsMinVersion);
+        output.writeString(tlsMaxVersion == null ? "" : tlsMaxVersion);
+        output.writeString(tlsCipherSuites == null ? "" : tlsCipherSuites);
+        output.writeInt(tlsHandshakeTimeout == null ? 0 : tlsHandshakeTimeout);
     }
 
     @Override
@@ -375,6 +394,14 @@ public abstract class StandardV2RayBean extends AbstractBean {
         if (version >= 11) {
             tlsSpoof = input.readString();
             tlsSpoofMethod = input.readString();
+        }
+
+        // v12
+        if (version >= 12) {
+            tlsMinVersion = input.readString();
+            tlsMaxVersion = input.readString();
+            tlsCipherSuites = input.readString();
+            tlsHandshakeTimeout = input.readInt();
         }
 
         // Note: xhttp fields are read in the switch case above when version >= 4

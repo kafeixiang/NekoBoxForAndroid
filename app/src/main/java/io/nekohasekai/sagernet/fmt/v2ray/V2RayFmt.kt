@@ -832,6 +832,18 @@ fun buildSingBoxOutboundTLS(bean: StandardV2RayBean): OutboundTLSOptions? {
             spoof = bean.tlsSpoof.trim()
             spoof_method = bean.tlsSpoofMethod.takeIf { !it.isNullOrBlank() } ?: "wrong-sequence"
         }
+        if (!bean.tlsMinVersion.isNullOrBlank()) {
+            min_version = bean.tlsMinVersion
+        }
+        if (!bean.tlsMaxVersion.isNullOrBlank()) {
+            max_version = bean.tlsMaxVersion
+        }
+        if (!bean.tlsCipherSuites.isNullOrBlank()) {
+            cipher_suites = bean.tlsCipherSuites.listByLineOrComma()
+        }
+        if (bean.tlsHandshakeTimeout != null && bean.tlsHandshakeTimeout > 0) {
+            handshake_timeout = bean.tlsHandshakeTimeout.toLong()
+        }
     }
 }
 

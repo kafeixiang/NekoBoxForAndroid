@@ -27,6 +27,10 @@ class ShadowTLSSettingsActivity : ProfileSettingsActivity<ShadowTLSBean>() {
     private val utlsFingerprint = pbm.add(PreferenceBinding(Type.Text, "utlsFingerprint"))
     private val tlsSpoof = pbm.add(PreferenceBinding(Type.Text, "tlsSpoof"))
     private val tlsSpoofMethod = pbm.add(PreferenceBinding(Type.Text, "tlsSpoofMethod"))
+    private val tlsMinVersion = pbm.add(PreferenceBinding(Type.Text, "tlsMinVersion"))
+    private val tlsMaxVersion = pbm.add(PreferenceBinding(Type.Text, "tlsMaxVersion"))
+    private val tlsCipherSuites = pbm.add(PreferenceBinding(Type.Text, "tlsCipherSuites"))
+    private val tlsHandshakeTimeout = pbm.add(PreferenceBinding(Type.TextToInt, "tlsHandshakeTimeout"))
 
     override fun ShadowTLSBean.init() {
         pbm.writeToCacheAll(this)

@@ -891,4 +891,11 @@
     <string name="dns_reverse_mapping">DNS Reverse Mapping</string>
     <string name="dns_reverse_mapping_summary">Store reverse IP-to-domain mapping to help routing and sniffing</string>
 
+    <string name="tls_min_version">TLS Minimum Version</string>
+    <string name="tls_max_version">TLS Maximum Version</string>
+    <string name="tls_cipher_suites">TLS Cipher Suites</string>
+    <string name="tls_cipher_suites_summary">Custom cipher suites separated by comma or line (leave empty for default)</string>
+    <string name="tls_handshake_timeout">TLS Handshake Timeout</string>
+    <string name="tls_handshake_timeout_summary">Handshake timeout in seconds (0 for default)</string>
+
 </resources>
