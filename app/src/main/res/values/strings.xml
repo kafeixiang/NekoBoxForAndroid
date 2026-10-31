@@ -856,4 +856,13 @@
     <string name="dns_client_subnet_summary">Attach client subnet IP prefix to DNS queries for optimal CDN geo-routing</string>
     <string name="dns_client_subnet_dialog_message">e.g. 1.2.3.0/24 or 2001:da8::/48 (leave empty to disable)</string>
 
+    <string name="route_ip_version">IP Version</string>
+    <string name="ip_version_any">Any (IPv4 &amp; IPv6)</string>
+    <string name="route_client">QUIC Client</string>
+    <string name="route_client_summary">Match client type for QUIC (e.g. chromium, safari, firefox, quic-go)</string>
+    <string name="route_network_is_expensive">Metered Network</string>
+    <string name="route_network_is_expensive_summary">Match metered network (cellular data or mobile hotspot)</string>
+    <string name="route_network_is_constrained">Constrained Network</string>
+    <string name="route_network_is_constrained_summary">Match network in Data Saver / low data mode</string>
+
 </resources>

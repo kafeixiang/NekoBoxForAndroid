@@ -1214,6 +1214,9 @@ public class SingBoxOptions {
         public List<String> protocol;
 
         // Generate note: Listable
+        public List<String> client;
+
+        // Generate note: Listable
         public List<String> domain;
 
         // Generate note: Listable
@@ -1295,6 +1298,9 @@ public class SingBoxOptions {
 
         // Generate note: Listable
         public List<String> protocol;
+
+        // Generate note: Listable
+        public List<String> client;
 
         // Generate note: Listable
         public List<String> domain;
@@ -5013,6 +5019,9 @@ public class SingBoxOptions {
         public List<String> protocol;
 
         // Generate note: Listable
+        public List<String> client;
+
+        // Generate note: Listable
         public List<String> domain;
 
         // Generate note: Listable
@@ -5120,6 +5129,9 @@ public class SingBoxOptions {
 
         // Generate note: Listable
         public List<String> protocol;
+
+        // Generate note: Listable
+        public List<String> client;
 
         // Generate note: Listable
         public List<String> domain;

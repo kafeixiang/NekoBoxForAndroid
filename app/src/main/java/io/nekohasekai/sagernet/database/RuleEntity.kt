@@ -41,6 +41,14 @@ data class RuleEntity(
     var ruleSetIpCIDRMatchSource: Boolean = false,
     @ColumnInfo(defaultValue = "")
     var rejectMethod: String = "",
+    @ColumnInfo(defaultValue = "0")
+    var ipVersion: Int = 0,
+    @ColumnInfo(defaultValue = "")
+    var client: String = "",
+    @ColumnInfo(defaultValue = "0")
+    var networkIsExpensive: Boolean = false,
+    @ColumnInfo(defaultValue = "0")
+    var networkIsConstrained: Boolean = false,
 ) : Parcelable {
 
     fun displayName(): String {
@@ -63,6 +71,11 @@ data class RuleEntity(
         if (ipIsPrivate) summary += "dst: private\n"
         if (sourceIpIsPrivate) summary += "src: private\n"
         if (rejectMethod.isNotBlank()) summary += "reject: $rejectMethod\n"
+        if (ipVersion == 4) summary += "ip: v4\n"
+        if (ipVersion == 6) summary += "ip: v6\n"
+        if (client.isNotBlank()) summary += "client: $client\n"
+        if (networkIsExpensive) summary += "[expensive net]\n"
+        if (networkIsConstrained) summary += "[constrained net]\n"
         if (invert) summary += "[invert]\n"
         if (packages.isNotEmpty()) summary += app.getString(
             R.string.apps_message, packages.size

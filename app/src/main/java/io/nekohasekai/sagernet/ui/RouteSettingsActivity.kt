@@ -74,6 +74,10 @@ class RouteSettingsActivity(
         DataStore.routeWifiSSID = wifiSsid
         DataStore.routeRuleSetMatchSource = ruleSetIpCIDRMatchSource
         DataStore.routeRejectMethod = rejectMethod
+        DataStore.routeIpVersion = ipVersion
+        DataStore.routeClient = client
+        DataStore.routeNetworkIsExpensive = networkIsExpensive
+        DataStore.routeNetworkIsConstrained = networkIsConstrained
         DataStore.routeOutboundRule = outbound
         DataStore.routeOutbound = when (outbound) {
             0L -> 0
@@ -102,6 +106,10 @@ class RouteSettingsActivity(
         wifiSsid = DataStore.routeWifiSSID
         ruleSetIpCIDRMatchSource = DataStore.routeRuleSetMatchSource
         rejectMethod = DataStore.routeRejectMethod
+        ipVersion = DataStore.routeIpVersion
+        client = DataStore.routeClient
+        networkIsExpensive = DataStore.routeNetworkIsExpensive
+        networkIsConstrained = DataStore.routeNetworkIsConstrained
         outbound = when (DataStore.routeOutbound) {
             0 -> 0L
             1 -> -1L

@@ -62,6 +62,21 @@
             app:key="routeProtocol"
             app:title="protocol"
             app:useSimpleSummaryProvider="true" />
+        <moe.matsuri.nb4a.ui.SimpleMenuPreference
+            app:defaultValue="0"
+            app:entries="@array/ip_version_entries"
+            app:entryValues="@array/ip_version_values"
+            app:icon="@drawable/ic_baseline_compare_arrows_24"
+            app:key="routeIpVersion"
+            app:title="@string/route_ip_version"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:dialogMessage="chromium, safari, firefox, quic-go"
+            app:icon="@drawable/ic_baseline_layers_24"
+            app:key="routeClient"
+            app:summary="@string/route_client_summary"
+            app:title="@string/route_client"
+            app:useSimpleSummaryProvider="true" />
         <SwitchPreference
             app:icon="@drawable/ic_baseline_security_24"
             app:key="routeIpIsPrivate"
@@ -77,6 +92,16 @@
             app:key="routeNetworkType"
             app:title="@string/route_network_type"
             app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:icon="@drawable/ic_device_data_usage"
+            app:key="routeNetworkIsExpensive"
+            app:summary="@string/route_network_is_expensive_summary"
+            app:title="@string/route_network_is_expensive" />
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_speed_24"
+            app:key="routeNetworkIsConstrained"
+            app:summary="@string/route_network_is_constrained_summary"
+            app:title="@string/route_network_is_constrained" />
         <EditTextPreference
             app:icon="@drawable/ic_hardware_router"
             app:key="routeWifiSSID"

@@ -985,4 +985,16 @@
         <item>reno</item>
     </string-array>
 
+    <string-array name="ip_version_entries">
+        <item>@string/ip_version_any</item>
+        <item>IPv4</item>
+        <item>IPv6</item>
+    </string-array>
+
+    <string-array name="ip_version_values">
+        <item>0</item>
+        <item>4</item>
+        <item>6</item>
+    </string-array>
+
 </resources>

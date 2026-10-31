@@ -711,6 +711,18 @@ fun buildConfig(
                 if (rule.ruleSetIpCIDRMatchSource) {
                     rule_set_ip_cidr_match_source = true
                 }
+                if (rule.ipVersion == 4 || rule.ipVersion == 6) {
+                    ip_version = rule.ipVersion
+                }
+                if (rule.client.isNotBlank()) {
+                    client = rule.client.listByLineOrComma()
+                }
+                if (rule.networkIsExpensive) {
+                    network_is_expensive = true
+                }
+                if (rule.networkIsConstrained) {
+                    network_is_constrained = true
+                }
 
                 if (rule.port.isNotBlank()) {
                     port = mutableListOf<Int>()
@@ -748,6 +760,8 @@ fun buildConfig(
                     return DNSRule_DefaultOptions().apply {
                         if (uidList.isNotEmpty()) user_id = uidList
                         domainList?.let { makeSingBoxRule(it) }
+                        if (rule.ipVersion == 4 || rule.ipVersion == 6) ip_version = rule.ipVersion
+                        if (rule.client.isNotBlank()) client = rule.client.listByLineOrComma()
                         if (rule.invert) invert = true
                         if (rule.ruleset.isNotBlank()) {
                             if (rule_set == null) rule_set = mutableListOf()

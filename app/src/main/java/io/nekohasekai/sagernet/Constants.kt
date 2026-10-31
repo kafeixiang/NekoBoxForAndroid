@@ -158,6 +158,10 @@ object Key {
     const val ROUTE_WIFI_SSID = "routeWifiSSID"
     const val ROUTE_RULESET_MATCH_SOURCE = "routeRuleSetMatchSource"
     const val ROUTE_REJECT_METHOD = "routeRejectMethod"
+    const val ROUTE_IP_VERSION = "routeIpVersion"
+    const val ROUTE_CLIENT = "routeClient"
+    const val ROUTE_NETWORK_IS_EXPENSIVE = "routeNetworkIsExpensive"
+    const val ROUTE_NETWORK_IS_CONSTRAINED = "routeNetworkIsConstrained"
     const val ROUTE_OUTBOUND = "routeOutbound"
     const val ROUTE_PACKAGES = "routePackages"
 

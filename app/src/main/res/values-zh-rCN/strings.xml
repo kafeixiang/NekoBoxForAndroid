@@ -769,4 +769,13 @@
     <string name="dns_client_subnet">EDNS 客户端子网 (ECS)</string>
     <string name="dns_client_subnet_summary">在 DNS 查询中附加客户端 IP 子网前缀，使 CDN 精准调度最优就近节点</string>
     <string name="dns_client_subnet_dialog_message">例如 1.2.3.0/24 或 2001:da8::/48（留空表示不启用）</string>
+
+    <string name="route_ip_version">IP 协议版本</string>
+    <string name="ip_version_any">全部 (IPv4 与 IPv6)</string>
+    <string name="route_client">QUIC 客户端类型</string>
+    <string name="route_client_summary">匹配探测到的 QUIC 客户端（例如 chromium, safari, firefox, quic-go）</string>
+    <string name="route_network_is_expensive">计费网络 (蜂窝流量)</string>
+    <string name="route_network_is_expensive_summary">匹配按流量计费的网络（如蜂窝移动数据、便携热点）</string>
+    <string name="route_network_is_constrained">受限网络 (省流量模式)</string>
+    <string name="route_network_is_constrained_summary">匹配系统开启了省流量/低数据模式的网络</string>
 </resources>
