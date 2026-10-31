@@ -34,6 +34,7 @@ import org.json.JSONObject
 import org.json.JSONTokener
 import org.yaml.snakeyaml.TypeDescription
 import org.yaml.snakeyaml.Yaml
+import org.yaml.snakeyaml.constructor.SafeConstructor
 import org.yaml.snakeyaml.error.YAMLException
 import java.io.StringReader
 import androidx.core.net.toUri
@@ -250,22 +251,24 @@ object RawUpdater : GroupUpdater() {
 
             try {
 
-                val yaml = Yaml().apply {
+                val yaml = Yaml(SafeConstructor()).apply {
                     addTypeDescription(TypeDescription(String::class.java, "str"))
                 }.loadAs(text, Map::class.java)
 
                 val globalClientFingerprint = yaml["global-client-fingerprint"]?.toString() ?: ""
 
-                for (proxy in (yaml["proxies"] as? (List<Map<String, Any?>>) ?: error(
+                val proxyList = yaml["proxies"] as? (List<Map<String, Any?>>) ?: error(
                     app.getString(R.string.no_proxies_found_in_file)
-                ))) {
-                    // Note: YAML numbers parsed as "Long"
+                )
 
-                    when (proxy["type"] as String) {
+                for (proxy in proxyList) {
+                    val proxyType = proxy["type"]?.toString()?.lowercase() ?: continue
+
+                    when (proxyType) {
                         "socks5" -> {
                             proxies.add(SOCKSBean().apply {
-                                serverAddress = proxy["server"] as String
-                                serverPort = proxy["port"].toString().toInt()
+                                serverAddress = proxy["server"]?.toString() ?: return@apply
+                                serverPort = proxy["port"]?.toString()?.toIntOrNull() ?: return@apply
                                 username = proxy["username"]?.toString()
                                 password = proxy["password"]?.toString()
                                 name = proxy["name"]?.toString()
@@ -274,8 +277,8 @@ object RawUpdater : GroupUpdater() {
 
                         "http" -> {
                             proxies.add(HttpBean().apply {
-                                serverAddress = proxy["server"] as String
-                                serverPort = proxy["port"].toString().toInt()
+                                serverAddress = proxy["server"]?.toString() ?: return@apply
+                                serverPort = proxy["port"]?.toString()?.toIntOrNull() ?: return@apply
                                 username = proxy["username"]?.toString()
                                 password = proxy["password"]?.toString()
                                 setTLS(proxy["tls"]?.toString() == "true")
@@ -288,35 +291,45 @@ object RawUpdater : GroupUpdater() {
                         "ss" -> {
                             val ssPlugin = mutableListOf<String>()
                             if (proxy.contains("plugin")) {
-                                val opts = proxy["plugin-opts"] as Map<String, Any?>
-                                when (proxy["plugin"]) {
-                                    "obfs" -> {
-                                        ssPlugin.apply {
-                                            add("obfs-local")
-                                            add("obfs=" + (opts["mode"]?.toString() ?: ""))
-                                            add("obfs-host=" + (opts["host"]?.toString() ?: ""))
+                                val opts = proxy["plugin-opts"] as? Map<String, Any?>
+                                if (opts != null) {
+                                    when (proxy["plugin"]?.toString()) {
+                                        "obfs" -> {
+                                            ssPlugin.apply {
+                                                add("obfs-local")
+                                                add("obfs=" + (opts["mode"]?.toString() ?: ""))
+                                                add("obfs-host=" + (opts["host"]?.toString() ?: ""))
+                                            }
                                         }
-                                    }
 
-                                    "v2ray-plugin" -> {
-                                        ssPlugin.apply {
-                                            add("v2ray-plugin")
-                                            add("mode=" + (opts["mode"]?.toString() ?: ""))
-                                            if (opts["mode"]?.toString() == "true") add("tls")
-                                            add("host=" + (opts["host"]?.toString() ?: ""))
-                                            add("path=" + (opts["path"]?.toString() ?: ""))
-                                            if (opts["mux"]?.toString() == "true") add("mux=8")
+                                        "v2ray-plugin" -> {
+                                            ssPlugin.apply {
+                                                add("v2ray-plugin")
+                                                add("mode=" + (opts["mode"]?.toString() ?: ""))
+                                                if (opts["mode"]?.toString() == "true") add("tls")
+                                                add("host=" + (opts["host"]?.toString() ?: ""))
+                                                add("path=" + (opts["path"]?.toString() ?: ""))
+                                                if (opts["mux"]?.toString() == "true") add("mux=8")
+                                            }
                                         }
                                     }
                                 }
                             }
                             proxies.add(ShadowsocksBean().apply {
-                                serverAddress = proxy["server"] as String
-                                serverPort = proxy["port"].toString().toInt()
+                                serverAddress = proxy["server"]?.toString() ?: return@apply
+                                serverPort = proxy["port"]?.toString()?.toIntOrNull() ?: return@apply
                                 password = proxy["password"]?.toString()
-                                method = clashCipher(proxy["cipher"] as String)
+                                method = clashCipher(proxy["cipher"]?.toString() ?: "aes-256-gcm")
                                 plugin = ssPlugin.joinToString(";")
                                 name = proxy["name"]?.toString()
+                                val uot = proxy["udp-over-tcp"] ?: proxy["uot"]
+                                if (uot != null) {
+                                    sUoT = uot.toString() == "true" || uot.toString() == "1"
+                                }
+                                val uotVer = proxy["uot-version"] ?: proxy["uot_version"]
+                                if (uotVer != null) {
+                                    sUoTVersion = uotVer.toString().toIntOrNull() ?: 2
+                                }
                             })
                         }
 
@@ -405,8 +418,8 @@ object RawUpdater : GroupUpdater() {
                                     "skip-cert-verify" -> bean.allowInsecure =
                                         opt.value as? Boolean == true
 
-                                    "client-fingerprint" -> bean.utlsFingerprint =
-                                        opt.value as String
+                                    "client-fingerprint", "fingerprint" -> bean.utlsFingerprint =
+                                        opt.value?.toString() ?: ""
 
                                     "reality-opts" -> (opt.value as? Map<String, Any?>)?.also {
                                         for (realityOpt in it) {
@@ -741,6 +754,29 @@ object RawUpdater : GroupUpdater() {
 
                                     "down" -> bean.downloadMbps =
                                         opt.value.toString().substringBefore(" ").toIntOrNull() ?: 0
+
+                                    "hop-interval", "hop_interval" -> bean.hopInterval =
+                                        opt.value.toString().toIntOrNull()
+
+                                    "hop-interval-max", "hop_interval_max" -> bean.hopIntervalMax =
+                                        opt.value.toString().toIntOrNull()
+
+                                    "pin-sha256", "pin_sha256", "pinsha256" -> bean.pinSHA256 =
+                                        opt.value.toString()
+
+                                    "bbr", "bbr-profile", "bbr_profile" -> bean.bbrProfile =
+                                        opt.value.toString()
+
+                                    "obfs", "obfs-type", "obfs_type" -> bean.obfsType =
+                                        opt.value.toString()
+
+                                    "disable-chrome-parrot", "disable_chrome_parrot" -> bean.disableChromeParrot =
+                                        opt.value.toString() == "true" || opt.value.toString() == "1"
+
+                                    "alpn" -> {
+                                        val alpn = (opt.value as? (List<String>))
+                                        bean.alpn = alpn?.joinToString("\n") ?: opt.value.toString()
+                                    }
                                 }
                             }
                             if (hopPorts.isNotBlank()) {
@@ -758,10 +794,9 @@ object RawUpdater : GroupUpdater() {
                                     "name" -> bean.name = opt.value.toString()
                                     "server" -> bean.serverAddress = opt.value.toString()
                                     "ip" -> ip = opt.value.toString()
-                                    "port" -> bean.serverPort = opt.value.toString().toInt()
+                                    "port" -> bean.serverPort = opt.value.toString().toIntOrNull() ?: 443
 
                                     "token" -> {
-                                        bean.protocolVersion = 4
                                         bean.token = opt.value.toString()
                                     }
 
@@ -782,14 +817,19 @@ object RawUpdater : GroupUpdater() {
 
                                     "alpn" -> {
                                         val alpn = (opt.value as? (List<String>))
-                                        bean.alpn = alpn?.joinToString("\n")
+                                        bean.alpn = alpn?.joinToString("\n") ?: opt.value.toString()
                                     }
 
-                                    "congestion-controller" -> bean.congestionController =
+                                    "congestion-controller", "congestion-control" -> bean.congestionController =
                                         opt.value.toString()
 
                                     "udp-relay-mode" -> bean.udpRelayMode = opt.value.toString()
 
+                                    "udp-over-stream", "udp_over_stream" -> bean.udpOverStream =
+                                        opt.value.toString() == "true" || opt.value.toString() == "1"
+
+                                    "heartbeat" -> bean.heartbeat =
+                                        opt.value.toString().replace("s", "").toIntOrNull() ?: 10
                                 }
                             }
                             if (ip.isNotBlank()) {
@@ -803,6 +843,47 @@ object RawUpdater : GroupUpdater() {
 
                         "snell" -> {
                             val bean = parseClashSnell(proxy)
+                            proxies.add(bean)
+                        }
+
+                        "wireguard" -> {
+                            val bean = WireGuardBean()
+                            val localAddrs = mutableListOf<String>()
+                            for (opt in proxy) {
+                                if (opt.value == null) continue
+                                when (opt.key.replace("_", "-")) {
+                                    "name" -> bean.name = opt.value.toString()
+                                    "server" -> bean.serverAddress = opt.value.toString()
+                                    "port" -> bean.serverPort = opt.value.toString().toIntOrNull() ?: 51820
+                                    "ip" -> {
+                                        when (val v = opt.value) {
+                                            is List<*> -> localAddrs.addAll(v.mapNotNull { it?.toString() })
+                                            else -> localAddrs.add(v.toString())
+                                        }
+                                    }
+                                    "ipv6" -> localAddrs.add(opt.value.toString())
+                                    "public-key", "publickey" -> bean.peerPublicKey = opt.value.toString()
+                                    "private-key", "privatekey" -> bean.privateKey = opt.value.toString()
+                                    "preshared-key", "pre-shared-key", "presharedkey" -> bean.peerPreSharedKey = opt.value.toString()
+                                    "reserved" -> {
+                                        bean.reserved = when (val v = opt.value) {
+                                            is List<*> -> v.joinToString(",")
+                                            else -> v.toString()
+                                        }
+                                    }
+                                    "mtu" -> bean.mtu = opt.value.toString().toIntOrNull() ?: 1420
+                                    "workers" -> bean.workers = opt.value.toString().toIntOrNull() ?: 0
+                                    "keepalive", "persistent-keepalive", "persistent-keepalive-interval" -> {
+                                        bean.persistentKeepalive = opt.value.toString().toIntOrNull() ?: 0
+                                    }
+                                    "system-interface", "system" -> {
+                                        bean.systemInterface = opt.value.toString() == "true" || opt.value.toString() == "1"
+                                    }
+                                }
+                            }
+                            if (localAddrs.isNotEmpty()) {
+                                bean.localAddress = localAddrs.joinToString("\n")
+                            }
                             proxies.add(bean)
                         }
                     }
@@ -824,7 +905,7 @@ object RawUpdater : GroupUpdater() {
                     }
                 }
                 return proxies
-            } catch (e: YAMLException) {
+            } catch (e: Exception) {
                 Logs.w(e)
             }
         } else if (text.contains("[Interface]")) {

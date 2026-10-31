@@ -27,6 +27,9 @@ fun parseShadowsocks(url: String): ShadowsocksBean {
                     ).newBuilder().fragment(url.substringAfter("#")).build()
         }
 
+        val uotParam = link.queryParameter("uot") ?: link.queryParameter("udp-over-tcp")
+        val uotVerParam = link.queryParameter("uot_version") ?: link.queryParameter("uot-version")
+
         // ss-android style
 
         if (link.password.isNotBlank()) {
@@ -37,6 +40,12 @@ fun parseShadowsocks(url: String): ShadowsocksBean {
                 password = link.password
                 plugin = link.queryParameter("plugin") ?: ""
                 name = link.fragment
+                if (uotParam != null) {
+                    sUoT = uotParam == "1" || uotParam.equals("true", ignoreCase = true)
+                }
+                if (uotVerParam != null) {
+                    sUoTVersion = uotVerParam.toIntOrNull() ?: 2
+                }
                 fixPluginName()
             }
         }
@@ -50,6 +59,12 @@ fun parseShadowsocks(url: String): ShadowsocksBean {
             password = methodAndPswd.substringAfter(":")
             plugin = link.queryParameter("plugin") ?: ""
             name = link.fragment
+            if (uotParam != null) {
+                sUoT = uotParam == "1" || uotParam.equals("true", ignoreCase = true)
+            }
+            if (uotVerParam != null) {
+                sUoTVersion = uotVerParam.toIntOrNull() ?: 2
+            }
             fixPluginName()
         }
     } else {
@@ -61,12 +76,21 @@ fun parseShadowsocks(url: String): ShadowsocksBean {
         val link = ("https://" + v2Url.substringAfter("ss://")
             .decodeBase64UrlSafe()).toHttpUrlOrNull() ?: error("invalid v2rayN link $url")
 
+        val uotParam = link.queryParameter("uot") ?: link.queryParameter("udp-over-tcp")
+        val uotVerParam = link.queryParameter("uot_version") ?: link.queryParameter("uot-version")
+
         return ShadowsocksBean().apply {
             serverAddress = link.host
             serverPort = link.port
             method = link.username
             password = link.password
-            plugin = ""
+            plugin = link.queryParameter("plugin") ?: ""
+            if (uotParam != null) {
+                sUoT = uotParam == "1" || uotParam.equals("true", ignoreCase = true)
+            }
+            if (uotVerParam != null) {
+                sUoTVersion = uotVerParam.toIntOrNull() ?: 2
+            }
             val remarks = url.substringAfter("#").unUrlSafe()
             if (remarks.isNotBlank()) name = remarks
         }
@@ -82,6 +106,13 @@ fun ShadowsocksBean.toUri(): String {
 
     if (plugin.isNotBlank()) {
         builder.addQueryParameter("plugin", plugin)
+    }
+
+    if (sUoT == true) {
+        builder.addQueryParameter("uot", "1")
+        if (sUoTVersion != null && sUoTVersion != 2) {
+            builder.addQueryParameter("uot_version", sUoTVersion.toString())
+        }
     }
 
     if (name.isNotBlank()) {
@@ -103,6 +134,21 @@ fun JSONObject.parseShadowsocks(): ShadowsocksBean {
         val pId = getStr("plugin")
         if (!pId.isNullOrBlank()) {
             plugin = pId + ";" + optString("plugin_opts", "")
+        }
+
+        if (has("udp_over_tcp")) {
+            val uotObj = optJSONObject("udp_over_tcp")
+            if (uotObj != null) {
+                sUoT = uotObj.optBoolean("enabled", true)
+                sUoTVersion = uotObj.optInt("version", 2)
+            } else {
+                sUoT = optBoolean("udp_over_tcp")
+            }
+        } else if (has("uot")) {
+            sUoT = optBoolean("uot")
+            if (has("uot_version")) {
+                sUoTVersion = optInt("uot_version", 2)
+            }
         }
     }
 }

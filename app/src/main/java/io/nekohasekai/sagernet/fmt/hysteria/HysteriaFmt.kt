@@ -102,6 +102,12 @@ fun parseHysteria2(url: String): HysteriaBean {
         link.queryParameter("obfs")?.also {
             obfsType = it
         }
+        (link.queryParameter("hop_interval") ?: link.queryParameter("hop-interval"))?.toIntOrNull()?.also {
+            hopInterval = it
+        }
+        (link.queryParameter("hop_interval_max") ?: link.queryParameter("hop-interval-max"))?.toIntOrNull()?.also {
+            hopIntervalMax = it
+        }
     }
 }
 
@@ -172,6 +178,12 @@ fun HysteriaBean.toUri(): String {
         if (obfuscation.isNotBlank()) {
             builder.addQueryParameter("obfs", if (!obfsType.isNullOrBlank()) obfsType else "salamander")
             builder.addQueryParameter("obfs-password", obfuscation)
+        }
+        if (hopInterval != null && hopInterval > 0) {
+            builder.addQueryParameter("hop_interval", hopInterval.toString())
+        }
+        if (hopIntervalMax != null && hopIntervalMax > 0) {
+            builder.addQueryParameter("hop_interval_max", hopIntervalMax.toString())
         }
     }
     return builder.toLink(if (protocolVersion == 2) "hy2" else "hysteria")

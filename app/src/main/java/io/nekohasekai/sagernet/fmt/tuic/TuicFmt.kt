@@ -50,6 +50,12 @@ fun parseTuic(url: String): TuicBean {
         link.queryParameter("disable_sni")?.let {
             if (it == "1") disableSNI = true
         }
+        (link.queryParameter("udp_over_stream") ?: link.queryParameter("udp-over-stream"))?.let {
+            if (it == "1" || it == "true") udpOverStream = true
+        }
+        (link.queryParameter("heartbeat") ?: link.queryParameter("heartbeat_interval"))?.let {
+            heartbeat = it.replace("s", "").toIntOrNull() ?: heartbeat
+        }
     }
 }
 
@@ -58,6 +64,9 @@ fun TuicBean.toUri(): String {
 
     builder.addQueryParameter("congestion_control", congestionController)
     builder.addQueryParameter("udp_relay_mode", udpRelayMode)
+
+    if (udpOverStream == true) builder.addQueryParameter("udp_over_stream", "1")
+    if (heartbeat != null && heartbeat != 10) builder.addQueryParameter("heartbeat", "${heartbeat}s")
 
     if (sni.isNotBlank()) builder.addQueryParameter("sni", sni)
     if (alpn.isNotBlank()) builder.addQueryParameter("alpn", alpn)
