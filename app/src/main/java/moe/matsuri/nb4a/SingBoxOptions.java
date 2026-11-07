@@ -111,7 +111,13 @@ public class SingBoxOptions {
 
         public List<Inbound> inbounds;
 
+        public List<SingBoxOption> endpoints;
+
         public List<SingBoxOption> outbounds;
+
+        public List<SingBoxOption> services;
+
+        public List<SingBoxOption> certificate_providers;
 
         public RouteOptions route;
 
@@ -134,6 +140,10 @@ public class SingBoxOptions {
         public String secret;
 
         public String default_mode;
+
+        public List<String> access_control_allow_origin;
+
+        public Boolean access_control_allow_private_network;
 
         // Generate note: option type:  public List<String> ModeList;
 
@@ -173,7 +183,13 @@ public class SingBoxOptions {
 
         public List<Inbound> inbounds;
 
+        public List<Endpoint> endpoints;
+
         public List<Outbound> outbounds;
+
+        public List<SingBoxOption> services;
+
+        public List<SingBoxOption> certificate_providers;
 
         public RouteOptions route;
 
@@ -312,6 +328,8 @@ public class SingBoxOptions {
 
         public Boolean reverse_mapping;
 
+        public String client_subnet;
+
         public DNSFakeIPOptions fakeip;
 
         // Generate note: nested type DNSClientOptions
@@ -323,15 +341,35 @@ public class SingBoxOptions {
 
         public Boolean independent_cache;
 
+        public Integer cache_capacity;
+
         // End of public DNSClientOptions ;
 
     }
 
     public static class DNSServerOptions extends SingBoxOption {
 
+        public String type;
+
         public String tag;
 
         public String address;
+
+        public String server;
+
+        public Integer server_port;
+
+        public String path;
+
+        public OutboundTLSOptions tls;
+
+        public String inet4_range;
+
+        public String inet6_range;
+
+        public String rcode;
+
+        public String domain_resolver;
 
         public String address_resolver;
 
@@ -339,9 +377,15 @@ public class SingBoxOptions {
 
         public Long address_fallback_delay;
 
-        public String strategy;
-
         public String detour;
+
+        public String endpoint;
+
+        public Boolean accept_default_resolvers;
+
+        public Boolean accept_search_domain;
+
+        public String client_subnet;
 
     }
 
@@ -354,6 +398,8 @@ public class SingBoxOptions {
         public Boolean disable_expire;
 
         public Boolean independent_cache;
+
+        public Integer cache_capacity;
 
     }
 
@@ -384,6 +430,10 @@ public class SingBoxOptions {
         public Boolean enabled;
 
         public Boolean store_fakeip;
+
+        public Boolean store_rdrc;
+
+        public Boolean store_dns;
 
         public String path;
 
@@ -531,6 +581,29 @@ public class SingBoxOptions {
 
         public String hop_interval;
 
+        public String hop_interval_max;
+
+        public String bbr_profile;
+
+        public Boolean brutal_debug;
+
+        public Boolean disable_chrome_parrot;
+
+        // QUICOptions
+        public Long idle_timeout;
+
+        public Long keep_alive_period;
+
+        public Long stream_receive_window;
+
+        public Long connection_receive_window;
+
+        public Integer max_concurrent_streams;
+
+        public Integer initial_packet_size;
+
+        public Boolean disable_path_mtu_discovery;
+
     }
 
     public static class Hysteria2InboundOptions extends SingBoxOption {
@@ -590,6 +663,10 @@ public class SingBoxOptions {
         public String type;
 
         public String password;
+
+        public Integer min_packet_size;
+
+        public Integer max_packet_size;
 
     }
 
@@ -656,6 +733,29 @@ public class SingBoxOptions {
         public List<String> server_ports;
 
         public String hop_interval;
+
+        public String hop_interval_max;
+
+        public String bbr_profile;
+
+        public Boolean brutal_debug;
+
+        public Boolean disable_chrome_parrot;
+
+        // QUICOptions
+        public Long idle_timeout;
+
+        public Long keep_alive_period;
+
+        public Long stream_receive_window;
+
+        public Long connection_receive_window;
+
+        public Integer max_concurrent_streams;
+
+        public Integer initial_packet_size;
+
+        public Boolean disable_path_mtu_discovery;
 
     }
 
@@ -882,6 +982,9 @@ public class SingBoxOptions {
 
     }
 
+    public static class Endpoint extends Outbound {
+    }
+
     public static class DialerOptions extends SingBoxOption {
 
         public String detour;
@@ -1065,6 +1168,8 @@ public class SingBoxOptions {
         @SerializedName("final")
         public String final_;
 
+        public String default_domain_resolver;
+
         public Boolean find_process;
 
         public Boolean auto_detect_interface;
@@ -1074,6 +1179,14 @@ public class SingBoxOptions {
         public String default_interface;
 
         public Integer default_mark;
+
+        public String default_network_strategy;
+
+        public List<String> default_network_type;
+
+        public List<String> default_fallback_network_type;
+
+        public String default_fallback_delay;
 
     }
 
@@ -1117,6 +1230,9 @@ public class SingBoxOptions {
 
         // Generate note: Listable
         public List<String> protocol;
+
+        // Generate note: Listable
+        public List<String> client;
 
         // Generate note: Listable
         public List<String> domain;
@@ -1202,6 +1318,9 @@ public class SingBoxOptions {
         public List<String> protocol;
 
         // Generate note: Listable
+        public List<String> client;
+
+        // Generate note: Listable
         public List<String> domain;
 
         // Generate note: Listable
@@ -1253,11 +1372,25 @@ public class SingBoxOptions {
 
         public Boolean invert;
 
+        public String action;
+
         public String server;
 
         public Boolean disable_cache;
 
         public Integer rewrite_ttl;
+
+        public String client_subnet;
+
+        public Boolean rule_set_ip_cidr_match_source;
+
+        public List<String> ip_cidr;
+
+        public Boolean ip_is_private;
+
+        public Boolean ip_accept_any;
+
+        public Boolean race;
 
     }
 
@@ -1900,6 +2033,38 @@ public class SingBoxOptions {
 
         public String certificate_path;
 
+        public String engine;
+
+        public List<String> curve_preferences;
+
+        public List<String> certificate_sha256;
+
+        public List<String> certificate_public_key_sha256;
+
+        public List<String> client_certificate;
+
+        public String client_certificate_path;
+
+        public List<String> client_key;
+
+        public String client_key_path;
+
+        public Boolean fragment;
+
+        public Long fragment_fallback_delay;
+
+        public Boolean record_fragment;
+
+        public String spoof;
+
+        public String spoof_method;
+
+        public Boolean kernel_tx;
+
+        public Boolean kernel_rx;
+
+        public Long handshake_timeout;
+
         public OutboundECHOptions ech;
 
         public OutboundUTLSOptions utls;
@@ -1984,6 +2149,8 @@ public class SingBoxOptions {
         public List<String> config;
 
         public String config_path;
+
+        public String query_server_name;
 
     }
 
@@ -2307,6 +2474,21 @@ public class SingBoxOptions {
 
         public OutboundTLSOptions tls;
 
+        // QUICOptions
+        public Long idle_timeout;
+
+        public Long keep_alive_period;
+
+        public Long stream_receive_window;
+
+        public Long connection_receive_window;
+
+        public Integer max_concurrent_streams;
+
+        public Integer initial_packet_size;
+
+        public Boolean disable_path_mtu_discovery;
+
     }
 
     public static class TunInboundOptions extends SingBoxOption {
@@ -2324,6 +2506,8 @@ public class SingBoxOptions {
         public Boolean auto_route;
 
         public Boolean strict_route;
+
+        public Boolean exclude_mptcp;
 
         // Generate note: Listable
         public List<String> inet4_route_address;
@@ -2359,6 +2543,10 @@ public class SingBoxOptions {
         public List<String> exclude_package;
 
         public Boolean endpoint_independent_nat;
+
+        public String udp_mapping;
+
+        public String udp_filtering;
 
         public Long udp_timeout;
 
@@ -2790,12 +2978,11 @@ public class SingBoxOptions {
 
     public static class WireGuardPeer extends SingBoxOption {
 
-        // Generate note: nested type ServerOptions
-        public String server;
+        public String address;
 
-        public Integer server_port;
+        public Integer port;
 
-        // End of public ServerOptions ;
+        public Integer persistent_keepalive_interval;
 
         public String public_key;
 
@@ -2804,8 +2991,7 @@ public class SingBoxOptions {
         // Generate note: Listable
         public List<String> allowed_ips;
 
-        // Generate note: Base64 String
-        public String reserved;
+        public List<Integer> reserved;
 
     }
 
@@ -2816,6 +3002,9 @@ public class SingBoxOptions {
         public Integer mtu;
 
         // Generate note: Listable
+        public List<String> address;
+
+        // Generate note: Listable
         public List<String> inet4_address;
 
         // Generate note: Listable
@@ -2824,6 +3013,8 @@ public class SingBoxOptions {
         public Boolean auto_route;
 
         public Boolean strict_route;
+
+        public Boolean exclude_mptcp;
 
         // Generate note: Listable
         public List<String> inet4_route_address;
@@ -2859,6 +3050,10 @@ public class SingBoxOptions {
         public List<String> exclude_package;
 
         public Boolean endpoint_independent_nat;
+
+        public String udp_mapping;
+
+        public String udp_filtering;
 
         public Long udp_timeout;
 
@@ -3863,7 +4058,7 @@ public class SingBoxOptions {
 
     }
 
-    public static class Outbound_WireGuardOptions extends Outbound {
+    public static class Outbound_WireGuardOptions extends Endpoint {
 
         // Generate note: nested type DialerOptions
         public String detour;
@@ -3895,37 +4090,236 @@ public class SingBoxOptions {
 
         // End of public DialerOptions ;
 
-        public Boolean system_interface;
+        public Boolean system;
 
-        public String interface_name;
+        public String name;
 
         // Generate note: Listable
-        public List<String> local_address;
+        public List<String> address;
 
         public String private_key;
 
+        public Integer listen_port;
+
         public List<WireGuardPeer> peers;
-
-        // Generate note: nested type ServerOptions
-        public String server;
-
-        public Integer server_port;
-
-        // End of public ServerOptions ;
-
-        public String peer_public_key;
-
-        public String pre_shared_key;
-
-        // Generate note: Base64 String
-        public String reserved;
 
         public Integer workers;
 
         public Integer mtu;
 
-        public String network;
+        public Boolean on_demand;
 
+        public Long udp_timeout;
+
+        public String udp_mapping;
+
+        public String udp_filtering;
+
+        public Long udp_nat_max;
+
+    }
+
+    public static class Endpoint_MASQUEClientOptions extends Endpoint {
+
+        public String detour;
+
+        public String bind_interface;
+
+        public String inet4_bind_address;
+
+        public String inet6_bind_address;
+
+        public Boolean bind_address_no_port;
+
+        public String protect_path;
+
+        public Integer routing_mark;
+
+        public Boolean reuse_addr;
+
+        public String netns;
+
+        public String connect_timeout;
+
+        public Boolean tcp_fast_open;
+
+        public Boolean tcp_multi_path;
+
+        public Boolean disable_tcp_keep_alive;
+
+        public String tcp_keep_alive;
+
+        public String tcp_keep_alive_interval;
+
+        public Boolean udp_fragment;
+
+        public String network_strategy;
+
+        public List<String> network_type;
+
+        public List<String> fallback_network_type;
+
+        public String fallback_delay;
+
+        public String domain_strategy;
+
+        public String server;
+
+        public Integer server_port;
+
+        public Boolean system;
+
+        public String name;
+
+        public Integer mtu;
+
+        public Integer udp_mapping;
+
+        public Integer udp_filtering;
+
+        public Integer udp_nat_max;
+
+        public String username;
+
+        public String password;
+
+        public OutboundTLSOptions tls;
+
+        public String path;
+
+        public Map<String, List<String>> headers;
+
+        public Integer version;
+
+        public Boolean disable_version_fallback;
+
+        public List<String> advertise_routes;
+
+        public String udp_timeout;
+
+        public Boolean on_demand;
+
+    }
+
+    public static class OpenVPNRemoteOptions extends SingBoxOption {
+        public String server;
+        public Integer server_port;
+    }
+
+    public static class OpenVPNControlWrapOptions extends SingBoxOption {
+        public String type;
+        public List<String> key;
+        public String direction;
+    }
+
+    public static class OpenVPNOutboundTLSOptions extends SingBoxOption {
+        public String server_name;
+        public String server_name_type;
+        public List<String> certificate;
+        public List<String> client_certificate;
+        public List<String> client_key;
+        public List<String> peer_fingerprint;
+        public List<String> remote_certificate_ku;
+        public String remote_certificate_eku;
+        public OpenVPNControlWrapOptions control_wrap;
+    }
+
+    public static class Endpoint_OpenVPNClientOptions extends Endpoint {
+        public String detour;
+        public String server;
+        public Integer server_port;
+        public String network;
+        public String username;
+        public String password;
+        public String cipher;
+        public List<String> data_ciphers;
+        public String auth;
+        public String compression;
+        public Boolean redirect_gateway;
+        public Integer mtu;
+        public OpenVPNOutboundTLSOptions tls;
+    }
+
+    public static class OpenConnectFormEntryOptions extends SingBoxOption {
+        public String form_id;
+        public String submission_key;
+        public String name;
+        public String value;
+    }
+
+    public static class OpenConnectTLSOptions extends SingBoxOption {
+        public Boolean insecure;
+        public String server_name;
+        public List<String> peer_fingerprint;
+        public List<String> certificate_authority;
+        public List<String> client_certificate;
+        public List<String> client_key;
+        public String client_key_password;
+        public List<String> mca_certificate;
+        public List<String> mca_key;
+        public String mca_key_password;
+    }
+
+    public static class Endpoint_OpenConnectOptions extends Endpoint {
+        public String detour;
+        public String server;
+        public String flavor;
+        public String username;
+        public String password;
+        public String auth_group;
+        public String reported_os;
+        public String user_agent;
+        public String local_hostname;
+        public Boolean allow_insecure_crypto;
+        public List<OpenConnectFormEntryOptions> form_entries;
+        public OpenConnectTLSOptions tls;
+    }
+
+    public static class TailscaleSSHServerOptions extends SingBoxOption {
+        public Boolean enabled;
+    }
+
+    public static class Endpoint_TailscaleOptions extends Endpoint {
+        public String detour;
+        public String state_directory;
+        public String auth_key;
+        public String control_url;
+        public Boolean ephemeral;
+        public String hostname;
+        public Boolean accept_routes;
+        public String exit_node;
+        public Boolean exit_node_allow_lan_access;
+        public List<String> advertise_routes;
+        public Boolean advertise_exit_node;
+        public List<String> advertise_tags;
+        public Integer listen_port;
+        public String taildrop_directory;
+        public TailscaleSSHServerOptions ssh_server;
+    }
+
+    public static class Service_OOMKillerOptions extends SingBoxOption {
+        public String type = "oom-killer";
+        public String tag;
+        public String memory_limit;
+    }
+
+    public static class Service_ResolvedOptions extends SingBoxOption {
+        public String type = "resolved";
+        public String tag;
+    }
+
+    public static class CertProvider_ACMEOptions extends SingBoxOption {
+        public String type = "acme";
+        public String tag;
+        public String email;
+        public List<String> domain;
+    }
+
+    public static class CertProvider_OriginCAOptions extends SingBoxOption {
+        public String type = "origin-ca";
+        public String tag;
+        public String api_key;
+        public List<String> domain;
     }
 
     public static class Outbound_HysteriaOptions extends Outbound {
@@ -3995,6 +4389,29 @@ public class SingBoxOptions {
         public List<String> server_ports;
 
         public String hop_interval;
+
+        public String hop_interval_max;
+
+        public String bbr_profile;
+
+        public Boolean brutal_debug;
+
+        public Boolean disable_chrome_parrot;
+
+        // QUICOptions
+        public Long idle_timeout;
+
+        public Long keep_alive_period;
+
+        public Long stream_receive_window;
+
+        public Long connection_receive_window;
+
+        public Integer max_concurrent_streams;
+
+        public Integer initial_packet_size;
+
+        public Boolean disable_path_mtu_discovery;
 
     }
 
@@ -4315,6 +4732,141 @@ public class SingBoxOptions {
 
         public OutboundTLSOptions tls;
 
+        // QUICOptions
+        public Long idle_timeout;
+
+        public Long keep_alive_period;
+
+        public Long stream_receive_window;
+
+        public Long connection_receive_window;
+
+        public Integer max_concurrent_streams;
+
+        public Integer initial_packet_size;
+
+        public Boolean disable_path_mtu_discovery;
+
+    }
+
+    public static class Outbound_TrustTunnelOptions extends Outbound {
+
+        // Generate note: nested type DialerOptions
+        public String detour;
+
+        public String bind_interface;
+
+        public String inet4_bind_address;
+
+        public String inet6_bind_address;
+
+        public String protect_path;
+
+        public Integer routing_mark;
+
+        public Boolean reuse_addr;
+
+        public Long connect_timeout;
+
+        public Boolean tcp_fast_open;
+
+        public Boolean tcp_multi_path;
+
+        public Boolean udp_fragment;
+
+        public String domain_strategy;
+
+        public Long fallback_delay;
+
+        // End of public DialerOptions ;
+
+        // Generate note: nested type ServerOptions
+        public String server;
+
+        public Integer server_port;
+
+        // End of public ServerOptions ;
+
+        public String username;
+
+        public String password;
+
+        public Boolean health_check;
+
+        public Boolean quic;
+
+        public String quic_congestion_control;
+
+        public String network;
+
+        public OutboundTLSOptions tls;
+
+    }
+
+    public static class Outbound_ShadowQUICOptions extends Outbound {
+
+        public String detour;
+        public String bind_interface;
+        public String inet4_bind_address;
+        public String inet6_bind_address;
+        public String protect_path;
+        public Integer routing_mark;
+        public Boolean reuse_addr;
+        public Long connect_timeout;
+        public Boolean tcp_fast_open;
+        public Boolean tcp_multi_path;
+        public Boolean udp_fragment;
+        public String domain_strategy;
+        public Long fallback_delay;
+
+        public String server;
+        public Integer server_port;
+
+        public String username;
+        public String password;
+        public String server_name;
+        public List<String> alpn;
+        public String congestion_control;
+        public Boolean udp_over_stream;
+        public Boolean zero_rtt_handshake;
+        public Boolean sunny_quic;
+
+    }
+
+    public static class TailcatDERPServer extends SingBoxOption {
+        public String host;
+        public String ipv4;
+        public String ipv6;
+        public Integer derp_port;
+        public Integer stun_port;
+        public String cert_name;
+    }
+
+    public static class Outbound_TailcatOptions extends Outbound {
+        public String private_key;
+        public String server_public_key;
+        public String server_disco_key;
+        public String pre_shared_key;
+
+        // TailcatDERPOptions
+        public String derp_map_url;
+        public Integer derp_region;
+        public List<TailcatDERPServer> derp_servers;
+
+        // DialerOptions
+        public String detour;
+        public String bind_interface;
+        public String inet4_bind_address;
+        public String inet6_bind_address;
+        public String protect_path;
+        public Integer routing_mark;
+        public Boolean reuse_addr;
+        public Long connect_timeout;
+        public Boolean tcp_fast_open;
+        public Boolean tcp_multi_path;
+        public Boolean udp_fragment;
+        public String domain_strategy;
+        public Long fallback_delay;
     }
 
     public static class Outbound_JuicityOptions extends Outbound {
@@ -4422,6 +4974,29 @@ public class SingBoxOptions {
 
         public String hop_interval;
 
+        public String hop_interval_max;
+
+        public String bbr_profile;
+
+        public Boolean brutal_debug;
+
+        public Boolean disable_chrome_parrot;
+
+        // QUICOptions
+        public Long idle_timeout;
+
+        public Long keep_alive_period;
+
+        public Long stream_receive_window;
+
+        public Long connection_receive_window;
+
+        public Integer max_concurrent_streams;
+
+        public Integer initial_packet_size;
+
+        public Boolean disable_path_mtu_discovery;
+
     }
 
     public static class Outbound_SelectorOptions extends Outbound {
@@ -4443,6 +5018,10 @@ public class SingBoxOptions {
 
         public Integer tolerance;
 
+        public Long idle_timeout;
+
+        public Boolean interrupt_exist_connections;
+
     }
 
     public static class Rule_DefaultOptions extends Rule {
@@ -4460,6 +5039,9 @@ public class SingBoxOptions {
 
         // Generate note: Listable
         public List<String> protocol;
+
+        // Generate note: Listable
+        public List<String> client;
 
         // Generate note: Listable
         public List<String> domain;
@@ -4518,11 +5100,40 @@ public class SingBoxOptions {
 
         public String action;
 
+        public String strategy;
+
+        public String timeout;
+
         public String outbound;
+
+        public Boolean rule_set_ip_cidr_match_source;
+
+        public List<String> network_type;
+
+        public Boolean network_is_expensive;
+
+        public Boolean network_is_constrained;
+
+        public List<String> wifi_ssid;
+
+        public List<String> wifi_bssid;
+
+        public List<String> sniffer;
+
+        public String override_address;
+
+        public Integer override_port;
+
+        public String method;
+
+        public Boolean no_drop;
 
     }
 
     public static class DNSRule_DefaultOptions extends DNSRule {
+
+        // Generate note: Listable
+        public List<String> preferred_by;
 
         // Generate note: Listable
         public List<String> inbound;
@@ -4540,6 +5151,9 @@ public class SingBoxOptions {
 
         // Generate note: Listable
         public List<String> protocol;
+
+        // Generate note: Listable
+        public List<String> client;
 
         // Generate note: Listable
         public List<String> domain;
@@ -4592,11 +5206,25 @@ public class SingBoxOptions {
 
         public Boolean invert;
 
+        public String action;
+
         public String server;
 
         public Boolean disable_cache;
 
         public Integer rewrite_ttl;
+
+        public String client_subnet;
+
+        public Boolean rule_set_ip_cidr_match_source;
+
+        public List<String> ip_cidr;
+
+        public Boolean ip_is_private;
+
+        public Boolean ip_accept_any;
+
+        public Boolean race;
 
     }
 
@@ -4824,8 +5452,6 @@ public class SingBoxOptions {
 
         public String mode;
 
-        public Boolean quic_proxy_mode;
-
         public Boolean reuse;
 
     }
@@ -4839,6 +5465,35 @@ public class SingBoxOptions {
         public String password;
         public String multiplexing;
         public String traffic_pattern;
+    }
+
+    public static class Outbound_NaiveOptions extends Outbound {
+        public String detour;
+        public String bind_interface;
+        public String inet4_bind_address;
+        public String inet6_bind_address;
+        public String protect_path;
+        public Integer routing_mark;
+        public Boolean reuse_addr;
+        public Long connect_timeout;
+        public Boolean tcp_fast_open;
+        public Boolean tcp_multi_path;
+        public Boolean udp_fragment;
+        public String domain_strategy;
+        public Long fallback_delay;
+
+        public String server;
+        public Integer server_port;
+        public String username;
+        public String password;
+        public Integer insecure_concurrency;
+        public Map<String, List<String>> extra_headers;
+        public Long stream_receive_window;
+        public UDPOverTCPOptions udp_over_tcp;
+        public Boolean quic;
+        public String quic_congestion_control;
+        public Long quic_session_receive_window;
+        public OutboundTLSOptions tls;
     }
 
 }
