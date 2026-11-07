@@ -20,6 +20,8 @@ import io.nekohasekai.sagernet.fmt.shadowsocks.buildSingBoxOutboundShadowsocksBe
 import io.nekohasekai.sagernet.fmt.shadowsocks.parseShadowsocks
 import io.nekohasekai.sagernet.fmt.snell.SnellBean
 import io.nekohasekai.sagernet.fmt.snell.buildSingBoxOutboundSnellBean
+import io.nekohasekai.sagernet.fmt.snell.parseSnell
+import io.nekohasekai.sagernet.fmt.snell.toUri
 import io.nekohasekai.sagernet.fmt.ssh.SSHBean
 import io.nekohasekai.sagernet.fmt.ssh.buildSingBoxOutboundSSHBean
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
@@ -435,6 +437,7 @@ class ProtocolValidityTest {
             version = 4
             obfsMode = "http"
             obfsHost = "snell.example.com"
+            reuse = true
         }
         val snellOutbound = buildSingBoxOutboundSnellBean(snellBean)
         assertEquals("snell", snellOutbound.type)
@@ -444,6 +447,38 @@ class ProtocolValidityTest {
         assertEquals(4, snellOutbound.version)
         assertEquals("http", snellOutbound.obfs_mode)
         assertEquals("snell.example.com", snellOutbound.obfs_host)
+        assertEquals(true, snellOutbound.reuse)
+
+        // Test Snell v6 building
+        val snell6Bean = SnellBean().apply {
+            serverAddress = "127.0.0.1"
+            serverPort = 18260
+            psk = "test-snell-psk-123456"
+            version = 6
+            mode = "unshaped"
+            userKey = "user123"
+            reuse = true
+        }
+        val snell6Outbound = buildSingBoxOutboundSnellBean(snell6Bean)
+        assertEquals("snell", snell6Outbound.type)
+        assertEquals("127.0.0.1", snell6Outbound.server)
+        assertEquals(18260, snell6Outbound.server_port)
+        assertEquals("test-snell-psk-123456", snell6Outbound.psk)
+        assertEquals(6, snell6Outbound.version)
+        assertEquals("unshaped", snell6Outbound.mode)
+        assertEquals("user123", snell6Outbound.userkey)
+        assertEquals(true, snell6Outbound.reuse)
+
+        // Test Snell URI roundtrip
+        val uri = snell6Bean.toUri()
+        val parsed = parseSnell(uri)
+        assertEquals("127.0.0.1", parsed.serverAddress)
+        assertEquals(18260, parsed.serverPort)
+        assertEquals("test-snell-psk-123456", parsed.psk)
+        assertEquals(6, parsed.version)
+        assertEquals("unshaped", parsed.mode)
+        assertEquals("user123", parsed.userKey)
+        assertEquals(true, parsed.reuse)
 
         val sshBean = SSHBean().apply {
             serverAddress = "1.2.3.4"

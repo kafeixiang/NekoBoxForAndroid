@@ -10,6 +10,7 @@ fun parseSnell(url: String): SnellBean {
         ?: error("Invalid snell URL")
 
     return SnellBean().apply {
+        initializeDefaultValues()
         serverAddress = link.host
         serverPort = link.port
         psk = link.username.unUrlSafe()
@@ -30,25 +31,27 @@ fun parseSnell(url: String): SnellBean {
 
 fun SnellBean.toUri(): String {
     val builder = StringBuilder("snell://")
-    builder.append(psk.urlSafe()).append("@")
-    builder.append(serverAddress).append(":").append(serverPort)
+    builder.append((psk ?: "").urlSafe()).append("@")
+    builder.append(serverAddress ?: "").append(":").append(serverPort ?: 443)
 
     val params = mutableListOf<String>()
-    params.add("version=$version")
-    if (userKey.isNotBlank()) params.add("userkey=${userKey.urlSafe()}")
+    params.add("version=${version ?: 4}")
+    if (!userKey.isNullOrBlank()) params.add("userkey=${userKey.urlSafe()}")
     if (version == 6) {
-        if (mode.isNotBlank() && mode != "default") params.add("mode=$mode")
+        if (!mode.isNullOrBlank() && mode != "default") params.add("mode=$mode")
         if (quicProxyMode == true) params.add("quic-proxy-mode=true")
     } else {
-        if (obfsMode.isNotBlank()) params.add("obfs-mode=$obfsMode")
-        if (obfsHost.isNotBlank()) params.add("obfs-host=$obfsHost")
+        if (!obfsMode.isNullOrBlank()) params.add("obfs-mode=$obfsMode")
+        if (!obfsHost.isNullOrBlank()) params.add("obfs-host=$obfsHost")
     }
-    if (reuse) params.add("reuse=true")
-    if (network.isNotBlank()) params.add("network=$network")
+    if (reuse == true) params.add("reuse=true")
+    if (!network.isNullOrBlank()) params.add("network=$network")
 
-    builder.append("?").append(params.joinToString("&"))
+    if (params.isNotEmpty()) {
+        builder.append("?").append(params.joinToString("&"))
+    }
 
-    if (name.isNotBlank()) {
+    if (!name.isNullOrBlank()) {
         builder.append("#").append(name.urlSafe())
     }
 
