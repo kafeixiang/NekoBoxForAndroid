@@ -8,31 +8,9 @@ import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.database.ProxyEntity.Companion.TYPE_CONFIG
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.fmt.ConfigBuildResult.IndexEntity
-import io.nekohasekai.sagernet.fmt.direct.DirectBean
-import io.nekohasekai.sagernet.fmt.direct.buildSingBoxOutboundDirectBean
-import io.nekohasekai.sagernet.fmt.masque.MASQUEBean
-import io.nekohasekai.sagernet.fmt.masque.buildSingBoxOutboundMASQUEBean
-import io.nekohasekai.sagernet.fmt.openvpn.OpenVPNBean
-import io.nekohasekai.sagernet.fmt.openvpn.buildSingBoxOutboundOpenVPNBean
-import io.nekohasekai.sagernet.fmt.openconnect.OpenConnectBean
-import io.nekohasekai.sagernet.fmt.openconnect.buildSingBoxOutboundOpenConnectBean
-import io.nekohasekai.sagernet.fmt.tailscale.TailscaleBean
-import io.nekohasekai.sagernet.fmt.tailscale.buildSingBoxOutboundTailscaleBean
-import io.nekohasekai.sagernet.fmt.tailscale.TailcatBean
-import io.nekohasekai.sagernet.fmt.tailscale.buildSingBoxOutboundTailcatBean
-import io.nekohasekai.sagernet.fmt.tor.TorBean
-import io.nekohasekai.sagernet.fmt.tor.buildSingBoxOutboundTorBean
-import io.nekohasekai.sagernet.fmt.trusttunnel.TrustTunnelBean
-import io.nekohasekai.sagernet.fmt.trusttunnel.buildSingBoxOutboundTrustTunnelBean
-import io.nekohasekai.sagernet.fmt.shadowquic.ShadowQUICBean
-import io.nekohasekai.sagernet.fmt.shadowquic.buildSingBoxOutboundShadowQUICBean
 import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean
 import io.nekohasekai.sagernet.fmt.hysteria.buildSingBoxOutboundHysteriaBean
 import io.nekohasekai.sagernet.fmt.internal.ChainBean
-import io.nekohasekai.sagernet.fmt.mieru.MieruBean
-import io.nekohasekai.sagernet.fmt.mieru.buildSingBoxOutboundMieruBean
-import io.nekohasekai.sagernet.fmt.naive.NaiveBean
-import io.nekohasekai.sagernet.fmt.naive.buildSingBoxOutboundNaiveBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.buildSingBoxOutboundShadowsocksBean
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
@@ -43,12 +21,34 @@ import io.nekohasekai.sagernet.fmt.tuic.TuicBean
 import io.nekohasekai.sagernet.fmt.tuic.buildSingBoxOutboundTuicBean
 import io.nekohasekai.sagernet.fmt.juicity.JuicityBean
 import io.nekohasekai.sagernet.fmt.juicity.buildSingBoxOutboundJuicityBean
+import io.nekohasekai.sagernet.fmt.trusttunnel.TrustTunnelBean
+import io.nekohasekai.sagernet.fmt.trusttunnel.buildSingBoxOutboundTrustTunnelBean
+import io.nekohasekai.sagernet.fmt.shadowquic.ShadowQUICBean
+import io.nekohasekai.sagernet.fmt.shadowquic.buildSingBoxOutboundShadowQUICBean
 import io.nekohasekai.sagernet.fmt.v2ray.StandardV2RayBean
 import io.nekohasekai.sagernet.fmt.v2ray.buildSingBoxOutboundStandardV2RayBean
+import io.nekohasekai.sagernet.fmt.mieru.MieruBean
+import io.nekohasekai.sagernet.fmt.mieru.buildSingBoxOutboundMieruBean
+import io.nekohasekai.sagernet.fmt.naive.NaiveBean
+import io.nekohasekai.sagernet.fmt.naive.buildSingBoxOutboundNaiveBean
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.shadowsocksr.buildSingBoxOutboundShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.snell.SnellBean
 import io.nekohasekai.sagernet.fmt.snell.buildSingBoxOutboundSnellBean
+import io.nekohasekai.sagernet.fmt.direct.DirectBean
+import io.nekohasekai.sagernet.fmt.direct.buildSingBoxOutboundDirectBean
+import io.nekohasekai.sagernet.fmt.masque.MASQUEBean
+import io.nekohasekai.sagernet.fmt.masque.buildSingBoxEndpointMASQUEBean
+import io.nekohasekai.sagernet.fmt.openvpn.OpenVPNBean
+import io.nekohasekai.sagernet.fmt.openvpn.buildSingBoxEndpointOpenVPNBean
+import io.nekohasekai.sagernet.fmt.openconnect.OpenConnectBean
+import io.nekohasekai.sagernet.fmt.openconnect.buildSingBoxEndpointOpenConnectBean
+import io.nekohasekai.sagernet.fmt.tailscale.TailscaleBean
+import io.nekohasekai.sagernet.fmt.tailscale.buildSingBoxEndpointTailscaleBean
+import io.nekohasekai.sagernet.fmt.tailscale.TailcatBean
+import io.nekohasekai.sagernet.fmt.tailscale.buildSingBoxOutboundTailcatBean
+import io.nekohasekai.sagernet.fmt.tor.TorBean
+import io.nekohasekai.sagernet.fmt.tor.buildSingBoxOutboundTorBean
 import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
 import io.nekohasekai.sagernet.fmt.wireguard.buildSingBoxOutboundWireguardBean
 import io.nekohasekai.sagernet.ktx.isIpAddress
@@ -62,6 +62,7 @@ import moe.matsuri.nb4a.proxy.anytls.buildSingBoxOutboundAnyTLSBean
 import moe.matsuri.nb4a.proxy.config.ConfigBean
 import moe.matsuri.nb4a.proxy.shadowtls.ShadowTLSBean
 import moe.matsuri.nb4a.proxy.shadowtls.buildSingBoxOutboundShadowTLSBean
+import com.github.shadowsocks.plugin.PluginOptions
 import moe.matsuri.nb4a.utils.JavaUtil.gson
 import moe.matsuri.nb4a.utils.Util
 import moe.matsuri.nb4a.utils.listByLineOrComma
@@ -155,7 +156,7 @@ fun buildConfig(
     val extraProxies =
         if (forTest) mapOf() else SagerDatabase.proxyDao.getEntities(extraRules.mapNotNull { rule ->
             rule.outbound.takeIf { it > 0 && it != proxy.id }
-        }.toHashSet().toList()).associateBy { it.id }
+        }.toHashSet().toList()).filter { it.canRunOrInternal() }.associateBy { it.id }
     val buildSelector = !forTest && group?.isSelector == true && !forExport
     val userDNSRuleList = mutableListOf<DNSRule_DefaultOptions>()
     val domainListDNSDirectForce = mutableListOf<String>()
@@ -184,10 +185,33 @@ fun buildConfig(
     }
 
     return MyOptions().apply {
-        if (!forTest && DataStore.enableClashAPI) experimental = ExperimentalOptions().apply {
-            clash_api = ClashAPIOptions().apply {
-                external_controller = "127.0.0.1:9090"
-                external_ui = "../files/yacd"
+        if (!forTest && (DataStore.enableClashAPI || DataStore.storeCacheFile)) {
+            experimental = ExperimentalOptions().apply {
+                if (DataStore.enableClashAPI) {
+                    clash_api = ClashAPIOptions().apply {
+                        external_controller = "127.0.0.1:9090"
+                        external_ui = "../files/yacd"
+                        access_control_allow_origin = listOf("*")
+                        access_control_allow_private_network = true
+                    }
+                }
+                if (DataStore.storeCacheFile) {
+                    cache_file = SingBoxOptions.CacheFile().apply {
+                        enabled = true
+                        path = "cache.db"
+                        store_fakeip = true
+                        store_dns = true
+                        store_rdrc = true
+                    }
+                }
+            }
+        }
+
+        if (DataStore.enableNTP) {
+            ntp = SingBoxOptions.NTPOptions().apply {
+                enabled = true
+                server = DataStore.ntpServer.ifBlank { "time.apple.com" }
+                server_port = 123
             }
         }
 
@@ -200,12 +224,6 @@ fun buildConfig(
                 4 -> "trace"
                 else -> "info"
             }
-        }
-
-        dns = DNSOptions().apply {
-            servers = mutableListOf()
-            rules = mutableListOf()
-            independent_cache = true
         }
 
         fun autoDnsDomainStrategy(s: String): String? {
@@ -221,34 +239,88 @@ fun buildConfig(
             }
         }
 
+        val defaultServerDomainStrategy = SingBoxOptionsUtil.domainStrategy("server")
+        val directDnsStrategy = autoDnsDomainStrategy(SingBoxOptionsUtil.domainStrategy("dns-direct"))
+        val remoteDnsStrategy = autoDnsDomainStrategy(SingBoxOptionsUtil.domainStrategy("dns-remote"))
+
+        dns = DNSOptions().apply {
+            strategy = if (forTest) directDnsStrategy else remoteDnsStrategy
+            servers = mutableListOf()
+            rules = mutableListOf()
+            if (DataStore.optimisticDns) {
+                // sing-box optimistic dns
+                _hack_config_map["optimistic"] = mapOf("enabled" to true)
+            }
+            if (DataStore.dnsClientSubnet.isNotBlank()) {
+                client_subnet = DataStore.dnsClientSubnet.trim()
+            }
+            if (DataStore.dnsDisableCache) {
+                disable_cache = true
+            }
+            if (DataStore.dnsDisableExpire) {
+                disable_expire = true
+            }
+            if (DataStore.dnsIndependentCache) {
+                independent_cache = true
+            }
+            if (DataStore.dnsReverseMapping) {
+                reverse_mapping = true
+            }
+            if (DataStore.dnsCacheCapacity > 0) {
+                cache_capacity = DataStore.dnsCacheCapacity
+            }
+        }
+
         inbounds = mutableListOf()
 
         if (!forTest) {
             if (isVPN) inbounds.add(Inbound_TunOptions().apply {
                 type = "tun"
                 tag = "tun-in"
-                stack = when (DataStore.tunImplementation) {
-                    TunImplementation.GVISOR -> "gvisor"
-                    TunImplementation.SYSTEM -> "system"
-                    else -> "mixed"
-                }
-                endpoint_independent_nat = true
                 mtu = DataStore.mtu
-                domain_strategy = genDomainStrategy(DataStore.resolveDestination)
-                sniff = needSniff
-                sniff_override_destination = needSniffOverride
+                auto_route = false
+                strict_route = DataStore.strictRoute
+                if (DataStore.tunExcludeMptcp) {
+                    exclude_mptcp = true
+                }
+                if (DataStore.tunUdpTimeout > 0) {
+                    udp_timeout = DataStore.tunUdpTimeout.toLong()
+                }
+                if (DataStore.tunUdpMapping.isNotBlank()) {
+                    val mappingVal = when (DataStore.tunUdpMapping) {
+                        "full_cone", "endpoint_independent" -> "endpoint_independent"
+                        "symmetric", "address_and_port_dependent" -> "address_and_port_dependent"
+                        "address_dependent" -> "address_dependent"
+                        else -> DataStore.tunUdpMapping
+                    }
+                    udp_mapping = mappingVal
+                    if (mappingVal == "endpoint_independent") {
+                        endpoint_independent_nat = true
+                    }
+                }
+                if (DataStore.tunUdpFiltering.isNotBlank()) {
+                    udp_filtering = DataStore.tunUdpFiltering
+                }
+                when (DataStore.tunImplementation) {
+                    TunImplementation.SYSTEM -> stack = "system"
+                    TunImplementation.GVISOR -> stack = "gvisor"
+                    TunImplementation.MIXED -> stack = "mixed"
+                    else -> {} // 默认使用 sing-tun 自有 TCP/IP stack (省略 stack 字段)
+                }
                 when (ipv6Mode) {
                     IPv6Mode.DISABLE -> {
-                        inet4_address = listOf(VpnService.PRIVATE_VLAN4_CLIENT + "/28")
+                        address = listOf(VpnService.PRIVATE_VLAN4_CLIENT + "/28")
                     }
 
                     IPv6Mode.ONLY -> {
-                        inet6_address = listOf(VpnService.PRIVATE_VLAN6_CLIENT + "/126")
+                        address = listOf(VpnService.PRIVATE_VLAN6_CLIENT + "/126")
                     }
 
                     else -> {
-                        inet4_address = listOf(VpnService.PRIVATE_VLAN4_CLIENT + "/28")
-                        inet6_address = listOf(VpnService.PRIVATE_VLAN6_CLIENT + "/126")
+                        address = listOf(
+                            VpnService.PRIVATE_VLAN4_CLIENT + "/28",
+                            VpnService.PRIVATE_VLAN6_CLIENT + "/126"
+                        )
                     }
                 }
             })
@@ -257,9 +329,6 @@ fun buildConfig(
                 tag = TAG_MIXED
                 listen = bind
                 listen_port = DataStore.mixedPort
-                domain_strategy = genDomainStrategy(DataStore.resolveDestination)
-                sniff = needSniff
-                sniff_override_destination = needSniffOverride
             })
         }
 
@@ -268,9 +337,26 @@ fun buildConfig(
         // init routing object
         route = RouteOptions().apply {
             auto_detect_interface = true
+            find_process = true
+            default_domain_resolver = "dns-direct"
             rules = mutableListOf()
             rule_set = mutableListOf()
+            if (DataStore.overrideAndroidVpn) {
+                override_android_vpn = true
+            }
+            if (DataStore.defaultNetworkStrategy.isNotBlank() && DataStore.defaultNetworkStrategy != "default") {
+                default_network_strategy = DataStore.defaultNetworkStrategy
+                if (DataStore.defaultNetworkStrategy == "fallback") {
+                    default_network_type = listOf("wifi")
+                    default_fallback_network_type = listOf("cellular")
+                    if (DataStore.defaultFallbackDelay > 0) {
+                        default_fallback_delay = "${DataStore.defaultFallbackDelay}ms"
+                    }
+                }
+            }
         }
+
+        val vpnWithPushDNS = mutableMapOf<String, String>() // endpointTag:dnsType
 
         // returns outbound tag
         fun buildChain(
@@ -294,8 +380,6 @@ fun buildConfig(
             var chainTagOut = ""
             val chainTag = "c-$chainId"
             var muxApplied = false
-
-            val defaultServerDomainStrategy = SingBoxOptionsUtil.domainStrategy("server")
 
             profileList.forEachIndexed { index, proxyEntity ->
                 val bean = proxyEntity.requireBean()
@@ -381,6 +465,12 @@ fun buildConfig(
                         is JuicityBean ->
                             buildSingBoxOutboundJuicityBean(bean)
 
+                        is TrustTunnelBean ->
+                            buildSingBoxOutboundTrustTunnelBean(bean)
+
+                        is ShadowQUICBean ->
+                            buildSingBoxOutboundShadowQUICBean(bean)
+
                         is SOCKSBean ->
                             buildSingBoxOutboundSocksBean(bean)
 
@@ -405,35 +495,40 @@ fun buildConfig(
                         is MieruBean ->
                             buildSingBoxOutboundMieruBean(bean)
 
-                        is NaiveBean ->
-                            buildSingBoxOutboundNaiveBean(bean)
-
                         is DirectBean ->
                             buildSingBoxOutboundDirectBean(bean)
 
                         is MASQUEBean ->
-                            buildSingBoxOutboundMASQUEBean(bean)
+                            buildSingBoxEndpointMASQUEBean(bean)
 
-                        is OpenVPNBean ->
-                            buildSingBoxOutboundOpenVPNBean(bean)
+                        is OpenVPNBean -> {
+                            vpnWithPushDNS[tagOut] = "openvpn"
+                            buildSingBoxEndpointOpenVPNBean(bean)
+                        }
 
-                        is OpenConnectBean ->
-                            buildSingBoxOutboundOpenConnectBean(bean)
+                        is OpenConnectBean -> {
+                            vpnWithPushDNS[tagOut] = "openconnect"
+                            buildSingBoxEndpointOpenConnectBean(bean)
+                        }
 
-                        is TailscaleBean ->
-                            buildSingBoxOutboundTailscaleBean(bean)
+                        is TailscaleBean -> {
+                            vpnWithPushDNS[tagOut] = "tailscale"
+                            val extraRoutes = if (bean.advertiseFakeDNSRoutes == true && useFakeDns) {
+                                listOf("198.18.0.0/15", "fc00::/18")
+                            } else {
+                                emptyList()
+                            }
+                            buildSingBoxEndpointTailscaleBean(bean, extraRoutes)
+                        }
 
                         is TailcatBean ->
                             buildSingBoxOutboundTailcatBean(bean)
 
+                        is NaiveBean ->
+                            buildSingBoxOutboundNaiveBean(bean)
+
                         is TorBean ->
                             buildSingBoxOutboundTorBean(bean)
-
-                        is TrustTunnelBean ->
-                            buildSingBoxOutboundTrustTunnelBean(bean)
-
-                        is ShadowQUICBean ->
-                            buildSingBoxOutboundShadowQUICBean(bean)
 
                         else -> throw IllegalStateException("can't reach")
                     }
@@ -453,23 +548,42 @@ fun buildConfig(
                     // udp over tcp
                     try {
                         val sUoT = bean.javaClass.getField("sUoT").get(bean)
-                        if (sUoT is Boolean && sUoT) {
-                            _hack_config_map["udp_over_tcp"] = true
+                        val isSSWithShadowTLS = bean is ShadowsocksBean && bean.plugin.startsWith("shadow-tls")
+                        if ((sUoT is Boolean && sUoT) || isSSWithShadowTLS) {
+                            val uotVer = try {
+                                bean.javaClass.getField("sUoTVersion").get(bean) as? Int ?: 2
+                            } catch (_: Exception) {
+                                2
+                            }
+                            _hack_config_map["udp_over_tcp"] = mapOf("enabled" to true, "version" to uotVer)
                         }
                     } catch (_: Exception) {
                     }
 
-                    // domain_strategy
+                    // domain_resolver
                     pastEntity?.requireBean()?.apply {
-                        // don't loopback
-                        if (defaultServerDomainStrategy != "" && !serverAddress.isIpAddress()) {
+                        if (!serverAddress.isIpAddress()) {
                             domainListDNSDirectForce.add("full:$serverAddress")
                         }
                     }
-                    _hack_config_map["domain_strategy"] =
-                        if (forTest) "" else defaultServerDomainStrategy
+                    if (!forTest && defaultServerDomainStrategy.isNotBlank()) {
+                        _hack_config_map["domain_resolver"] = mapOf(
+                            "server" to "dns-direct",
+                            "strategy" to defaultServerDomainStrategy
+                        )
+                    }
 
                     _hack_config_map["tag"] = tagOut
+
+                    if (DataStore.tcpMultiPath) {
+                        _hack_config_map["tcp_multi_path"] = true
+                    }
+                    if (DataStore.udpFragment) {
+                        _hack_config_map["udp_fragment"] = true
+                    }
+                    if (DataStore.tcpFastOpen) {
+                        _hack_config_map["tcp_fast_open"] = true
+                    }
 
                     _hack_custom_config = bean.customOutboundJson
                 }
@@ -483,7 +597,7 @@ fun buildConfig(
                     var needExternal = true
                     if (index == profileList.lastIndex) {
                         val pluginId = when (bean) {
-                            is HysteriaBean -> if (bean.protocolVersion == 1) "hysteria-plugin" else "hysteria2-plugin"
+                            is HysteriaBean -> "hysteria-plugin"
                             else -> ""
                         }
                         if (Plugins.isUsingMatsuriExe(pluginId)) {
@@ -523,6 +637,58 @@ fun buildConfig(
                 chainOutbounds.add(currentOutbound)
                 pastOutbound = currentOutbound
                 pastEntity = proxyEntity
+
+                if (bean is ShadowsocksBean && bean.plugin.isNotBlank() && bean.plugin.substringBefore(";") == "shadow-tls") {
+                    val shadowtlsTag = "$tagOut-shadowtls"
+                    currentOutbound._hack_config_map["detour"] = shadowtlsTag
+                    (currentOutbound as? Outbound_ShadowsocksOptions)?.detour = shadowtlsTag
+
+                    val opts = PluginOptions(
+                        "shadow-tls",
+                        if (bean.plugin.contains(";")) bean.plugin.substringAfter(";") else ""
+                    )
+                    val tlsHost = opts["host"] ?: opts["sni"] ?: bean.serverAddress
+                    val tlsPassword = opts["password"] ?: ""
+                    val tlsVersion = opts["version"]?.toIntOrNull() ?: 3
+                    val tlsFingerprint = opts["fingerprint"] ?: opts["client-fingerprint"]
+
+                    val shadowtlsOutbound = Outbound_ShadowTLSOptions().apply {
+                        type = "shadowtls"
+                        tag = shadowtlsTag
+                        server = bean.serverAddress
+                        server_port = bean.serverPort
+                        version = tlsVersion
+                        password = tlsPassword
+                        tls = OutboundTLSOptions().apply {
+                            enabled = true
+                            server_name = tlsHost
+                            if (!tlsFingerprint.isNullOrBlank()) {
+                                utls = OutboundUTLSOptions().apply {
+                                    enabled = true
+                                    fingerprint = tlsFingerprint
+                                }
+                            }
+                        }
+                        if (DataStore.tcpMultiPath) {
+                            _hack_config_map["tcp_multi_path"] = true
+                        }
+                        if (DataStore.udpFragment) {
+                            _hack_config_map["udp_fragment"] = true
+                        }
+                        if (DataStore.tcpFastOpen) {
+                            _hack_config_map["tcp_fast_open"] = true
+                        }
+                        if (!forTest && defaultServerDomainStrategy.isNotBlank()) {
+                            _hack_config_map["domain_resolver"] = mapOf(
+                                "server" to "dns-direct",
+                                "strategy" to defaultServerDomainStrategy
+                            )
+                        }
+                    }
+                    outbounds.add(shadowtlsOutbound)
+                    chainOutbounds.add(shadowtlsOutbound)
+                    pastOutbound = shadowtlsOutbound
+                }
             }
 
             trafficMap[chainTagOut] = chainTrafficSet.toList()
@@ -530,8 +696,8 @@ fun buildConfig(
         }
 
         // build outbounds
-        if (buildSelector) {
-            val list = group.id.let { SagerDatabase.proxyDao.getByGroup(it) }
+        val mainTag = if (buildSelector) {
+            val list = group.id.let { SagerDatabase.proxyDao.getByGroup(it) }.filter { it.type != 0 && (it.id == proxy.id || it.canRunOrInternal()) }
             list.forEach {
                 tagMap[it.id] = buildChain(it.id, it)
             }
@@ -541,9 +707,11 @@ fun buildConfig(
                 default_ = tagMap[proxy.id]
                 outbounds = tagMap.values.toList()
             })
+            TAG_PROXY
         } else {
             buildChain(0, proxy)
         }
+        route.final_ = mainTag
         // build outbounds from route item
         extraProxies.forEach { (key, p) ->
             tagMap[key] = buildChain(key, p)
@@ -579,8 +747,48 @@ fun buildConfig(
                 if (rule.ip.isNotBlank()) {
                     makeSingBoxRule(rule.ip.listByLineOrComma(), true)
                 }
+                if (rule.ruleset.isNotBlank()) {
+                    if (rule_set == null) rule_set = mutableListOf()
+                    rule.ruleset.listByLineOrComma().forEach {
+                        if (it.isNotBlank()) rule_set.add(it)
+                    }
+                }
 
                 if (rule_set != null) generateRuleSet(rule_set, ruleSets)
+
+                if (rule.invert) {
+                    invert = true
+                }
+                if (rule.ipIsPrivate) {
+                    ip_is_private = true
+                }
+                if (rule.sourceIpIsPrivate) {
+                    source_ip_is_private = true
+                }
+                if (rule.networkType.isNotBlank()) {
+                    network_type = listOf(rule.networkType)
+                }
+                if (rule.wifiSsid.isNotBlank()) {
+                    wifi_ssid = rule.wifiSsid.listByLineOrComma()
+                }
+                if (rule.wifiBssid.isNotBlank()) {
+                    wifi_bssid = rule.wifiBssid.listByLineOrComma()
+                }
+                if (rule.ruleSetIpCIDRMatchSource) {
+                    rule_set_ip_cidr_match_source = true
+                }
+                if (rule.ipVersion == 4 || rule.ipVersion == 6) {
+                    ip_version = rule.ipVersion
+                }
+                if (rule.client.isNotBlank()) {
+                    client = rule.client.listByLineOrComma()
+                }
+                if (rule.networkIsExpensive) {
+                    network_is_expensive = true
+                }
+                if (rule.networkIsConstrained) {
+                    network_is_constrained = true
+                }
 
                 if (rule.port.isNotBlank()) {
                     port = mutableListOf<Int>()
@@ -618,18 +826,32 @@ fun buildConfig(
                     return DNSRule_DefaultOptions().apply {
                         if (uidList.isNotEmpty()) user_id = uidList
                         domainList?.let { makeSingBoxRule(it) }
+                        if (rule.ipVersion == 4 || rule.ipVersion == 6) ip_version = rule.ipVersion
+                        if (rule.client.isNotBlank()) client = rule.client.listByLineOrComma()
+                        if (rule.invert) invert = true
+                        if (rule.ruleset.isNotBlank()) {
+                            if (rule_set == null) rule_set = mutableListOf()
+                            rule.ruleset.listByLineOrComma().forEach {
+                                if (it.isNotBlank()) rule_set.add(it)
+                            }
+                        }
+                        if (rule.ipIsPrivate) ip_is_private = true
+                        if (rule.ruleSetIpCIDRMatchSource) rule_set_ip_cidr_match_source = true
                     }
                 }
 
                 when (rule.outbound) {
                     -1L -> {
-                        userDNSRuleList += makeDnsRuleObj().apply { server = "dns-direct" }
+                        userDNSRuleList += makeDnsRuleObj().apply {
+                            server = "dns-direct"
+                        }
                     }
 
                     0L -> {
                         if (useFakeDns) userDNSRuleList += makeDnsRuleObj().apply {
                             server = "dns-fake"
                             inbound = listOf("tun-in")
+                            query_type = listOf("A", "AAAA")
                         }
                         userDNSRuleList += makeDnsRuleObj().apply {
                             server = "dns-remote"
@@ -638,8 +860,7 @@ fun buildConfig(
 
                     -2L -> {
                         userDNSRuleList += makeDnsRuleObj().apply {
-                            server = "dns-block"
-                            disable_cache = true
+                            action = "reject"
                         }
                     }
                 }
@@ -666,6 +887,9 @@ fun buildConfig(
                     if (ruleObj.outbound == TAG_BLOCK) {
                         ruleObj.outbound = null
                         ruleObj.action = "reject"
+                        if (rule.rejectMethod.isNotBlank()) {
+                            ruleObj.method = rule.rejectMethod
+                        }
                     }
                     route.rules.add(ruleObj)
                     route.rule_set.addAll(ruleSets)
@@ -712,38 +936,55 @@ fun buildConfig(
             }
         }
 
-        dns.servers.add(DNSServerOptions().apply {
-            address = "rcode://success"
-            tag = "dns-block"
-        })
-
-        dns.servers.add(DNSServerOptions().apply {
-            address = "local"
+        dns.servers.add(SingBoxOptions.DNSServerOptions().apply {
             tag = "dns-local"
-            detour = TAG_DIRECT
+            type = "local"
         })
 
-        directDNS.firstOrNull().let {
-            dns.servers.add(DNSServerOptions().apply {
-                address = it ?: throw Exception("No direct DNS, check your settings!")
-                tag = "dns-direct"
-                detour = TAG_DIRECT
-                address_resolver = "dns-local"
-                strategy = autoDnsDomainStrategy(SingBoxOptionsUtil.domainStrategy(tag))
-            })
+        directDNS.firstOrNull()?.let {
+            dns.servers.add(
+                buildDNSServer(
+                    it,
+                    tag = "dns-direct",
+                    detour = null,
+                    domainResolver = "dns-local",
+                )
+            )
         }
 
-        remoteDns.firstOrNull().let {
+        remoteDns.firstOrNull()?.let {
             // Always use direct DNS for urlTest
-            if (!forTest) dns.servers.add(DNSServerOptions().apply {
-                address = it ?: throw Exception("No remote DNS, check your settings!")
-                tag = "dns-remote"
-                address_resolver = "dns-direct"
-                strategy = autoDnsDomainStrategy(SingBoxOptionsUtil.domainStrategy(tag))
-            })
+            if (!forTest) {
+                dns.servers.add(
+                    buildDNSServer(
+                        it,
+                        tag = "dns-remote",
+                        detour = null,
+                        domainResolver = "dns-direct",
+                    )
+                )
+            }
+        }
+
+        if (!forTest) {
+            for ((endpointTag, dnsType) in vpnWithPushDNS) {
+                val dnsTag = "dns-$endpointTag"
+                dns.servers.add(SingBoxOptions.DNSServerOptions().apply {
+                    type = dnsType
+                    tag = dnsTag
+                    endpoint = endpointTag
+                    accept_default_resolvers = true
+                    accept_search_domain = true
+                })
+                dns.rules.add(0, DNSRule_DefaultOptions().apply {
+                    preferred_by = listOf(dnsTag)
+                    server = dnsTag
+                })
+            }
         }
 
         dns.final_ = if (forTest) "dns-direct" else "dns-remote"
+        dns.strategy = if (forTest) directDnsStrategy else remoteDnsStrategy
 
         // dns object user rules
         if (enableDnsRouting) {
@@ -764,6 +1005,19 @@ fun buildConfig(
                 port = listOf(53)
                 action = "hijack-dns"
             })
+            val destinationStrategy = genDomainStrategy(DataStore.resolveDestination)
+            if (!destinationStrategy.isNullOrEmpty()) {
+                route.rules.add(0, Rule_DefaultOptions().apply {
+                    action = "resolve"
+                    strategy = destinationStrategy
+                })
+            }
+            if (needSniff) {
+                route.rules.add(0, Rule_DefaultOptions().apply {
+                    action = "sniff"
+                    sniffer = listOf("tls", "http", "quic", "dns", "stun", "bittorrent", "dtls", "ssh", "rdp", "ntp")
+                })
+            }
             if (DataStore.bypassLanInCore) {
                 route.rules.add(Rule_DefaultOptions().apply {
                     outbound = TAG_BYPASS
@@ -778,27 +1032,19 @@ fun buildConfig(
             })
             // FakeDNS obj
             if (useFakeDns) {
-                dns.fakeip = DNSFakeIPOptions().apply {
-                    enabled = true
+                dns.servers.add(SingBoxOptions.DNSServerOptions().apply {
+                    type = "fakeip"
+                    tag = "dns-fake"
                     inet4_range = "198.18.0.0/15"
                     inet6_range = "fc00::/18"
-                }
-                dns.servers.add(DNSServerOptions().apply {
-                    address = "fakeip"
-                    tag = "dns-fake"
-                    strategy = "ipv4_only"
                 })
                 dns.rules.add(DNSRule_DefaultOptions().apply {
                     inbound = listOf("tun-in")
+                    query_type = listOf("A", "AAAA")
                     server = "dns-fake"
                     disable_cache = true
                 })
             }
-            // avoid loopback
-            dns.rules.add(0, DNSRule_DefaultOptions().apply {
-                outbound = mutableListOf("any")
-                server = "dns-direct"
-            })
             // force bypass (always top DNS rule)
             if (domainListDNSDirectForce.isNotEmpty()) {
                 dns.rules.add(0, DNSRule_DefaultOptions().apply {
@@ -806,7 +1052,51 @@ fun buildConfig(
                     server = "dns-direct"
                 })
             }
+            // FakeIP exclude filter rules
+            if (useFakeDns && DataStore.fakeDnsExclude.isNotBlank()) {
+                val fakeExcludes = DataStore.fakeDnsExclude.listByLineOrComma()
+                val (remoteExcludes, directExcludes) = fakeExcludes.partition { it.startsWith("remote:") }
+                if (directExcludes.isNotEmpty()) {
+                    dns.rules.add(0, DNSRule_DefaultOptions().apply {
+                        makeSingBoxRule(directExcludes.map { it.removePrefix("direct:") })
+                        server = "dns-direct"
+                    })
+                }
+                if (remoteExcludes.isNotEmpty()) {
+                    dns.rules.add(0, DNSRule_DefaultOptions().apply {
+                        makeSingBoxRule(remoteExcludes.map { it.removePrefix("remote:") })
+                        server = "dns-remote"
+                    })
+                }
+            }
         }
+
+        val endpointTypes = arrayOf("wireguard", "masque-client", "openvpn-client", "openconnect", "tailscale")
+        val (epList, obList) = outbounds.partition {
+            it is SingBoxOptions.Endpoint ||
+            endpointTypes.contains((it as? Outbound)?.type) ||
+            endpointTypes.contains(it._hack_config_map["type"])
+        }
+        if (epList.isNotEmpty()) {
+            if (!forTest && buildSelector) {
+                val activeTag = tagMap[proxy.id]
+                for (ep in epList) {
+                    val epTag = (ep as? Outbound)?.tag ?: ep._hack_config_map["tag"] as? String
+                    if (epTag != null && epTag != activeTag) {
+                        ep._hack_config_map["on_demand"] = true
+                    }
+                }
+            }
+            endpoints = epList.toMutableList()
+        }
+        outbounds = obList.toMutableList()
+
+        // Services: OOM killer
+        val serviceList = mutableListOf<SingBoxOptions.SingBoxOption>()
+        serviceList.add(SingBoxOptions.Service_OOMKillerOptions().apply {
+            type = "oom-killer"
+        })
+        services = serviceList
 
         if (!forTest) _hack_custom_config = DataStore.globalCustomConfig
     }.let {

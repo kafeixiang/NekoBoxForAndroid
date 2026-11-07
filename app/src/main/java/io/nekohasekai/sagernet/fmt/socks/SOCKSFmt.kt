@@ -50,12 +50,12 @@ fun SOCKSBean.toUri(): String {
 fun SOCKSBean.toV2rayN(): String {
 
     var link = ""
-    if (username.isNotBlank()) {
-        link += username.urlSafe() + ":" + password.urlSafe() + "@"
+    if (!username.isNullOrBlank()) {
+        link += username.urlSafe() + ":" + (password ?: "").urlSafe() + "@"
     }
     link += "$serverAddress:$serverPort"
     link = "socks://" + NGUtil.encode(link)
-    if (name.isNotBlank()) {
+    if (!name.isNullOrBlank()) {
         link += "#" + name.urlSafe()
     }
 

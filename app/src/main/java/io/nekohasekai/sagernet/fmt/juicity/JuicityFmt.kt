@@ -1,13 +1,17 @@
 package io.nekohasekai.sagernet.fmt.juicity
 
+import io.nekohasekai.sagernet.ProtocolProvider
 import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.linkBuilder
 import io.nekohasekai.sagernet.ktx.toLink
+import io.nekohasekai.sagernet.ktx.toStringPretty
 import io.nekohasekai.sagernet.ktx.urlSafe
 import moe.matsuri.nb4a.SingBoxOptions
 import moe.matsuri.nb4a.SingBoxOptions.Outbound_JuicityOptions
 import moe.matsuri.nb4a.utils.listByLineOrComma
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import org.json.JSONObject
 import java.util.Base64
 
 fun parseJuicity(url: String): JuicityBean {
@@ -38,10 +42,10 @@ fun parseJuicity(url: String): JuicityBean {
 fun JuicityBean.toUri(): String {
     val builder = linkBuilder().username(uuid).password(password).host(serverAddress).port(serverPort)
 
-    if (sni.isNotBlank()) {
+    if (!sni.isNullOrBlank()) {
         builder.addQueryParameter("sni", sni)
     }
-    if (pinnedCertchainSha256.isNotBlank()) {
+    if (!pinnedCertchainSha256.isNullOrBlank()) {
         normalizePinnedCertChainHash(pinnedCertchainSha256.listByLineOrComma().firstOrNull())?.let {
             builder.addQueryParameter("pinned_certchain_sha256", it)
         }
@@ -49,7 +53,7 @@ fun JuicityBean.toUri(): String {
     if (allowInsecure) {
         builder.addQueryParameter("allow_insecure", "1")
     }
-    if (name.isNotBlank()) {
+    if (!name.isNullOrBlank()) {
         builder.encodedFragment(name.urlSafe())
     }
 
@@ -67,18 +71,44 @@ fun buildSingBoxOutboundJuicityBean(bean: JuicityBean): Outbound_JuicityOptions 
         // Create TLS options object
         tls = SingBoxOptions.OutboundTLSOptions().apply {
             enabled = true
-            if (bean.sni.isNotBlank()) {
+            if (!bean.sni.isNullOrBlank()) {
                 server_name = bean.sni
             }
-            insecure = bean.allowInsecure || DataStore.globalAllowInsecure || bean.pinnedCertchainSha256.isNotBlank()
+            insecure = bean.allowInsecure || (try { DataStore.globalAllowInsecure } catch (_: Throwable) { false }) || !bean.pinnedCertchainSha256.isNullOrBlank()
         }
 
-        if (bean.pinnedCertchainSha256.isNotBlank()) {
+        if (!bean.pinnedCertchainSha256.isNullOrBlank()) {
             normalizePinnedCertChainHash(bean.pinnedCertchainSha256.listByLineOrComma().firstOrNull())?.let {
                 pin_cert_sha256 = it
             }
         }
     }
+}
+
+fun JuicityBean.canUseSingBox(): Boolean {
+    return true
+}
+
+fun JuicityBean.buildJuicityConfig(port: Int): String {
+    return JSONObject().apply {
+        put("listen", "$LOCALHOST:$port")
+        put("server", "$serverAddress:$serverPort")
+        put("uuid", uuid)
+        put("password", password)
+        if (sni.isNotBlank()) {
+            put("sni", sni)
+        }
+        if (allowInsecure) {
+            put("allow_insecure", true)
+        }
+        put("congestion_control", "bbr")
+        if (pinnedCertchainSha256.isNotBlank()) {
+            normalizePinnedCertChainHash(pinnedCertchainSha256.listByLineOrComma().firstOrNull())?.let {
+                put("pinned_certchain_sha256", it)
+            }
+        }
+        put("log_level", if (DataStore.logLevel > 0) "debug" else "error")
+    }.toStringPretty()
 }
 
 private fun normalizePinnedCertChainHash(rawHash: String?): String? {

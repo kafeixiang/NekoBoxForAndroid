@@ -253,17 +253,17 @@ suspend fun parseProxies(text: String): List<AbstractBean> {
             }.onFailure {
                 Logs.w(it)
             }
-        } else if (startsWith("wireguard://") || startsWith("wg://")) {
-            Logs.d("Try parse WireGuard link: $this")
-            runCatching {
-                entities.add(parseWireGuardLink(this))
-            }.onFailure {
-                Logs.w(it)
-            }
         } else if (startsWith("anytls://")) {
             Logs.d("Try parse anytls link: $this")
             runCatching {
                 entities.add(parseAnytls(this))
+            }.onFailure {
+                Logs.w(it)
+            }
+        } else if (startsWith("wireguard://") || startsWith("wg://")) {
+            Logs.d("Try parse WireGuard link: $this")
+            runCatching {
+                entities.add(parseWireGuardLink(this))
             }.onFailure {
                 Logs.w(it)
             }

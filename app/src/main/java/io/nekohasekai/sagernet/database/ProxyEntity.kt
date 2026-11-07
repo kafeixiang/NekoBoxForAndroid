@@ -29,7 +29,6 @@ import io.nekohasekai.sagernet.fmt.direct.toUri
 import io.nekohasekai.sagernet.fmt.masque.MASQUEBean
 import io.nekohasekai.sagernet.fmt.masque.toUri
 import io.nekohasekai.sagernet.fmt.openvpn.OpenVPNBean
-import io.nekohasekai.sagernet.fmt.openvpn.OpenVPNFmt
 import io.nekohasekai.sagernet.fmt.openconnect.OpenConnectBean
 import io.nekohasekai.sagernet.fmt.tailscale.TailscaleBean
 import io.nekohasekai.sagernet.fmt.tailscale.TailcatBean
@@ -44,6 +43,8 @@ import io.nekohasekai.sagernet.fmt.trojan_go.toUri
 import io.nekohasekai.sagernet.fmt.tuic.TuicBean
 import io.nekohasekai.sagernet.fmt.tuic.toUri
 import io.nekohasekai.sagernet.fmt.juicity.JuicityBean
+import io.nekohasekai.sagernet.fmt.juicity.buildJuicityConfig
+import io.nekohasekai.sagernet.fmt.juicity.canUseSingBox
 import io.nekohasekai.sagernet.fmt.juicity.toUri
 import io.nekohasekai.sagernet.fmt.trusttunnel.TrustTunnelBean
 import io.nekohasekai.sagernet.fmt.trusttunnel.toUri
@@ -235,8 +236,8 @@ data class ProxyEntity(
             TYPE_TAILSCALE -> tailscaleBean = KryoConverters.tailscaleDeserialize(byteArray)
             TYPE_TOR -> torBean = KryoConverters.torDeserialize(byteArray)
             TYPE_TRUST_TUNNEL -> trustTunnelBean = KryoConverters.trustTunnelDeserialize(byteArray)
-            TYPE_SHADOWQUIC -> shadowquicBean = KryoConverters.shadowquicDeserialize(byteArray)
             TYPE_TAILCAT -> tailcatBean = KryoConverters.tailcatDeserialize(byteArray)
+            TYPE_SHADOWQUIC -> shadowquicBean = KryoConverters.shadowquicDeserialize(byteArray)
         }
     }
 
@@ -268,8 +269,8 @@ data class ProxyEntity(
         TYPE_TAILSCALE -> "Tailscale"
         TYPE_TOR -> "Tor"
         TYPE_TRUST_TUNNEL -> "TrustTunnel"
-        TYPE_SHADOWQUIC -> "ShadowQUIC"
         TYPE_TAILCAT -> "Tailcat"
+        TYPE_SHADOWQUIC -> "ShadowQUIC"
         else -> "Undefined type $type"
     }
 
@@ -305,8 +306,8 @@ data class ProxyEntity(
             TYPE_TAILSCALE -> tailscaleBean
             TYPE_TOR -> torBean
             TYPE_TRUST_TUNNEL -> trustTunnelBean
-            TYPE_SHADOWQUIC -> shadowquicBean
             TYPE_TAILCAT -> tailcatBean
+            TYPE_SHADOWQUIC -> shadowquicBean
             else -> error("Undefined type $type")
         } ?: error("Null ${displayType()} profile")
     }
@@ -325,6 +326,12 @@ data class ProxyEntity(
             is ShadowTLSBean -> false
             is NekoBean -> false
             is ConfigBean -> false
+            is DirectBean -> false
+            is OpenVPNBean -> false
+            is OpenConnectBean -> false
+            is TailscaleBean -> false
+            is TailcatBean -> false
+            is TorBean -> false
             else -> true
         }
     }
@@ -385,7 +392,16 @@ data class ProxyEntity(
 
                             is HysteriaBean -> {
                                 append("\n\n")
-                                append(bean.buildHysteria1Config(port, null))
+                                if (bean.protocolVersion == 2) {
+                                    append(bean.buildHysteria2Config(port, null))
+                                } else {
+                                    append(bean.buildHysteria1Config(port, null))
+                                }
+                            }
+
+                            is JuicityBean -> {
+                                append("\n\n")
+                                append(bean.buildJuicityConfig(port))
                             }
                         }
                     }
@@ -512,8 +528,6 @@ data class ProxyEntity(
         wgBean = null
         tuicBean = null
         juicityBean = null
-        trustTunnelBean = null
-        shadowquicBean = null
         shadowTLSBean = null
         anyTLSBean = null
         chainBean = null
@@ -524,8 +538,9 @@ data class ProxyEntity(
         openvpnBean = null
         openconnectBean = null
         tailscaleBean = null
-        tailcatBean = null
         torBean = null
+        trustTunnelBean = null
+        shadowquicBean = null
 
         when (bean) {
             is SOCKSBean -> {
@@ -623,6 +638,21 @@ data class ProxyEntity(
                 snellBean = bean
             }
 
+            is ChainBean -> {
+                type = TYPE_CHAIN
+                chainBean = bean
+            }
+
+            is NekoBean -> {
+                type = TYPE_NEKO
+                nekoBean = bean
+            }
+
+            is ConfigBean -> {
+                type = TYPE_CONFIG
+                configBean = bean
+            }
+
             is DirectBean -> {
                 type = TYPE_DIRECT
                 directBean = bean
@@ -656,21 +686,6 @@ data class ProxyEntity(
             is TorBean -> {
                 type = TYPE_TOR
                 torBean = bean
-            }
-
-            is ChainBean -> {
-                type = TYPE_CHAIN
-                chainBean = bean
-            }
-
-            is NekoBean -> {
-                type = TYPE_NEKO
-                nekoBean = bean
-            }
-
-            is ConfigBean -> {
-                type = TYPE_CONFIG
-                configBean = bean
             }
 
             else -> error("Undefined type $type")
