@@ -16,6 +16,8 @@ import io.nekohasekai.sagernet.fmt.openvpn.OpenVPNBean
 import io.nekohasekai.sagernet.fmt.openvpn.buildSingBoxOutboundOpenVPNBean
 import io.nekohasekai.sagernet.fmt.openconnect.OpenConnectBean
 import io.nekohasekai.sagernet.fmt.openconnect.buildSingBoxOutboundOpenConnectBean
+import io.nekohasekai.sagernet.fmt.tailscale.TailscaleBean
+import io.nekohasekai.sagernet.fmt.tailscale.buildSingBoxOutboundTailscaleBean
 import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean
 import io.nekohasekai.sagernet.fmt.hysteria.buildSingBoxOutboundHysteriaBean
 import io.nekohasekai.sagernet.fmt.internal.ChainBean
@@ -404,6 +406,9 @@ fun buildConfig(
 
                         is OpenConnectBean ->
                             buildSingBoxOutboundOpenConnectBean(bean)
+
+                        is TailscaleBean ->
+                            buildSingBoxOutboundTailscaleBean(bean)
 
                         else -> throw IllegalStateException("can't reach")
                     }

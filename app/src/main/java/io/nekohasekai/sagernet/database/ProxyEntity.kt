@@ -124,6 +124,7 @@ data class ProxyEntity(
         const val TYPE_MASQUE = 26
         const val TYPE_OPENVPN = 27
         const val TYPE_OPENCONNECT = 28
+        const val TYPE_TAILSCALE = 29
 
         const val TYPE_CONFIG = 998
         const val TYPE_NEKO = 999
@@ -218,6 +219,7 @@ data class ProxyEntity(
             TYPE_MASQUE -> masqueBean = KryoConverters.masqueDeserialize(byteArray)
             TYPE_OPENVPN -> openvpnBean = KryoConverters.openvpnDeserialize(byteArray)
             TYPE_OPENCONNECT -> openconnectBean = KryoConverters.openconnectDeserialize(byteArray)
+            TYPE_TAILSCALE -> tailscaleBean = KryoConverters.tailscaleDeserialize(byteArray)
         }
     }
 
@@ -246,6 +248,7 @@ data class ProxyEntity(
         TYPE_MASQUE -> "MASQUE"
         TYPE_OPENVPN -> "OpenVPN"
         TYPE_OPENCONNECT -> "OpenConnect"
+        TYPE_TAILSCALE -> "Tailscale"
         else -> "Undefined type $type"
     }
 
@@ -278,6 +281,7 @@ data class ProxyEntity(
             TYPE_MASQUE -> masqueBean
             TYPE_OPENVPN -> openvpnBean
             TYPE_OPENCONNECT -> openconnectBean
+            TYPE_TAILSCALE -> tailscaleBean
             else -> error("Undefined type $type")
         } ?: error("Null ${displayType()} profile")
     }
@@ -599,6 +603,11 @@ data class ProxyEntity(
                 openconnectBean = bean
             }
 
+            is TailscaleBean -> {
+                type = TYPE_TAILSCALE
+                tailscaleBean = bean
+            }
+
             is ChainBean -> {
                 type = TYPE_CHAIN
                 chainBean = bean
@@ -645,6 +654,7 @@ data class ProxyEntity(
                 TYPE_MASQUE -> MASQUESettingsActivity::class.java
                 TYPE_OPENVPN -> OpenVPNSettingsActivity::class.java
                 TYPE_OPENCONNECT -> OpenConnectSettingsActivity::class.java
+                TYPE_TAILSCALE -> TailscaleSettingsActivity::class.java
                 else -> throw IllegalArgumentException()
             }
         ).apply {
