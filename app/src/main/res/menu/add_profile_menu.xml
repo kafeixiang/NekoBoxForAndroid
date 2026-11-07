@@ -89,6 +89,9 @@
                         android:id="@+id/action_new_tailscale"
                         android:title="@string/action_tailscale" />
                     <item
+                        android:id="@+id/action_new_tor"
+                        android:title="@string/action_tor" />
+                    <item
                         android:id="@+id/action_new_ssh"
                         android:title="@string/action_ssh" />
                     <item
