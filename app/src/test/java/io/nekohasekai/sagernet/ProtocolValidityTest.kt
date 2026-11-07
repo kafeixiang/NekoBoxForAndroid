@@ -11,6 +11,10 @@ import io.nekohasekai.sagernet.fmt.juicity.JuicityBean
 import io.nekohasekai.sagernet.fmt.juicity.buildSingBoxOutboundJuicityBean
 import io.nekohasekai.sagernet.fmt.juicity.parseJuicity
 import io.nekohasekai.sagernet.fmt.juicity.toUri
+import io.nekohasekai.sagernet.fmt.masque.MASQUEBean
+import io.nekohasekai.sagernet.fmt.masque.buildSingBoxEndpointMASQUEBean
+import io.nekohasekai.sagernet.fmt.masque.parseMASQUE
+import io.nekohasekai.sagernet.fmt.masque.toUri
 import io.nekohasekai.sagernet.fmt.shadowquic.ShadowQUICBean
 import io.nekohasekai.sagernet.fmt.shadowquic.buildSingBoxOutboundShadowQUICBean
 import io.nekohasekai.sagernet.fmt.shadowquic.parseShadowQUIC
@@ -595,6 +599,74 @@ class ProtocolValidityTest {
         assertEquals("u", cloned.username)
         assertEquals("p", cloned.password)
         assertEquals(1350, cloned.mtu)
+    }
+
+    @Test
+    fun testMASQUEParsingAndBuilding() {
+        val link = "masque://testuser:testpass@masque.example.com:8443?path=%2Fmasque&version=3&disable_version_fallback=true&sni=masque.example.com&alpn=h3&allowInsecure=true&disableSNI=false&mtu=1350#test-masque"
+        val bean = parseMASQUE(link)
+
+        assertEquals("masque.example.com", bean.serverAddress)
+        assertEquals(8443, bean.serverPort)
+        assertEquals("testuser", bean.username)
+        assertEquals("testpass", bean.password)
+        assertEquals("/masque", bean.path)
+        assertEquals(3, bean.httpVersion)
+        assertEquals(true, bean.disableVersionFallback)
+        assertEquals("masque.example.com", bean.serverName)
+        assertEquals("h3", bean.alpn)
+        assertEquals(true, bean.allowInsecure)
+        assertEquals(false, bean.disableSNI)
+        assertEquals(1350, bean.mtu)
+        assertEquals("test-masque", bean.name)
+
+        val endpoint = buildSingBoxEndpointMASQUEBean(bean)
+        assertEquals("masque-client", endpoint.type)
+        assertEquals("masque.example.com", endpoint.server)
+        assertEquals(8443, endpoint.server_port)
+        assertEquals("testuser", endpoint.username)
+        assertEquals("testpass", endpoint.password)
+        assertEquals("/masque", endpoint.path)
+        assertEquals(3, endpoint.version)
+        assertEquals(true, endpoint.disable_version_fallback)
+        assertEquals(1350, endpoint.mtu)
+        assertNotNull(endpoint.tls)
+        assertEquals(true, endpoint.tls.enabled)
+        assertEquals("masque.example.com", endpoint.tls.server_name)
+        assertEquals(listOf("h3"), endpoint.tls.alpn)
+        assertEquals(true, endpoint.tls.insecure)
+
+        // Test clone & Kryo round-trip
+        val cloned = bean.clone()
+        assertEquals("masque.example.com", cloned.serverAddress)
+        assertEquals(8443, cloned.serverPort)
+        assertEquals("testuser", cloned.username)
+        assertEquals("testpass", cloned.password)
+        assertEquals("/masque", cloned.path)
+        assertEquals(3, cloned.httpVersion)
+        assertEquals(true, cloned.disableVersionFallback)
+        assertEquals(1350, cloned.mtu)
+
+        // Test URI roundtrip
+        val uri = bean.toUri()
+        val reParsed = parseMASQUE(uri)
+        assertEquals("masque.example.com", reParsed.serverAddress)
+        assertEquals(8443, reParsed.serverPort)
+        assertEquals("testuser", reParsed.username)
+        assertEquals("testpass", reParsed.password)
+        assertEquals("/masque", reParsed.path)
+        assertEquals(3, reParsed.httpVersion)
+        assertEquals(true, reParsed.disableVersionFallback)
+        assertEquals(1350, reParsed.mtu)
+        assertEquals("test-masque", reParsed.name)
+
+        // Test global Formats.parseProxies
+        val entities = runBlocking { io.nekohasekai.sagernet.ktx.parseProxies(uri) }
+        assertEquals(1, entities.size)
+        assertTrue(entities[0] is MASQUEBean)
+        val fromFormat = entities[0] as MASQUEBean
+        assertEquals("masque.example.com", fromFormat.serverAddress)
+        assertEquals(8443, fromFormat.serverPort)
     }
 
     @Test

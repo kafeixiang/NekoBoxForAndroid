@@ -57,16 +57,16 @@ public class MASQUEBean extends AbstractBean {
         output.writeString(password);
         output.writeString(path);
         output.writeString(headers);
-        output.writeInt(httpVersion);
-        output.writeBoolean(disableVersionFallback);
-        output.writeBoolean(enableTLS);
+        output.writeInt(httpVersion != null ? httpVersion : 3);
+        output.writeBoolean(disableVersionFallback != null ? disableVersionFallback : false);
+        output.writeBoolean(enableTLS != null ? enableTLS : true);
         output.writeString(serverName);
         output.writeString(alpn);
         output.writeString(certificates);
         output.writeString(utlsFingerprint);
-        output.writeBoolean(allowInsecure);
-        output.writeBoolean(disableSNI);
-        output.writeInt(mtu);
+        output.writeBoolean(allowInsecure != null ? allowInsecure : false);
+        output.writeBoolean(disableSNI != null ? disableSNI : false);
+        output.writeInt(mtu != null ? mtu : DEFAULT_MTU);
     }
 
     @Override
