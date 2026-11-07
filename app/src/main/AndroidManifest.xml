@@ -134,6 +134,8 @@
                 <data android:scheme="naive+https" />
                 <data android:scheme="naive+quic" />
                 <data android:scheme="hysteria" />
+                <data android:scheme="sq" />
+                <data android:scheme="shadowquic" />
 
             </intent-filter>
 
@@ -191,6 +193,12 @@
             android:name="io.nekohasekai.sagernet.ui.profile.JuicitySettingsActivity"
             android:configChanges="uiMode" />
         <activity
+            android:name="io.nekohasekai.sagernet.ui.profile.TrustTunnelSettingsActivity"
+            android:configChanges="uiMode" />
+        <activity
+            android:name="io.nekohasekai.sagernet.ui.profile.ShadowQUICSettingsActivity"
+            android:configChanges="uiMode" />
+        <activity
             android:name="io.nekohasekai.sagernet.ui.profile.SnellSettingsActivity"
             android:configChanges="uiMode" />
         <activity
@@ -209,16 +217,10 @@
             android:name="io.nekohasekai.sagernet.ui.profile.TailscaleSettingsActivity"
             android:configChanges="uiMode" />
         <activity
-            android:name="io.nekohasekai.sagernet.ui.profile.TorSettingsActivity"
-            android:configChanges="uiMode" />
-        <activity
-            android:name="io.nekohasekai.sagernet.ui.profile.TrustTunnelSettingsActivity"
-            android:configChanges="uiMode" />
-        <activity
-            android:name="io.nekohasekai.sagernet.ui.profile.ShadowQUICSettingsActivity"
-            android:configChanges="uiMode" />
-        <activity
             android:name="io.nekohasekai.sagernet.ui.profile.TailcatSettingsActivity"
+            android:configChanges="uiMode" />
+        <activity
+            android:name="io.nekohasekai.sagernet.ui.profile.TorSettingsActivity"
             android:configChanges="uiMode" />
         <activity
             android:name="io.nekohasekai.sagernet.ui.profile.ChainSettingsActivity"
@@ -249,6 +251,9 @@
             android:configChanges="uiMode" />
         <activity
             android:name="com.github.shadowsocks.plugin.obfs_local.ConfigActivity"
+            android:configChanges="uiMode" />
+        <activity
+            android:name="com.github.shadowsocks.plugin.shadowtls.ConfigActivity"
             android:configChanges="uiMode" />
         <activity
             android:name=".QuickToggleShortcut"

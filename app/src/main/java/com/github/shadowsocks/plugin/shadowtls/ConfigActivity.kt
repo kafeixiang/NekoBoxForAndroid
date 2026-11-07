@@ -1,0 +1,84 @@
+package com.github.shadowsocks.plugin.shadowtls
+
+import android.os.Bundle
+import android.view.MenuItem
+import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.Toolbar
+import com.github.shadowsocks.plugin.ConfigurationActivity
+import com.github.shadowsocks.plugin.PluginOptions
+import io.nekohasekai.sagernet.R
+
+class ConfigActivity : ConfigurationActivity(), Toolbar.OnMenuItemClickListener {
+    companion object {
+        const val KEY_DIRTY = "dirty"
+    }
+
+    private val child by lazy { supportFragmentManager.findFragmentById(R.id.content) as ConfigFragment }
+    private var oldOptions: PluginOptions? = null
+
+    private val onBackPressedCallback = object : OnBackPressedCallback(false) {
+        override fun handleOnBackPressed() {
+            onFinish()
+        }
+    }
+    var dirty = false
+        set(value) {
+            field = value
+            onBackPressedCallback.isEnabled = value
+        }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.layout_shadowtls_plugin)
+
+        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
+
+        findViewById<Toolbar>(R.id.toolbar).apply {
+            title = "ShadowTLS"
+            setNavigationIcon(R.drawable.ic_navigation_close)
+            setNavigationOnClickListener { onFinish() }
+            inflateMenu(R.menu.plugin_menu)
+            setOnMenuItemClickListener(this@ConfigActivity)
+        }
+
+        savedInstanceState?.getBoolean(KEY_DIRTY)?.let {
+            dirty = it
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean(KEY_DIRTY, dirty)
+    }
+
+    override fun onInitializePluginOptions(options: PluginOptions) {
+        oldOptions = options
+        child.onInitializePluginOptions(options)
+    }
+
+    override fun onMenuItemClick(item: MenuItem?) = when (item?.itemId) {
+        R.id.action_apply -> {
+            saveChanges(child.options)
+            finish()
+            true
+        }
+        else -> false
+    }
+
+    private fun onFinish() {
+        if (child.options != oldOptions) {
+            AlertDialog.Builder(this).run {
+                setTitle(R.string.unsaved_changes_prompt)
+                setPositiveButton(android.R.string.yes) { _, _ ->
+                    saveChanges(child.options)
+                    finish()
+                }
+                setNegativeButton(android.R.string.no) { _, _ ->
+                    finish()
+                }
+                create()
+            }.show()
+        } else finish()
+    }
+}

@@ -51,6 +51,14 @@
         <SwitchPreference
             app:key="sUoT"
             app:title="UDP over TCP" />
+        <moe.matsuri.nb4a.ui.SimpleMenuPreference
+            app:defaultValue="2"
+            app:dependency="sUoT"
+            app:entries="@array/uot_version_entries"
+            app:entryValues="@array/uot_version_values"
+            app:key="sUoTVersion"
+            app:title="@string/uot_version"
+            app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
     <PreferenceCategory

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+    <EditTextPreference
+        app:icon="@drawable/ic_action_copyright"
+        app:key="host"
+        app:persistent="false"
+        app:title="@string/sni"
+        app:useSimpleSummaryProvider="true" />
+    <EditTextPreference
+        app:dialogLayout="@layout/layout_password_dialog"
+        app:icon="@drawable/ic_notification_enhanced_encryption"
+        app:key="password"
+        app:persistent="false"
+        app:title="@string/password" />
+    <moe.matsuri.nb4a.ui.SimpleMenuPreference
+        app:defaultValue="3"
+        app:entries="@array/shadowtls_version_value"
+        app:entryValues="@array/shadowtls_version_value"
+        app:icon="@drawable/ic_baseline_update_24"
+        app:key="version"
+        app:persistent="false"
+        app:title="@string/protocol_version"
+        app:useSimpleSummaryProvider="true" />
+    <moe.matsuri.nb4a.ui.SimpleMenuPreference
+        app:defaultValue=""
+        app:entries="@array/utls_fingerprint_entry"
+        app:entryValues="@array/utls_fingerprint_entry"
+        app:icon="@drawable/ic_baseline_fingerprint_24"
+        app:key="fingerprint"
+        app:persistent="false"
+        app:title="@string/utls_fingerprint"
+        app:useSimpleSummaryProvider="true" />
+</PreferenceScreen>

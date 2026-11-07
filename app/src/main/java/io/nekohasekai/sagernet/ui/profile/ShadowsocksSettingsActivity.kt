@@ -31,6 +31,7 @@ class ShadowsocksSettingsActivity : ProfileSettingsActivity<ShadowsocksBean>() {
     private val pluginName = pbm.add(PreferenceBinding(Type.Text, "pluginName"))
     private val pluginConfig = pbm.add(PreferenceBinding(Type.Text, "pluginConfig"))
     private val sUoT = pbm.add(PreferenceBinding(Type.Bool, "sUoT"))
+    private val sUoTVersion = pbm.add(PreferenceBinding(Type.TextToInt, "sUoTVersion"))
     private val enableMux = pbm.add(PreferenceBinding(Type.Bool, "enableMux"))
     private val muxType = pbm.add(PreferenceBinding(Type.TextToInt, "muxType"))
     private val muxConcurrency = pbm.add(PreferenceBinding(Type.TextToInt, "muxConcurrency"))
@@ -61,13 +62,14 @@ class ShadowsocksSettingsActivity : ProfileSettingsActivity<ShadowsocksBean>() {
         // 1. 先清理缓存中的脏数据，确保本次编辑环境纯净
         DataStore.profileCacheStore.remove(getConfigKey("v2ray-plugin"))
         DataStore.profileCacheStore.remove(getConfigKey("obfs-local"))
+        DataStore.profileCacheStore.remove(getConfigKey("shadow-tls"))
 
         // 2. 执行标准的初始化绑定
         pbm.writeToCacheAll(this)
 
         // 3. 解析并备份当前插件配置
-        val pn = plugin.substringBefore(";")
-        val pc = plugin.substringAfter(";")
+        val pn = if (plugin.contains(";")) plugin.substringBefore(";") else plugin
+        val pc = if (plugin.contains(";")) plugin.substringAfter(";") else ""
         DataStore.profileCacheStore.putString("pluginName", pn)
         DataStore.profileCacheStore.putString("pluginConfig", pc)
         if (pn.isNotBlank()) {
@@ -81,7 +83,9 @@ class ShadowsocksSettingsActivity : ProfileSettingsActivity<ShadowsocksBean>() {
 
         val pn = pluginName.readStringFromCache()
         val pc = pluginConfig.readStringFromCache()
-        plugin = if (pn.isNotBlank()) "$pn;$pc" else ""
+        plugin = if (pn.isNotBlank()) {
+            if (pc.isNotBlank()) "$pn;$pc" else pn
+        } else ""
     }
 
     override fun PreferenceFragmentCompat.createPreferences(
@@ -118,22 +122,8 @@ class ShadowsocksSettingsActivity : ProfileSettingsActivity<ShadowsocksBean>() {
                 true
             }
         }
-    }
 
-    private fun updateMuxBrutal(enabled: Boolean) {
-        muxBrutalUpMbps.preference.isVisible = enabled
-        muxBrutalDownMbps.preference.isVisible = enabled
-    }
-
-    private fun updateMuxMode(mode: Int) {
-        // mode 0: max_streams mode - show muxConcurrency, hide muxMaxConnections/muxMinStreams
-        // mode 1: connections mode - hide muxConcurrency, show muxMaxConnections/muxMinStreams
-        val isMaxStreamsMode = mode == 0
-        muxConcurrency.preference.isVisible = isMaxStreamsMode
-        muxMaxConnections.preference.isVisible = !isMaxStreamsMode
-        muxMinStreams.preference.isVisible = !isMaxStreamsMode
-
-        fun updatePluginConfigState(pn: String) {
+        val updatePluginConfigState = { pn: String ->
             pluginConfig.preference.isEnabled = pn.isNotBlank() && pn != "none"
         }
 
@@ -158,6 +148,20 @@ class ShadowsocksSettingsActivity : ProfileSettingsActivity<ShadowsocksBean>() {
         }
     }
 
+    private fun updateMuxBrutal(enabled: Boolean) {
+        muxBrutalUpMbps.preference.isVisible = enabled
+        muxBrutalDownMbps.preference.isVisible = enabled
+    }
+
+    private fun updateMuxMode(mode: Int) {
+        // mode 0: max_streams mode - show muxConcurrency, hide muxMaxConnections/muxMinStreams
+        // mode 1: connections mode - hide muxConcurrency, show muxMaxConnections/muxMinStreams
+        val isMaxStreamsMode = mode == 0
+        muxConcurrency.preference.isVisible = isMaxStreamsMode
+        muxMaxConnections.preference.isVisible = !isMaxStreamsMode
+        muxMinStreams.preference.isVisible = !isMaxStreamsMode
+    }
+
     override fun PreferenceFragmentCompat.displayPreferenceDialog(preference: Preference): Boolean {
         if (preference.key == "pluginConfig") {
             val pn = (pluginName.preference as? SimpleMenuPreference)?.value ?: pluginName.readStringFromCache()
@@ -166,6 +170,7 @@ class ShadowsocksSettingsActivity : ProfileSettingsActivity<ShadowsocksBean>() {
             val intent = when (pn) {
                 "v2ray-plugin" -> Intent().setClassName(requireContext().packageName, "com.github.shadowsocks.plugin.v2ray.ConfigActivity")
                 "obfs-local" -> Intent().setClassName(requireContext().packageName, "com.github.shadowsocks.plugin.obfs_local.ConfigActivity")
+                "shadow-tls" -> Intent().setClassName(requireContext().packageName, "com.github.shadowsocks.plugin.shadowtls.ConfigActivity")
                 else -> null
             }
 
