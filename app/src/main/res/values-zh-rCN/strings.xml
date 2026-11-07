@@ -584,4 +584,236 @@
     <string name="snell_quic_proxy">QUIC Proxy 模式</string>
     <string name="snell_quic_proxy_summary">仅 v6：旧版 v5 QUIC Proxy 兼容</string>
     <string name="snell_reuse_summary">仅适用于 v4-v6</string>
+
+    <!-- Direct & MASQUE & Mieru -->
+    <string name="action_direct">直连</string>
+    <string name="action_masque">MASQUE</string>
+    <string name="server_ports">服务器端口范围</string>
+    <string name="server_ports_summary">例如 1000-2000, 3000-4000 (优先于单端口)</string>
+    <string name="traffic_pattern">流量模式</string>
+    <string name="mieru_multiplexing">多路复用</string>
+    <string name="masque_http_version">HTTP 版本</string>
+    <string name="masque_disable_version_fallback">禁用版本降级</string>
+    <string name="masque_headers">自定义请求头</string>
+    <string name="masque_path">路径模板</string>
+
+    <!-- OpenVPN -->
+    <string name="action_openvpn">OpenVPN</string>
+    <string name="openvpn_network">网络协议</string>
+    <string name="cipher">加密算法</string>
+    <string name="openvpn_cipher">加密算法</string>
+    <string name="openvpn_data_ciphers">数据加密算法</string>
+    <string name="openvpn_auth">认证算法</string>
+    <string name="openvpn_compression">压缩算法</string>
+    <string name="openvpn_redirect_gateway">重定向网关</string>
+    <string name="openvpn_server_name_type">服务器名称类型</string>
+    <string name="openvpn_ca_certificate">CA 证书</string>
+    <string name="openvpn_client_certificate">客户端证书</string>
+    <string name="openvpn_client_key">客户端私钥</string>
+    <string name="openvpn_peer_fingerprint">对端证书指纹</string>
+    <string name="openvpn_remote_cert_ku">远程证书用法 (KU)</string>
+    <string name="openvpn_remote_cert_eku">远程证书扩展用法 (EKU)</string>
+    <string name="openvpn_control_wrap_type">控制通道封装类型</string>
+    <string name="openvpn_control_wrap_key">封装密钥</string>
+    <string name="openvpn_control_wrap_direction">封装方向</string>
+
+    <!-- OpenConnect -->
+    <string name="action_openconnect">OpenConnect</string>
+    <string name="openconnect_server">服务器 URL</string>
+    <string name="openconnect_flavor">协议类型</string>
+    <string name="openconnect_auth_group">认证组</string>
+    <string name="openconnect_user_agent">用户代理</string>
+    <string name="openconnect_reported_os">上报操作系统</string>
+    <string name="openconnect_local_hostname">本地主机名</string>
+    <string name="openconnect_allow_insecure_crypto">允许不安全密码套件</string>
+    <string name="openconnect_tls_peer_fingerprint">TLS 对端证书指纹</string>
+    <string name="openconnect_ca">CA 证书</string>
+    <string name="openconnect_client_key_password">私钥密码</string>
+    <string name="openconnect_mca_certificate">MCA 证书</string>
+    <string name="openconnect_mca_key">MCA 私钥</string>
+    <string name="openconnect_mca_key_password">MCA 私钥密码</string>
+    <string name="openconnect_authentication">身份验证</string>
+    <string name="clear_remembered_authentication_answers">清除已记住的身份验证答复</string>
+
+    <!-- Tailscale -->
+    <string name="action_tailscale">Tailscale</string>
+    <string name="tailscale_control_url">控制服务器 URL</string>
+    <string name="tailscale_auth_key">认证密钥</string>
+    <string name="tailscale_hostname">主机名</string>
+    <string name="tailscale_state_directory">状态存储目录</string>
+    <string name="tailscale_ephemeral">临时节点</string>
+    <string name="tailscale_accept_routes">接受子网路由</string>
+    <string name="tailscale_exit_node">出口节点 (IP 或主机名)</string>
+    <string name="tailscale_exit_node_allow_lan">出口节点允许局域网访问</string>
+    <string name="tailscale_advertise_routes">通告子网路由</string>
+    <string name="tailscale_advertise_fake_dns_routes">通告 FakeDNS 路由</string>
+    <string name="tailscale_advertise_fake_dns_routes_summary">向其他 Tailscale 设备通告 FakeDNS IPv4 和 IPv6 路由</string>
+    <string name="tailscale_advertise_exit_node">作为出口节点通告</string>
+    <string name="tailscale_advertise_tags">通告标签</string>
+    <string name="tailscale_listen_port">监听端口</string>
+
+    <!-- Tailcat -->
+    <string name="action_tailcat" translatable="false">Tailcat</string>
+    <string name="tailcat_server_public_key">服务器公钥</string>
+    <string name="tailcat_server_disco_key">服务器 Disco 公钥</string>
+    <string name="pre_shared_key">预共享密钥</string>
+    <string name="tailcat_derp_category">DERP</string>
+    <string name="tailcat_derp_map_url">DERP Map URL</string>
+    <string name="tailcat_derp_region">DERP 区域</string>
+    <string name="tailcat_derp_servers">DERP 服务器</string>
+
+    <!-- Tor -->
+    <string name="action_tor">Tor</string>
+    <string name="tor_executable_path">可执行文件路径</string>
+    <string name="tor_data_directory">数据存储目录</string>
+    <string name="tor_extra_args">额外启动参数</string>
+    <string name="tor_torrc">自定义 Torrc 配置</string>
+
+    <!-- Services -->
+    <string name="service_oom_killer">OOM 内存保护</string>
+    <string name="service_oom_killer_limit">OOM 内存上限</string>
+
+    <!-- Protocol Provider -->
+    <string name="protocol_provider">协议提供者</string>
+    <string name="provider_core">sing-box</string>
+    <string name="provider_naive">NaïveProxy</string>
+    <string name="hysteria_provider">Hysteria</string>
+    <string name="mieru_provider">Mieru</string>
+
+    <!-- ShadowQUIC -->
+    <string name="action_shadowquic" translatable="false">ShadowQUIC</string>
+    <string name="congestion_control">拥塞控制</string>
+    <string name="udp_over_stream">UDP Over Stream</string>
+    <string name="zero_rtt">0-RTT 握手</string>
+
+    <!-- Hysteria 2 features -->
+    <string name="bbr_profile">BBR 拥塞控制配置</string>
+    <string name="bbr_profile_default">默认</string>
+    <string name="bbr_profile_standard">标准 (Standard)</string>
+    <string name="bbr_profile_conservative">保守 (Conservative)</string>
+    <string name="bbr_profile_aggressive">激进 (Aggressive)</string>
+    <string name="disable_chrome_parrot">禁用 Chrome 伪装 (Parrot)</string>
+    <string name="certificate_sha256">证书 SHA-256 指纹锁定</string>
+    <string name="hysteria_obfs_type">混淆类型</string>
+
+    <!-- Route Matchers & Options -->
+    <string name="route_ruleset">规则集</string>
+    <string name="route_invert">反向匹配</string>
+    <string name="route_invert_summary">对该规则的匹配结果取反（非）</string>
+    <string name="route_ip_is_private">目标 IP 为私有地址</string>
+    <string name="route_source_ip_is_private">来源 IP 为私有地址</string>
+    <string name="route_network_type">网络接口类型</string>
+    <string name="route_wifi_ssid">Wi-Fi SSID (热点名称)</string>
+    <string name="route_wifi_bssid">Wi-Fi BSSID (MAC 地址)</string>
+    <string name="route_ruleset_match_source">规则集匹配来源 IP</string>
+    <string name="route_ruleset_match_source_summary">规则集内的 IP CIDR 匹配来源 IP 而不是目标 IP</string>
+    <string name="network_type_all">全部 / 不限</string>
+
+    <!-- Global Route & Dialer Settings -->
+    <string name="override_android_vpn">覆盖 Android VPN</string>
+    <string name="override_android_vpn_summary">允许核心直接接管并覆盖系统 VPN 路由</string>
+    <string name="tcp_multi_path">多路径 TCP (MPTCP)</string>
+    <string name="tcp_multi_path_summary">出站连接启用多路径 TCP (需系统内核支持)</string>
+    <string name="udp_fragment">UDP 分片</string>
+    <string name="udp_fragment_summary">出站连接启用 UDP 分片</string>
+    <string name="enable_tls_fragment">TLS 客户端分片</string>
+    <string name="enable_tls_fragment_summary">分片 TLS ClientHello 握手报文，绕过基于 SNI 的审查和阻断</string>
+    <string name="tls_record_fragment">TLS 记录层分片</string>
+    <string name="tls_record_fragment_summary">分片 TLS 记录层报文</string>
+
+    <!-- Reject Method -->
+    <string name="route_reject_method">阻断拒绝模式</string>
+    <string name="route_reject_method_summary">指定命中阻断规则时的网络拒绝行为</string>
+    <string name="reject_method_default">默认</string>
+    <string name="reject_method_drop">丢弃 (Drop / 静默黑洞防探测)</string>
+    <string name="reject_method_reply">拒绝 (Reply / 主动回复重置)</string>
+
+    <!-- Tun & DNS & Dial -->
+    <string name="tun_udp_mapping">TUN UDP 映射模式</string>
+    <string name="udp_mapping_default">系统默认</string>
+    <string name="udp_mapping_full_cone">全锥型 (FullCone NAT / 提升联机兼容性)</string>
+    <string name="udp_mapping_symmetric">对称型 (Symmetric NAT)</string>
+
+    <string name="optimistic_dns">乐观 DNS 缓存 (Optimistic DNS)</string>
+    <string name="optimistic_dns_summary">DNS 记录到期时直接复用过期缓存实现秒开，并在后台异步刷新，降低首包延迟</string>
+
+    <string name="store_cache_file">持久化缓存落盘</string>
+    <string name="store_cache_file_summary">将 FakeIP 映射表和 DNS 缓存保存至磁盘，核心重启或网络切换时不丢映射</string>
+
+    <string name="enable_ntp">内核级时间同步 (NTP)</string>
+    <string name="enable_ntp_summary">在内核中向 NTP 服务器校准时间，解决系统时间漂移导致证书/协议握手失败</string>
+    <string name="ntp_server">NTP 服务器</string>
+
+    <string name="tcp_fast_open">TCP 快速打开 (TCP Fast Open / TFO)</string>
+    <string name="tcp_fast_open_summary">出站连接尝试启用 TFO 减少握手延迟 (需系统和节点支持)</string>
+
+    <string name="wireguard_workers">工作线程数 (Workers)</string>
+    <string name="wireguard_persistent_keepalive">保活周期 (秒, Keepalive)</string>
+
+    <string name="fake_dns_exclude">FakeIP 排除列表 (过滤)</string>
+    <string name="fake_dns_exclude_summary">匹配该列表的域名将跳过 FakeIP 分配，直接解析为真实 IP</string>
+    <string name="fake_dns_exclude_dialog_message">每行或逗号分隔一个域名或规则（例如 *.lan, *.local, geosite:cn，或指定 remote:example.com）</string>
+    <string name="dns_client_subnet">EDNS 客户端子网 (ECS)</string>
+    <string name="dns_client_subnet_summary">在 DNS 查询中附加客户端 IP 子网前缀，使 CDN 精准调度最优就近节点</string>
+    <string name="dns_client_subnet_dialog_message">例如 1.2.3.0/24 或 2001:da8::/48（留空表示不启用）</string>
+
+    <string name="route_ip_version">IP 协议版本</string>
+    <string name="ip_version_any">全部 (IPv4 与 IPv6)</string>
+    <string name="route_client">QUIC 客户端类型</string>
+    <string name="route_client_summary">匹配探测到的 QUIC 客户端（例如 chromium, safari, firefox, quic-go）</string>
+    <string name="route_network_is_expensive">计费网络 (蜂窝流量)</string>
+    <string name="route_network_is_expensive_summary">匹配按流量计费的网络（如蜂窝移动数据、便携热点）</string>
+    <string name="route_network_is_constrained">受限网络 (省流量模式)</string>
+    <string name="route_network_is_constrained_summary">匹配系统开启了省流量/低数据模式的网络</string>
+
+    <string name="tls_spoof">TLS ClientHello 伪造 (Spoof SNI)</string>
+    <string name="tls_spoof_summary">在真实握手前注入伪造 SNI 报文绕过白名单阻断 (需要 Root 权限)</string>
+    <string name="tls_spoof_method">伪造拒绝策略 (Spoof Method)</string>
+
+    <string name="connections_count">共 %d 条</string>
+    <string name="no_active_connections">暂无活跃连接</string>
+    <string name="close_all_connections">断开全部连接</string>
+    <string name="confirm_close_all_connections">确定要关闭并断开所有活跃连接吗？</string>
+    <string name="close">关闭</string>
+
+    <string name="strict_route">严格路由 (Strict Route)</string>
+    <string name="strict_route_summary">在 TUN 模式下启用严格路由策略，杜绝非代理接口流量或 IPv4/IPv6 泄漏</string>
+    <string name="tun_udp_timeout">TUN UDP 会话超时</string>
+    <string name="tun_udp_timeout_summary">TUN 虚拟网卡 UDP NAT 会话过期时间（秒，默认 300）</string>
+
+    <string name="dns_cache_capacity">DNS 缓存容量</string>
+    <string name="dns_cache_capacity_summary">本地缓存的最大 DNS 响应记录条数（默认 1024）</string>
+    <string name="dns_disable_cache">禁用 DNS 本地缓存</string>
+    <string name="dns_disable_cache_summary">完全不缓存任何 DNS 解析响应，每次均向服务器发起查询</string>
+    <string name="dns_disable_expire">禁用 DNS 记录过期 (永久缓存)</string>
+    <string name="dns_disable_expire_summary">忽略上游 TTL 规则，不过期丢弃已解析的 DNS 记录</string>
+    <string name="dns_independent_cache">独立各服务器 DNS 缓存</string>
+    <string name="dns_independent_cache_summary">使不同 DNS 服务器标签拥有隔离的独立缓存池，互不干扰</string>
+    <string name="dns_reverse_mapping">DNS 反向地址映射</string>
+    <string name="dns_reverse_mapping_summary">在内存中存储 IP 到域名的反向映射关系，辅助嗅探与路由决策</string>
+
+    <string name="tls_min_version">TLS 最低协议版本</string>
+    <string name="tls_max_version">TLS 最高协议版本</string>
+    <string name="tls_cipher_suites">TLS 自定义加密套件</string>
+    <string name="tls_cipher_suites_summary">自定义密码套件列表，支持逗号或换行分隔（留空使用默认）</string>
+    <string name="tls_handshake_timeout">TLS 握手超时时间</string>
+    <string name="tls_handshake_timeout_summary">TLS 握手超时限制（秒，0 表示使用默认）</string>
+
+    <string name="uot_version">UDP over TCP 版本</string>
+    <string name="hop_interval_max">最大跳跃间隔（秒）</string>
+    <string name="tuic_heartbeat">心跳间隔（秒）</string>
+    <string name="wireguard_system_interface">系统内核接口 (WireGuard Kernel)</string>
+
+    <string name="tun_udp_filtering">TUN UDP 过滤策略</string>
+    <string name="udp_filtering_address_dependent">受限锥形 (Address Dependent)</string>
+    <string name="tun_exclude_mptcp">排除多路径 TCP (Exclude MPTCP)</string>
+    <string name="tun_exclude_mptcp_summary">从 TUN 虚拟网卡中排除 MPTCP 流量，防止多路径流量绕过代理或连接异常</string>
+
+    <string name="default_word">默认</string>
+    <string name="default_network_strategy">网络接口调度策略</string>
+    <string name="default_network_strategy_summary">设置多网卡调度：混合加速 (WiFi + 蜂窝并发) 或 故障快速回退</string>
+    <string name="network_strategy_hybrid">混合模式 (WiFi + 蜂窝并发加速)</string>
+    <string name="network_strategy_fallback">回退模式 (优先 WiFi，弱网故障秒切蜂窝)</string>
+    <string name="default_fallback_delay">回退等待超时 (毫秒)</string>
+    <string name="default_fallback_delay_summary">首选网络无响应时回退备用网络的超时时间（默认 300ms）</string>
 </resources>

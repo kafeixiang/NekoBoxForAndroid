@@ -6,6 +6,7 @@ import io.nekohasekai.sagernet.CONNECTION_TEST_URL
 import io.nekohasekai.sagernet.GroupType
 import io.nekohasekai.sagernet.IPv6Mode
 import io.nekohasekai.sagernet.Key
+import io.nekohasekai.sagernet.ProtocolProvider
 import io.nekohasekai.sagernet.TunImplementation
 import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.bg.VpnService
@@ -94,6 +95,10 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var networkChangeResetConnections by configurationStore.boolean(Key.NETWORK_CHANGE_RESET_CONNECTIONS) { true }
     var wakeResetConnections by configurationStore.boolean(Key.WAKE_RESET_CONNECTIONS)
 
+    var providerNaive by configurationStore.stringToInt(Key.PROVIDER_NAIVE) { ProtocolProvider.CORE }
+    var providerHysteria by configurationStore.stringToInt(Key.PROVIDER_HYSTERIA) { ProtocolProvider.CORE }
+    var providerMieru by configurationStore.stringToInt(Key.PROVIDER_MIERU) { ProtocolProvider.CORE }
+
     //
 
     var isExpert by configurationStore.boolean(Key.APP_EXPERT)
@@ -162,7 +167,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var connectionTestConcurrent by configurationStore.int("connectionTestConcurrent") { 5 }
     var alwaysShowAddress by configurationStore.boolean(Key.ALWAYS_SHOW_ADDRESS)
 
-    var tunImplementation by configurationStore.stringToInt(Key.TUN_IMPLEMENTATION) { TunImplementation.GVISOR }
+    var tunImplementation by configurationStore.stringToInt(Key.TUN_IMPLEMENTATION) { TunImplementation.SING_TUN }
     var profileTrafficStatistics by configurationStore.boolean(Key.PROFILE_TRAFFIC_STATISTICS) { true }
 
     var yacdURL by configurationStore.string("yacdURL") { "http://127.0.0.1:9090/ui" }
@@ -206,6 +211,8 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverMTU by profileCacheStore.stringToInt(Key.SERVER_MTU)
     var serverHeaders by profileCacheStore.string(Key.SERVER_HEADERS)
     var serverAllowInsecure by profileCacheStore.boolean(Key.SERVER_ALLOW_INSECURE)
+    var serverQuic by profileCacheStore.boolean(Key.SERVER_QUIC)
+    var serverHealthCheck by profileCacheStore.boolean(Key.SERVER_HEALTH_CHECK)
 
     var serverAuthType by profileCacheStore.stringToInt(Key.SERVER_AUTH_TYPE)
     var serverUploadSpeed by profileCacheStore.stringToInt(Key.SERVER_UPLOAD_SPEED)
@@ -214,6 +221,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverConnectionReceiveWindow by profileCacheStore.stringToIntIfExists(Key.SERVER_CONNECTION_RECEIVE_WINDOW)
     var serverDisableMtuDiscovery by profileCacheStore.boolean(Key.SERVER_DISABLE_MTU_DISCOVERY)
     var serverHopInterval by profileCacheStore.stringToInt(Key.SERVER_HOP_INTERVAL) { 10 }
+    var serverHopIntervalMax by profileCacheStore.stringToInt(Key.SERVER_HOP_INTERVAL_MAX) { 0 }
 
     var protocolVersion by profileCacheStore.stringToInt(Key.PROTOCOL_VERSION) { 2 } // default is SOCKS5
 
@@ -225,9 +233,15 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverCongestionController by profileCacheStore.string(Key.SERVER_CONGESTION_CONTROLLER)
     var serverDisableSNI by profileCacheStore.boolean(Key.SERVER_DISABLE_SNI)
     var serverReduceRTT by profileCacheStore.boolean(Key.SERVER_REDUCE_RTT)
+    var serverUDPOverStream by profileCacheStore.boolean(Key.SERVER_UDP_OVER_STREAM)
+    var serverTuicHeartbeat by profileCacheStore.stringToInt(Key.SERVER_TUIC_HEARTBEAT) { 10 }
+    var serverSunnyQuic by profileCacheStore.boolean(Key.SERVER_SUNNY_QUIC)
 
     var serverUserId by profileCacheStore.string(Key.SERVER_USER_ID)
     var serverPinnedCertChainSha256 by profileCacheStore.string(Key.SERVER_PINNED_CERT_CHAIN_SHA256)
+    var serverHysteriaBbrProfile by profileCacheStore.string(Key.SERVER_HYSTERIA_BBR_PROFILE)
+    var serverHysteriaDisableChromeParrot by profileCacheStore.boolean(Key.SERVER_HYSTERIA_DISABLE_CHROME_PARROT)
+    var serverHysteriaObfsType by profileCacheStore.string(Key.SERVER_HYSTERIA_OBFS_TYPE)
 
     var routeName by profileCacheStore.string(Key.ROUTE_NAME)
     var routeDomain by profileCacheStore.string(Key.ROUTE_DOMAIN)
@@ -237,6 +251,19 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var routeNetwork by profileCacheStore.string(Key.ROUTE_NETWORK)
     var routeSource by profileCacheStore.string(Key.ROUTE_SOURCE)
     var routeProtocol by profileCacheStore.string(Key.ROUTE_PROTOCOL)
+    var routeRuleSet by profileCacheStore.string(Key.ROUTE_RULESET)
+    var routeInvert by profileCacheStore.boolean(Key.ROUTE_INVERT)
+    var routeIpIsPrivate by profileCacheStore.boolean(Key.ROUTE_IP_IS_PRIVATE)
+    var routeSourceIpIsPrivate by profileCacheStore.boolean(Key.ROUTE_SOURCE_IP_IS_PRIVATE)
+    var routeNetworkType by profileCacheStore.string(Key.ROUTE_NETWORK_TYPE)
+    var routeWifiSSID by profileCacheStore.string(Key.ROUTE_WIFI_SSID)
+    var routeWifiBSSID by profileCacheStore.string(Key.ROUTE_WIFI_BSSID)
+    var routeRuleSetMatchSource by profileCacheStore.boolean(Key.ROUTE_RULESET_MATCH_SOURCE)
+    var routeRejectMethod by profileCacheStore.string(Key.ROUTE_REJECT_METHOD)
+    var routeIpVersion by profileCacheStore.stringToInt(Key.ROUTE_IP_VERSION)
+    var routeClient by profileCacheStore.string(Key.ROUTE_CLIENT)
+    var routeNetworkIsExpensive by profileCacheStore.boolean(Key.ROUTE_NETWORK_IS_EXPENSIVE)
+    var routeNetworkIsConstrained by profileCacheStore.boolean(Key.ROUTE_NETWORK_IS_CONSTRAINED)
     var routeOutbound by profileCacheStore.stringToInt(Key.ROUTE_OUTBOUND)
     var routeOutboundRule by profileCacheStore.long(Key.ROUTE_OUTBOUND + "Long")
     var routePackages by profileCacheStore.string(Key.ROUTE_PACKAGES)
@@ -267,7 +294,32 @@ object DataStore : OnPreferenceDataStoreChangeListener {
 
     var rulesFirstCreate by profileCacheStore.boolean("rulesFirstCreate")
 
-    // var enableTLSFragment by configurationStore.boolean(Key.ENABLE_TLS_FRAGMENT)
+    var enableTLSFragment by configurationStore.boolean(Key.ENABLE_TLS_FRAGMENT)
+    var tlsRecordFragment by configurationStore.boolean(Key.TLS_RECORD_FRAGMENT)
+    var overrideAndroidVpn by configurationStore.boolean(Key.OVERRIDE_ANDROID_VPN)
+    var tcpMultiPath by configurationStore.boolean(Key.TCP_MULTI_PATH)
+    var udpFragment by configurationStore.boolean(Key.UDP_FRAGMENT)
+    var tcpFastOpen by configurationStore.boolean(Key.TCP_FAST_OPEN)
+
+    var storeCacheFile by configurationStore.boolean(Key.STORE_CACHE_FILE) { true }
+    var optimisticDns by configurationStore.boolean(Key.OPTIMISTIC_DNS)
+    var fakeDnsExclude by configurationStore.string(Key.FAKE_DNS_EXCLUDE)
+    var dnsClientSubnet by configurationStore.string(Key.DNS_CLIENT_SUBNET)
+    var dnsCacheCapacity by configurationStore.int(Key.DNS_CACHE_CAPACITY) { 1024 }
+    var dnsDisableCache by configurationStore.boolean(Key.DNS_DISABLE_CACHE) { false }
+    var dnsDisableExpire by configurationStore.boolean(Key.DNS_DISABLE_EXPIRE) { false }
+    var dnsIndependentCache by configurationStore.boolean(Key.DNS_INDEPENDENT_CACHE) { false }
+    var dnsReverseMapping by configurationStore.boolean(Key.DNS_REVERSE_MAPPING) { false }
+
+    var strictRoute by configurationStore.boolean(Key.STRICT_ROUTE) { false }
+    var tunUdpTimeout by configurationStore.int(Key.TUN_UDP_TIMEOUT) { 300 }
+    var tunUdpMapping by configurationStore.string(Key.TUN_UDP_MAPPING)
+    var tunUdpFiltering by configurationStore.string(Key.TUN_UDP_FILTERING)
+    var tunExcludeMptcp by configurationStore.boolean(Key.TUN_EXCLUDE_MPTCP) { false }
+    var enableNTP by configurationStore.boolean(Key.ENABLE_NTP)
+    var ntpServer by configurationStore.string(Key.NTP_SERVER) { "time.apple.com" }
+    var defaultNetworkStrategy by configurationStore.string(Key.DEFAULT_NETWORK_STRATEGY)
+    var defaultFallbackDelay by configurationStore.int(Key.DEFAULT_FALLBACK_DELAY) { 300 }
 
     var webdavServer: String?
         get() = configurationStore.getString("webdavServer")

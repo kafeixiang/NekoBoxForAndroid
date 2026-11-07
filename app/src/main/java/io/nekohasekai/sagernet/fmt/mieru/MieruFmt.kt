@@ -18,9 +18,44 @@
 
 package io.nekohasekai.sagernet.fmt.mieru
 
+import io.nekohasekai.sagernet.ProtocolProvider
+import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ktx.toStringPretty
+import moe.matsuri.nb4a.SingBoxOptions
+import moe.matsuri.nb4a.plugin.Plugins
 import org.json.JSONArray
 import org.json.JSONObject
+
+fun MieruBean.canUseSingBox(): Boolean {
+    val provider = try {
+        DataStore.providerMieru
+    } catch (_: Throwable) {
+        ProtocolProvider.CORE
+    }
+    if (provider == ProtocolProvider.PLUGIN && Plugins.getPluginExternal("mieru-plugin") != null) return false
+    return true
+}
+
+fun buildSingBoxOutboundMieruBean(bean: MieruBean): SingBoxOptions.Outbound_MieruOptions {
+    return SingBoxOptions.Outbound_MieruOptions().apply {
+        type = "mieru"
+        server = bean.serverAddress
+        if (!bean.serverPorts.isNullOrBlank()) {
+            server_ports = bean.serverPorts.split(",").map { it.trim() }.filter { it.isNotEmpty() }
+        } else {
+            server_port = bean.serverPort
+        }
+        transport = bean.protocol
+        username = bean.username
+        password = bean.password
+        if (!bean.multiplexing.isNullOrBlank() && bean.multiplexing != "MULTIPLEXING_OFF") {
+            multiplexing = bean.multiplexing
+        }
+        if (!bean.trafficPattern.isNullOrBlank()) {
+            traffic_pattern = bean.trafficPattern
+        }
+    }
+}
 
 fun MieruBean.buildMieruConfig(port: Int): String {
     val serverInfo = JSONArray().apply {

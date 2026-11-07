@@ -59,6 +59,9 @@ object Key {
 
     // Protocol Settings
     const val GLOBAL_ALLOW_INSECURE = "globalAllowInsecure"
+    const val PROVIDER_NAIVE = "providerNaive"
+    const val PROVIDER_HYSTERIA = "providerHysteria"
+    const val PROVIDER_MIERU = "providerMieru"
 
     const val ACQUIRE_WAKE_LOCK = "acquireWakeLock"
     const val HIDE_FROM_RECENT_APPS = "hideFromRecentApps"
@@ -112,6 +115,8 @@ object Key {
     const val SERVER_SS_CATEGORY = "serverSsCategory"
     const val SERVER_HEADERS = "serverHeaders"
     const val SERVER_ALLOW_INSECURE = "serverAllowInsecure"
+    const val SERVER_QUIC = "serverQuic"
+    const val SERVER_HEALTH_CHECK = "serverHealthCheck"
 
     const val SERVER_AUTH_TYPE = "serverAuthType"
     const val SERVER_UPLOAD_SPEED = "serverUploadSpeed"
@@ -120,6 +125,7 @@ object Key {
     const val SERVER_CONNECTION_RECEIVE_WINDOW = "serverConnectionReceiveWindow"
     const val SERVER_DISABLE_MTU_DISCOVERY = "serverDisableMtuDiscovery"
     const val SERVER_HOP_INTERVAL = "hopInterval"
+    const val SERVER_HOP_INTERVAL_MAX = "hopIntervalMax"
 
     const val SERVER_PRIVATE_KEY = "serverPrivateKey"
     const val SERVER_INSECURE_CONCURRENCY = "serverInsecureConcurrency"
@@ -128,9 +134,15 @@ object Key {
     const val SERVER_CONGESTION_CONTROLLER = "serverCongestionController"
     const val SERVER_DISABLE_SNI = "serverDisableSNI"
     const val SERVER_REDUCE_RTT = "serverReduceRTT"
+    const val SERVER_UDP_OVER_STREAM = "serverUDPOverStream"
+    const val SERVER_TUIC_HEARTBEAT = "serverTuicHeartbeat"
+    const val SERVER_SUNNY_QUIC = "serverSunnyQuic"
 
     const val SERVER_USER_ID = "serverUserId"
     const val SERVER_PINNED_CERT_CHAIN_SHA256 = "serverPinnedCertChainSha256"
+    const val SERVER_HYSTERIA_BBR_PROFILE = "serverHysteriaBbrProfile"
+    const val SERVER_HYSTERIA_DISABLE_CHROME_PARROT = "serverHysteriaDisableChromeParrot"
+    const val SERVER_HYSTERIA_OBFS_TYPE = "serverHysteriaObfsType"
 
     const val ROUTE_NAME = "routeName"
     const val ROUTE_DOMAIN = "routeDomain"
@@ -140,8 +152,51 @@ object Key {
     const val ROUTE_NETWORK = "routeNetwork"
     const val ROUTE_SOURCE = "routeSource"
     const val ROUTE_PROTOCOL = "routeProtocol"
+    const val ROUTE_RULESET = "routeRuleSet"
+    const val ROUTE_INVERT = "routeInvert"
+    const val ROUTE_IP_IS_PRIVATE = "routeIpIsPrivate"
+    const val ROUTE_SOURCE_IP_IS_PRIVATE = "routeSourceIpIsPrivate"
+    const val ROUTE_NETWORK_TYPE = "routeNetworkType"
+    const val ROUTE_WIFI_SSID = "routeWifiSSID"
+    const val ROUTE_WIFI_BSSID = "routeWifiBSSID"
+    const val ROUTE_RULESET_MATCH_SOURCE = "routeRuleSetMatchSource"
+    const val ROUTE_REJECT_METHOD = "routeRejectMethod"
+    const val ROUTE_IP_VERSION = "routeIpVersion"
+    const val ROUTE_CLIENT = "routeClient"
+    const val ROUTE_NETWORK_IS_EXPENSIVE = "routeNetworkIsExpensive"
+    const val ROUTE_NETWORK_IS_CONSTRAINED = "routeNetworkIsConstrained"
     const val ROUTE_OUTBOUND = "routeOutbound"
     const val ROUTE_PACKAGES = "routePackages"
+
+    const val ENABLE_TLS_FRAGMENT = "enableTLSFragment"
+    const val TLS_RECORD_FRAGMENT = "tlsRecordFragment"
+    const val OVERRIDE_ANDROID_VPN = "overrideAndroidVpn"
+    const val TCP_MULTI_PATH = "tcpMultiPath"
+    const val UDP_FRAGMENT = "udpFragment"
+    const val TCP_FAST_OPEN = "tcpFastOpen"
+
+    const val STORE_CACHE_FILE = "storeCacheFile"
+    const val OPTIMISTIC_DNS = "optimisticDns"
+    const val FAKE_DNS_EXCLUDE = "fakeDnsExclude"
+    const val DNS_CLIENT_SUBNET = "dnsClientSubnet"
+    const val DNS_CACHE_CAPACITY = "dnsCacheCapacity"
+    const val DNS_DISABLE_CACHE = "dnsDisableCache"
+    const val DNS_DISABLE_EXPIRE = "dnsDisableExpire"
+    const val DNS_INDEPENDENT_CACHE = "dnsIndependentCache"
+    const val DNS_REVERSE_MAPPING = "dnsReverseMapping"
+
+    const val STRICT_ROUTE = "strictRoute"
+    const val TUN_UDP_TIMEOUT = "tunUdpTimeout"
+    const val TUN_UDP_MAPPING = "tunUdpMapping"
+    const val TUN_UDP_FILTERING = "tunUdpFiltering"
+    const val TUN_EXCLUDE_MPTCP = "tunExcludeMptcp"
+    const val ENABLE_NTP = "enableNTP"
+    const val NTP_SERVER = "ntpServer"
+    const val DEFAULT_NETWORK_STRATEGY = "defaultNetworkStrategy"
+    const val DEFAULT_FALLBACK_DELAY = "defaultFallbackDelay"
+
+    const val WIREGUARD_WORKERS = "wireguardWorkers"
+    const val WIREGUARD_PERSISTENT_KEEPALIVE = "wireguardPersistentKeepalive"
 
     const val GROUP_NAME = "groupName"
     const val GROUP_TYPE = "groupType"
@@ -174,9 +229,10 @@ object Key {
 }
 
 object TunImplementation {
-    const val GVISOR = 0
+    const val SING_TUN = 0
     const val SYSTEM = 1
-    const val MIXED = 2
+    const val GVISOR = 2
+    const val MIXED = 3
 }
 
 object IPv6Mode {
@@ -184,6 +240,11 @@ object IPv6Mode {
     const val ENABLE = 1
     const val PREFER = 2
     const val ONLY = 3
+}
+
+object ProtocolProvider {
+    const val CORE = 0
+    const val PLUGIN = 1
 }
 
 object GroupType {

@@ -239,6 +239,7 @@
     <string name="action_wireguard" translatable="false">WireGuard</string>
     <string name="action_tuic" translatable="false">TUIC</string>
     <string name="action_juicity" translatable="false">Juicity</string>
+    <string name="action_trusttunnel" translatable="false">TrustTunnel</string>
     <string name="proxy_chain">Proxy Chain</string>
     <string name="custom_config">Custom Config</string>
     <string name="balancer">Balancer</string>
@@ -669,5 +670,237 @@
     <string name="snell_quic_proxy">QUIC Proxy Mode</string>
     <string name="snell_quic_proxy_summary">v6 only: legacy v5 QUIC Proxy compatibility</string>
     <string name="snell_reuse_summary">v4-v6 only</string>
+
+    <!-- Direct & MASQUE & Mieru -->
+    <string name="action_direct">Direct</string>
+    <string name="action_masque">MASQUE</string>
+    <string name="server_ports">Server Port Ranges</string>
+    <string name="server_ports_summary">e.g. 1000-2000, 3000-4000 (takes precedence over server port)</string>
+    <string name="traffic_pattern">Traffic Pattern</string>
+    <string name="mieru_multiplexing">Multiplexing</string>
+    <string name="masque_http_version">HTTP Version</string>
+    <string name="masque_disable_version_fallback">Disable Version Fallback</string>
+    <string name="masque_headers">Extra Headers</string>
+    <string name="masque_path">Path Template</string>
+
+    <!-- OpenVPN -->
+    <string name="action_openvpn">OpenVPN</string>
+    <string name="openvpn_network">Network Protocol</string>
+    <string name="cipher">Cipher</string>
+    <string name="openvpn_cipher">Cipher</string>
+    <string name="openvpn_data_ciphers">Data Ciphers</string>
+    <string name="openvpn_auth">Auth Digest</string>
+    <string name="openvpn_compression">Compression</string>
+    <string name="openvpn_redirect_gateway">Redirect Gateway</string>
+    <string name="openvpn_server_name_type">Server Name Type</string>
+    <string name="openvpn_ca_certificate">CA Certificate</string>
+    <string name="openvpn_client_certificate">Client Certificate</string>
+    <string name="openvpn_client_key">Client Key</string>
+    <string name="openvpn_peer_fingerprint">Peer Fingerprint</string>
+    <string name="openvpn_remote_cert_ku">Remote Certificate KU</string>
+    <string name="openvpn_remote_cert_eku">Remote Certificate EKU</string>
+    <string name="openvpn_control_wrap_type">Control Wrap Type</string>
+    <string name="openvpn_control_wrap_key">Control Wrap Key</string>
+    <string name="openvpn_control_wrap_direction">Control Wrap Direction</string>
+
+    <!-- OpenConnect -->
+    <string name="action_openconnect">OpenConnect</string>
+    <string name="openconnect_server">Server URL</string>
+    <string name="openconnect_flavor">Protocol Flavor</string>
+    <string name="openconnect_auth_group">Auth Group</string>
+    <string name="openconnect_user_agent">User Agent</string>
+    <string name="openconnect_reported_os">Reported OS</string>
+    <string name="openconnect_local_hostname">Local Hostname</string>
+    <string name="openconnect_allow_insecure_crypto">Allow Insecure Crypto</string>
+    <string name="openconnect_tls_peer_fingerprint">TLS Peer Fingerprint</string>
+    <string name="openconnect_ca">CA Certificate</string>
+    <string name="openconnect_client_key_password">Client Key Password</string>
+    <string name="openconnect_mca_certificate">MCA Certificate</string>
+    <string name="openconnect_mca_key">MCA Key</string>
+    <string name="openconnect_mca_key_password">MCA Key Password</string>
+    <string name="openconnect_authentication">Authentication</string>
+    <string name="clear_remembered_authentication_answers">Clear Remembered Authentication Answers</string>
+
+    <!-- Tailscale -->
+    <string name="action_tailscale">Tailscale</string>
+    <string name="tailscale_control_url">Control Server URL</string>
+    <string name="tailscale_auth_key">Auth Key</string>
+    <string name="tailscale_hostname">Hostname</string>
+    <string name="tailscale_state_directory">State Directory</string>
+    <string name="tailscale_ephemeral">Ephemeral Node</string>
+    <string name="tailscale_accept_routes">Accept Subnet Routes</string>
+    <string name="tailscale_exit_node">Exit Node (IP or Name)</string>
+    <string name="tailscale_exit_node_allow_lan">Exit Node Allow LAN Access</string>
+    <string name="tailscale_advertise_routes">Advertise Routes</string>
+    <string name="tailscale_advertise_fake_dns_routes">Advertise FakeDNS Routes</string>
+    <string name="tailscale_advertise_fake_dns_routes_summary">Advertise FakeDNS IPv4 and IPv6 routes to other Tailscale devices</string>
+    <string name="tailscale_advertise_exit_node">Advertise Exit Node</string>
+    <string name="tailscale_advertise_tags">Advertise Tags</string>
+    <string name="tailscale_listen_port">Listen Port</string>
+
+    <!-- Tailcat -->
+    <string name="action_tailcat" translatable="false">Tailcat</string>
+    <string name="tailcat_server_public_key">Server Public Key</string>
+    <string name="tailcat_server_disco_key">Server Disco Key</string>
+    <string name="pre_shared_key">Pre-shared Key</string>
+    <string name="tailcat_derp_category">DERP</string>
+    <string name="tailcat_derp_map_url">DERP Map URL</string>
+    <string name="tailcat_derp_region">DERP Region</string>
+    <string name="tailcat_derp_servers">DERP Servers</string>
+
+    <!-- Tor -->
+    <string name="action_tor">Tor</string>
+    <string name="tor_executable_path">Executable Path</string>
+    <string name="tor_data_directory">Data Directory</string>
+    <string name="tor_extra_args">Extra Arguments</string>
+    <string name="tor_torrc">Custom Torrc Options</string>
+
+    <!-- Services -->
+    <string name="service_oom_killer">OOM Killer</string>
+    <string name="service_oom_killer_limit">OOM Memory Limit</string>
+
+    <!-- Protocol Provider -->
+    <string name="protocol_provider">Protocol Provider</string>
+    <string name="provider_core">sing-box</string>
+    <string name="provider_naive">NaïveProxy</string>
+    <string name="hysteria_provider">Hysteria</string>
+    <string name="mieru_provider">Mieru</string>
+
+    <!-- ShadowQUIC -->
+    <string name="action_shadowquic" translatable="false">ShadowQUIC</string>
+    <string name="congestion_control">Congestion Control</string>
+    <string name="udp_over_stream">UDP Over Stream</string>
+    <string name="zero_rtt">0-RTT Handshake</string>
+
+    <!-- Hysteria 2 features -->
+    <string name="bbr_profile">BBR Profile</string>
+    <string name="bbr_profile_default">Default</string>
+    <string name="bbr_profile_standard">Standard</string>
+    <string name="bbr_profile_conservative">Conservative</string>
+    <string name="bbr_profile_aggressive">Aggressive</string>
+    <string name="disable_chrome_parrot">Disable Chrome Parrot</string>
+    <string name="certificate_sha256">Certificate SHA-256 Pin</string>
+    <string name="hysteria_obfs_type">Obfuscation Type</string>
+
+    <!-- Route Matchers & Options -->
+    <string name="route_ruleset">Rule Set</string>
+    <string name="route_invert">Invert Match</string>
+    <string name="route_invert_summary">Invert match results for this rule (NOT)</string>
+    <string name="route_ip_is_private">Destination IP is Private</string>
+    <string name="route_source_ip_is_private">Source IP is Private</string>
+    <string name="route_network_type">Network Interface Type</string>
+    <string name="route_wifi_ssid">Wi-Fi SSID</string>
+    <string name="route_wifi_bssid">Wi-Fi BSSID</string>
+    <string name="route_ruleset_match_source">Rule Set Matches Source IP</string>
+    <string name="route_ruleset_match_source_summary">Match rule set IP CIDR against source IP instead of destination IP</string>
+    <string name="network_type_all">Any</string>
+
+    <!-- Global Route & Dialer Settings -->
+    <string name="override_android_vpn">Override Android VPN</string>
+    <string name="override_android_vpn_summary">Bypass and take over Android VPN routing directly in core</string>
+    <string name="tcp_multi_path">TCP MultiPath (MPTCP)</string>
+    <string name="tcp_multi_path_summary">Enable TCP MultiPath on outbound connections (requires kernel support)</string>
+    <string name="udp_fragment">UDP Fragment</string>
+    <string name="udp_fragment_summary">Enable UDP fragmentation on outbound connections</string>
+    <string name="enable_tls_fragment">TLS Client Fragment</string>
+    <string name="enable_tls_fragment_summary">Fragment TLS ClientHello to bypass SNI inspection and blocking</string>
+    <string name="tls_record_fragment">TLS Record Fragment</string>
+    <string name="tls_record_fragment_summary">Fragment TLS record layer packets</string>
+
+    <!-- Reject Method -->
+    <string name="route_reject_method">Reject Mode</string>
+    <string name="route_reject_method_summary">Action behavior when reject/block matches</string>
+    <string name="reject_method_default">Default</string>
+    <string name="reject_method_drop">Drop (Silent Blackhole)</string>
+    <string name="reject_method_reply">Reply (Immediate RST/Unreachable)</string>
+
+    <!-- Tun & DNS & Dial -->
+    <string name="tun_udp_mapping">TUN UDP Mapping Mode</string>
+    <string name="udp_mapping_default">Default</string>
+    <string name="udp_mapping_full_cone">FullCone NAT (Endpoint Independent)</string>
+    <string name="udp_mapping_symmetric">Symmetric NAT</string>
+
+    <string name="optimistic_dns">Optimistic DNS</string>
+    <string name="optimistic_dns_summary">Serve expired DNS cache immediately and refresh in background to reduce latency</string>
+
+    <string name="store_cache_file">Persist Cache File</string>
+    <string name="store_cache_file_summary">Save FakeIP mappings and DNS cache to disk to preserve mappings across reconnections</string>
+
+    <string name="enable_ntp">Kernel NTP Time Sync</string>
+    <string name="enable_ntp_summary">Synchronize time with NTP server inside core to prevent handshake errors caused by system clock drift</string>
+    <string name="ntp_server">NTP Server</string>
+
+    <string name="tcp_fast_open">TCP Fast Open (TFO)</string>
+    <string name="tcp_fast_open_summary">Enable TFO on outbound connections to reduce handshake latency</string>
+
+    <string name="wireguard_workers">Workers</string>
+    <string name="wireguard_persistent_keepalive">Persistent Keepalive (Seconds)</string>
+
+    <string name="fake_dns_exclude">FakeIP Filter (Exclude List)</string>
+    <string name="fake_dns_exclude_summary">Domains matching this list will bypass FakeIP and resolve to real IPs</string>
+    <string name="fake_dns_exclude_dialog_message">Enter domains or rules separated by line or comma (e.g. *.lan, *.local, geosite:cn, or remote:example.com)</string>
+    <string name="dns_client_subnet">EDNS Client Subnet (ECS)</string>
+    <string name="dns_client_subnet_summary">Attach client subnet IP prefix to DNS queries for optimal CDN geo-routing</string>
+    <string name="dns_client_subnet_dialog_message">e.g. 1.2.3.0/24 or 2001:da8::/48 (leave empty to disable)</string>
+
+    <string name="route_ip_version">IP Version</string>
+    <string name="ip_version_any">Any (IPv4 &amp; IPv6)</string>
+    <string name="route_client">QUIC Client</string>
+    <string name="route_client_summary">Match client type for QUIC (e.g. chromium, safari, firefox, quic-go)</string>
+    <string name="route_network_is_expensive">Metered Network</string>
+    <string name="route_network_is_expensive_summary">Match metered network (cellular data or mobile hotspot)</string>
+    <string name="route_network_is_constrained">Constrained Network</string>
+    <string name="route_network_is_constrained_summary">Match network in Data Saver / low data mode</string>
+
+    <string name="tls_spoof">TLS ClientHello Spoof (SNI)</string>
+    <string name="tls_spoof_summary">Inject fake ClientHello with whitelist SNI before real handshake (requires root/elevated)</string>
+    <string name="tls_spoof_method">Spoof Method</string>
+
+    <string name="connections_count">Total: %d</string>
+    <string name="no_active_connections">No active connections</string>
+    <string name="close_all_connections">Close All Connections</string>
+    <string name="confirm_close_all_connections">Are you sure you want to close all active connections?</string>
+    <string name="close">Close</string>
+
+    <string name="strict_route">Strict Route</string>
+    <string name="strict_route_summary">Enforce strict routing in TUN mode to prevent IPv4/IPv6 traffic leakage</string>
+    <string name="tun_udp_timeout">TUN UDP Timeout</string>
+    <string name="tun_udp_timeout_summary">UDP NAT session timeout in TUN interface (in seconds, default 300)</string>
+
+    <string name="dns_cache_capacity">DNS Cache Capacity</string>
+    <string name="dns_cache_capacity_summary">Maximum number of DNS responses to cache (default 1024)</string>
+    <string name="dns_disable_cache">Disable DNS Cache</string>
+    <string name="dns_disable_cache_summary">Never cache DNS query responses locally</string>
+    <string name="dns_disable_expire">Disable DNS Expire</string>
+    <string name="dns_disable_expire_summary">Disable TTL expiration to keep DNS responses cached indefinitely</string>
+    <string name="dns_independent_cache">Independent DNS Cache</string>
+    <string name="dns_independent_cache_summary">Isolate DNS caches individually for each DNS server tag</string>
+    <string name="dns_reverse_mapping">DNS Reverse Mapping</string>
+    <string name="dns_reverse_mapping_summary">Store reverse IP-to-domain mapping to help routing and sniffing</string>
+
+    <string name="tls_min_version">TLS Minimum Version</string>
+    <string name="tls_max_version">TLS Maximum Version</string>
+    <string name="tls_cipher_suites">TLS Cipher Suites</string>
+    <string name="tls_cipher_suites_summary">Custom cipher suites separated by comma or line (leave empty for default)</string>
+    <string name="tls_handshake_timeout">TLS Handshake Timeout</string>
+    <string name="tls_handshake_timeout_summary">Handshake timeout in seconds (0 for default)</string>
+
+    <string name="uot_version">UDP over TCP Version</string>
+    <string name="hop_interval_max">Max Hop Interval (s)</string>
+    <string name="tuic_heartbeat">Heartbeat Interval (s)</string>
+    <string name="wireguard_system_interface">System Kernel Interface</string>
+
+    <string name="tun_udp_filtering">TUN UDP Filtering</string>
+    <string name="udp_filtering_address_dependent">Address Dependent</string>
+    <string name="tun_exclude_mptcp">Exclude MPTCP</string>
+    <string name="tun_exclude_mptcp_summary">Exclude Multipath TCP traffic to prevent tunnel leaks or connection interruptions</string>
+
+    <string name="default_word">Default</string>
+    <string name="default_network_strategy">Network Interface Strategy</string>
+    <string name="default_network_strategy_summary">Configure multi-interface behavior: Hybrid (WiFi + Cellular concurrent) or Fallback</string>
+    <string name="network_strategy_hybrid">Hybrid (WiFi + Cellular Concurrent)</string>
+    <string name="network_strategy_fallback">Fallback (WiFi with Cellular Fallback)</string>
+    <string name="default_fallback_delay">Fallback Delay (ms)</string>
+    <string name="default_fallback_delay_summary">Connection timeout before falling back to cellular network (default 300ms)</string>
 
 </resources>

@@ -2,7 +2,7 @@
 
     <EditTextPreference
         app:icon="@drawable/ic_social_emoji_symbols"
-        app:key="profileName"
+        app:key="name"
         app:title="@string/profile_name"
         app:useSimpleSummaryProvider="true" />
 
@@ -18,28 +18,46 @@
             app:key="serverPort"
             app:title="@string/server_port"
             app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:icon="@drawable/ic_maps_directions_boat"
+            app:key="serverPorts"
+            app:title="@string/server_ports"
+            app:useSimpleSummaryProvider="true" />
         <moe.matsuri.nb4a.ui.SimpleMenuPreference
             app:defaultValue="TCP"
             app:entries="@array/mieru_protocol"
             app:entryValues="@array/mieru_protocol"
             app:icon="@drawable/ic_baseline_compare_arrows_24"
-            app:key="serverProtocol"
+            app:key="protocol"
             app:title="@string/protocol"
             app:useSimpleSummaryProvider="true" />
         <EditTextPreference
             app:icon="@drawable/ic_baseline_person_24"
-            app:key="serverUsername"
+            app:key="username"
             app:title="@string/username"
             app:useSimpleSummaryProvider="true" />
         <EditTextPreference
             app:dialogLayout="@layout/layout_password_dialog"
             app:icon="@drawable/ic_settings_password"
-            app:key="serverPassword"
+            app:key="password"
             app:title="@string/password" />
         <EditTextPreference
             app:icon="@drawable/baseline_public_24"
-            app:key="serverMTU"
+            app:key="mtu"
             app:title="@string/mtu"
+            app:useSimpleSummaryProvider="true" />
+        <moe.matsuri.nb4a.ui.SimpleMenuPreference
+            app:defaultValue="MULTIPLEXING_LOW"
+            app:entries="@array/mieru_multiplexing_entry"
+            app:entryValues="@array/mieru_multiplexing_value"
+            app:icon="@drawable/ic_baseline_compare_arrows_24"
+            app:key="multiplexing"
+            app:title="@string/mieru_multiplexing"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:icon="@drawable/ic_baseline_compare_arrows_24"
+            app:key="trafficPattern"
+            app:title="@string/traffic_pattern"
             app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
