@@ -24,6 +24,9 @@ class WireGuardSettingsActivity : ProfileSettingsActivity<WireGuardBean>() {
     private val peerPreSharedKey = pbm.add(PreferenceBinding(Type.Text, "peerPreSharedKey"))
     private val mtu = pbm.add(PreferenceBinding(Type.TextToInt, "mtu"))
     private val reserved = pbm.add(PreferenceBinding(Type.Text, "reserved"))
+    private val workers = pbm.add(PreferenceBinding(Type.TextToInt, "workers"))
+    private val persistentKeepalive = pbm.add(PreferenceBinding(Type.TextToInt, "persistentKeepalive"))
+    private val systemInterface = pbm.add(PreferenceBinding(Type.Bool, "systemInterface"))
 
     override fun WireGuardBean.init() {
         pbm.writeToCacheAll(this)
@@ -44,6 +47,8 @@ class WireGuardSettingsActivity : ProfileSettingsActivity<WireGuardBean>() {
             .setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
         (privateKey.preference as EditTextPreference).summaryProvider = PasswordSummaryProvider
         (mtu.preference as EditTextPreference).setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
+        (workers.preference as EditTextPreference).setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
+        (persistentKeepalive.preference as EditTextPreference).setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
     }
 
 }
