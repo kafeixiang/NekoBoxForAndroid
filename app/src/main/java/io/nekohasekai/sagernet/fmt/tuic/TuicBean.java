@@ -32,6 +32,8 @@ public class TuicBean extends AbstractBean {
     public String customJSON;
     public Integer protocolVersion;
     public String uuid;
+    public Boolean udpOverStream;
+    public Integer heartbeat;
 
     @Override
     public void initializeDefaultValues() {
@@ -50,11 +52,13 @@ public class TuicBean extends AbstractBean {
         if (customJSON == null) customJSON = "";
         if (protocolVersion == null) protocolVersion = 5;
         if (uuid == null) uuid = "";
+        if (udpOverStream == null) udpOverStream = false;
+        if (heartbeat == null) heartbeat = 10;
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(2);
+        output.writeInt(3);
         super.serialize(output);
         output.writeString(token);
         output.writeString(caText);
@@ -70,6 +74,9 @@ public class TuicBean extends AbstractBean {
         output.writeString(customJSON);
         output.writeInt(protocolVersion);
         output.writeString(uuid);
+        // v3
+        output.writeBoolean(udpOverStream != null ? udpOverStream : false);
+        output.writeInt(heartbeat != null ? heartbeat : 0);
     }
 
     @Override
@@ -95,6 +102,13 @@ public class TuicBean extends AbstractBean {
             uuid = input.readString();
         } else {
             protocolVersion = 4;
+        }
+        if (version >= 3) {
+            udpOverStream = input.readBoolean();
+            heartbeat = input.readInt();
+        } else {
+            udpOverStream = false;
+            heartbeat = 0;
         }
     }
 

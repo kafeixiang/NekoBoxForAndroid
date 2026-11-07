@@ -50,6 +50,12 @@ fun parseTuic(url: String): TuicBean {
         link.queryParameter("disable_sni")?.let {
             if (it == "1") disableSNI = true
         }
+        (link.queryParameter("udp_over_stream") ?: link.queryParameter("udp-over-stream"))?.let {
+            if (it == "1" || it == "true") udpOverStream = true
+        }
+        (link.queryParameter("heartbeat") ?: link.queryParameter("heartbeat_interval"))?.let {
+            heartbeat = it.replace("s", "").toIntOrNull() ?: heartbeat
+        }
     }
 }
 
@@ -58,6 +64,9 @@ fun TuicBean.toUri(): String {
 
     builder.addQueryParameter("congestion_control", congestionController)
     builder.addQueryParameter("udp_relay_mode", udpRelayMode)
+
+    if (udpOverStream == true) builder.addQueryParameter("udp_over_stream", "1")
+    if (heartbeat != null && heartbeat != 10) builder.addQueryParameter("heartbeat", "${heartbeat}s")
 
     if (sni.isNotBlank()) builder.addQueryParameter("sni", sni)
     if (alpn.isNotBlank()) builder.addQueryParameter("alpn", alpn)
@@ -80,19 +89,25 @@ fun buildSingBoxOutboundTuicBean(bean: TuicBean): SingBoxOptions.Outbound_TUICOp
         when (bean.udpRelayMode) {
             "quic" -> udp_relay_mode = "quic"
         }
+        if (bean.udpOverStream == true) {
+            udp_over_stream = true
+        }
+        if (bean.heartbeat != null && bean.heartbeat > 0) {
+            _hack_config_map["heartbeat"] = "${bean.heartbeat}s"
+        }
         zero_rtt_handshake = bean.reduceRTT
         tls = SingBoxOptions.OutboundTLSOptions().apply {
-            if (bean.sni.isNotBlank()) {
+            if (!bean.sni.isNullOrBlank()) {
                 server_name = bean.sni
             }
-            if (bean.alpn.isNotBlank()) {
+            if (!bean.alpn.isNullOrBlank()) {
                 alpn = bean.alpn.listByLineOrComma()
             }
-            if (bean.caText.isNotBlank()) {
+            if (!bean.caText.isNullOrBlank()) {
                 certificate = bean.caText
             }
-            disable_sni = bean.disableSNI
-            insecure = bean.allowInsecure || DataStore.globalAllowInsecure
+            disable_sni = bean.disableSNI == true
+            insecure = bean.allowInsecure == true || (try { DataStore.globalAllowInsecure } catch (_: Throwable) { false })
             enabled = true
         }
     }

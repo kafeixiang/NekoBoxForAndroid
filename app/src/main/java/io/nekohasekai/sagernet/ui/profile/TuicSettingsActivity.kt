@@ -28,6 +28,8 @@ class TuicSettingsActivity : ProfileSettingsActivity<TuicBean>() {
         DataStore.serverSNI = sni
         DataStore.serverReduceRTT = reduceRTT
         DataStore.serverAllowInsecure = allowInsecure
+        DataStore.serverUDPOverStream = udpOverStream ?: false
+        DataStore.serverTuicHeartbeat = heartbeat ?: 10
     }
 
     override fun TuicBean.serialize() {
@@ -44,6 +46,8 @@ class TuicSettingsActivity : ProfileSettingsActivity<TuicBean>() {
         sni = DataStore.serverSNI
         reduceRTT = DataStore.serverReduceRTT
         allowInsecure = DataStore.serverAllowInsecure
+        udpOverStream = DataStore.serverUDPOverStream
+        heartbeat = DataStore.serverTuicHeartbeat
     }
 
     override fun PreferenceFragmentCompat.createPreferences(
@@ -62,6 +66,9 @@ class TuicSettingsActivity : ProfileSettingsActivity<TuicBean>() {
 
         findPreference<EditTextPreference>(Key.SERVER_PASSWORD)!!.apply {
             summaryProvider = PasswordSummaryProvider
+        }
+        findPreference<EditTextPreference>(Key.SERVER_TUIC_HEARTBEAT)?.apply {
+            setOnBindEditTextListener(io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers.Number)
         }
     }
 
