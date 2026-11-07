@@ -53,8 +53,8 @@ public class NaiveBean extends AbstractBean {
         output.writeString(extraHeaders);
         output.writeString(certificates);
         output.writeString(sni);
-        output.writeInt(insecureConcurrency);
-        output.writeBoolean(sUoT);
+        output.writeInt(insecureConcurrency != null ? insecureConcurrency : 0);
+        output.writeBoolean(sUoT != null ? sUoT : false);
         output.writeString(quicCongestionControl);
     }
 

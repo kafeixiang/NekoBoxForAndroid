@@ -30,31 +30,31 @@ fun parseNaive(link: String): NaiveBean {
 }
 
 fun NaiveBean.toUri(proxyOnly: Boolean = false): String {
-    val builder = linkBuilder().host(finalAddress).port(finalPort)
-    if (username.isNotBlank()) {
+    val builder = linkBuilder().host(finalAddress ?: serverAddress ?: "").port(if (finalPort != 0) finalPort else (serverPort ?: 443))
+    if (!username.isNullOrBlank()) {
         builder.username(username)
-        if (password.isNotBlank()) {
+        if (!password.isNullOrBlank()) {
             builder.password(password)
         }
     }
     if (!proxyOnly) {
-        if (sni.isNotBlank()) {
+        if (!sni.isNullOrBlank()) {
             builder.addQueryParameter("sni", sni)
         }
-        if (certificates.isNotBlank()) {
+        if (!certificates.isNullOrBlank()) {
             builder.addQueryParameter("cert", certificates)
         }
-        if (extraHeaders.isNotBlank()) {
+        if (!extraHeaders.isNullOrBlank()) {
             builder.addQueryParameter("extra-headers", extraHeaders)
         }
-        if (name.isNotBlank()) {
+        if (!name.isNullOrBlank()) {
             builder.encodedFragment(name.urlSafe())
         }
-        if (insecureConcurrency > 0) {
+        if ((insecureConcurrency ?: 0) > 0) {
             builder.addQueryParameter("insecure-concurrency", "$insecureConcurrency")
         }
     }
-    return builder.toLink(if (proxyOnly) proto else "naive+$proto", false)
+    return builder.toLink(if (proxyOnly) (proto ?: "https") else "naive+${proto ?: "https"}", false)
 }
 
 fun NaiveBean.buildNaiveConfig(port: Int): String {
@@ -113,7 +113,7 @@ fun buildSingBoxOutboundNaiveBean(bean: NaiveBean): SingBoxOptions.Outbound_Naiv
             quic = true
             quic_congestion_control = bean.quicCongestionControl.blankAsNull()
         }
-        if (bean.extraHeaders.isNotBlank()) {
+        if (!bean.extraHeaders.isNullOrBlank()) {
             val headersMap = mutableMapOf<String, MutableList<String>>()
             bean.extraHeaders.lineSequence().forEach { line ->
                 val trimmed = line.trim()
@@ -138,11 +138,9 @@ fun buildSingBoxOutboundNaiveBean(bean: NaiveBean): SingBoxOptions.Outbound_Naiv
         tls = SingBoxOptions.OutboundTLSOptions().apply {
             enabled = true
             server_name = bean.sni.blankAsNull() ?: bean.serverAddress.takeUnless { it.isIpAddress() }
-            if (bean.certificates.isNotBlank()) {
+            if (!bean.certificates.isNullOrBlank()) {
                 certificate = bean.certificates
             }
-            if (DataStore.enableTLSFragment) fragment = true
-            if (DataStore.tlsRecordFragment) record_fragment = true
         }
     }
 }

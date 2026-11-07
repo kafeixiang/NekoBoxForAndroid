@@ -51,7 +51,10 @@ import io.nekohasekai.sagernet.fmt.mieru.MieruBean
 import io.nekohasekai.sagernet.fmt.mieru.buildSingBoxOutboundMieruBean
 import io.nekohasekai.sagernet.fmt.mieru.canUseSingBox
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean
+import io.nekohasekai.sagernet.fmt.naive.buildSingBoxOutboundNaiveBean
 import io.nekohasekai.sagernet.fmt.naive.canUseSingBox
+import io.nekohasekai.sagernet.fmt.naive.parseNaive
+import io.nekohasekai.sagernet.fmt.naive.toUri
 import io.nekohasekai.sagernet.fmt.openconnect.OpenConnectBean
 import io.nekohasekai.sagernet.fmt.openconnect.buildSingBoxEndpointOpenConnectBean
 import io.nekohasekai.sagernet.fmt.openvpn.OpenVPNBean
@@ -493,6 +496,59 @@ class ProtocolValidityTest {
         assertEquals(22, sshOutbound.server_port)
         assertEquals("root", sshOutbound.user)
         assertEquals("sshpassword", sshOutbound.password)
+    }
+
+    @Test
+    fun testNaiveParsingAndBuilding() {
+        val link = "naive+https://testuser:testpassword@naive.example.com:443?sni=sni.example.com&cert=mycert&insecure-concurrency=4#test-naive"
+        val bean = parseNaive(link)
+
+        assertEquals("https", bean.proto)
+        assertEquals("naive.example.com", bean.serverAddress)
+        assertEquals(443, bean.serverPort)
+        assertEquals("testuser", bean.username)
+        assertEquals("testpassword", bean.password)
+        assertEquals("sni.example.com", bean.sni)
+        assertEquals("mycert", bean.certificates)
+        assertEquals(4, bean.insecureConcurrency)
+        assertEquals("test-naive", bean.name)
+
+        val outbound = buildSingBoxOutboundNaiveBean(bean)
+        assertEquals("naive", outbound.type)
+        assertEquals("naive.example.com", outbound.server)
+        assertEquals(443, outbound.server_port)
+        assertEquals("testuser", outbound.username)
+        assertEquals("testpassword", outbound.password)
+        assertEquals(4, outbound.insecure_concurrency)
+        assertNotNull(outbound.tls)
+        assertEquals(true, outbound.tls.enabled)
+        assertEquals("sni.example.com", outbound.tls.server_name)
+        assertEquals("mycert", outbound.tls.certificate)
+        assertNull(outbound.tls.fragment)
+        assertNull(outbound.tls.record_fragment)
+
+        // Test clone & Kryo round-trip
+        val cloned = bean.clone()
+        assertEquals("https", cloned.proto)
+        assertEquals("naive.example.com", cloned.serverAddress)
+        assertEquals(443, cloned.serverPort)
+        assertEquals("testuser", cloned.username)
+        assertEquals("testpassword", cloned.password)
+        assertEquals("sni.example.com", cloned.sni)
+        assertEquals("mycert", cloned.certificates)
+        assertEquals(4, cloned.insecureConcurrency)
+
+        // Test URI roundtrip
+        val uri = bean.toUri()
+        val reParsed = parseNaive(uri)
+        assertEquals("https", reParsed.proto)
+        assertEquals("naive.example.com", reParsed.serverAddress)
+        assertEquals(443, reParsed.serverPort)
+        assertEquals("testuser", reParsed.username)
+        assertEquals("testpassword", reParsed.password)
+        assertEquals("sni.example.com", reParsed.sni)
+        assertEquals("mycert", reParsed.certificates)
+        assertEquals(4, reParsed.insecureConcurrency)
     }
 
     @Test
