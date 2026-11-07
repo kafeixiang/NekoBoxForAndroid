@@ -98,6 +98,9 @@
                         android:id="@+id/action_new_shadowquic"
                         android:title="@string/action_shadowquic" />
                     <item
+                        android:id="@+id/action_new_tailcat"
+                        android:title="@string/action_tailcat" />
+                    <item
                         android:id="@+id/action_new_ssh"
                         android:title="@string/action_ssh" />
                     <item

@@ -218,6 +218,9 @@
             android:name="io.nekohasekai.sagernet.ui.profile.ShadowQUICSettingsActivity"
             android:configChanges="uiMode" />
         <activity
+            android:name="io.nekohasekai.sagernet.ui.profile.TailcatSettingsActivity"
+            android:configChanges="uiMode" />
+        <activity
             android:name="io.nekohasekai.sagernet.ui.profile.ChainSettingsActivity"
             android:configChanges="uiMode" />
         <activity

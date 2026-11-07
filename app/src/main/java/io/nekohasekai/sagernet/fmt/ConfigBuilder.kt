@@ -18,6 +18,8 @@ import io.nekohasekai.sagernet.fmt.openconnect.OpenConnectBean
 import io.nekohasekai.sagernet.fmt.openconnect.buildSingBoxOutboundOpenConnectBean
 import io.nekohasekai.sagernet.fmt.tailscale.TailscaleBean
 import io.nekohasekai.sagernet.fmt.tailscale.buildSingBoxOutboundTailscaleBean
+import io.nekohasekai.sagernet.fmt.tailscale.TailcatBean
+import io.nekohasekai.sagernet.fmt.tailscale.buildSingBoxOutboundTailcatBean
 import io.nekohasekai.sagernet.fmt.tor.TorBean
 import io.nekohasekai.sagernet.fmt.tor.buildSingBoxOutboundTorBean
 import io.nekohasekai.sagernet.fmt.trusttunnel.TrustTunnelBean
@@ -415,6 +417,9 @@ fun buildConfig(
 
                         is TailscaleBean ->
                             buildSingBoxOutboundTailscaleBean(bean)
+
+                        is TailcatBean ->
+                            buildSingBoxOutboundTailcatBean(bean)
 
                         is TorBean ->
                             buildSingBoxOutboundTorBean(bean)

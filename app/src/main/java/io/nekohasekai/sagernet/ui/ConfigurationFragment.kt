@@ -99,6 +99,7 @@ import io.nekohasekai.sagernet.ui.profile.TailscaleSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.TorSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.TrustTunnelSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.ShadowQUICSettingsActivity
+import io.nekohasekai.sagernet.ui.profile.TailcatSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.SocksSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.TrojanGoSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.TrojanSettingsActivity
@@ -610,6 +611,10 @@ class ConfigurationFragment @JvmOverloads constructor(
 
             R.id.action_new_shadowquic -> {
                 startActivity(Intent(requireActivity(), ShadowQUICSettingsActivity::class.java))
+            }
+
+            R.id.action_new_tailcat -> {
+                startActivity(Intent(requireActivity(), TailcatSettingsActivity::class.java))
             }
 
             R.id.action_new_wg -> {
