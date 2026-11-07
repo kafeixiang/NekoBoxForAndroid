@@ -562,8 +562,24 @@ fun buildConfig(
 
                     // domain_resolver
                     pastEntity?.requireBean()?.apply {
-                        if (!serverAddress.isIpAddress()) {
+                        if (!serverAddress.isNullOrBlank() && !serverAddress.isIpAddress()) {
                             domainListDNSDirectForce.add("full:$serverAddress")
+                        }
+                        if (this is HysteriaBean && enableRealm == true) {
+                            if (!realmServerURL.isNullOrBlank()) {
+                                try {
+                                    val host = java.net.URI(realmServerURL).host
+                                    if (!host.isNullOrBlank() && !host.isIpAddress()) {
+                                        domainListDNSDirectForce.add("full:$host")
+                                    }
+                                } catch (_: Exception) {}
+                            }
+                            realmStunServers?.listByLineOrComma()?.forEach { stun ->
+                                val stunHost = stun.substringBefore(":")
+                                if (stunHost.isNotBlank() && !stunHost.isIpAddress()) {
+                                    domainListDNSDirectForce.add("full:$stunHost")
+                                }
+                            }
                         }
                     }
                     if (!forTest && defaultServerDomainStrategy.isNotBlank()) {
@@ -919,8 +935,25 @@ fun buildConfig(
                 }
             }
 
-            if (!serverAddr.isIpAddress()) {
+            if (!serverAddr.isNullOrBlank() && !serverAddr.isIpAddress()) {
                 domainListDNSDirectForce.add("full:${serverAddr}")
+            }
+
+            if (it is HysteriaBean && it.enableRealm == true) {
+                if (!it.realmServerURL.isNullOrBlank()) {
+                    try {
+                        val host = java.net.URI(it.realmServerURL).host
+                        if (!host.isNullOrBlank() && !host.isIpAddress()) {
+                            domainListDNSDirectForce.add("full:$host")
+                        }
+                    } catch (_: Exception) {}
+                }
+                it.realmStunServers?.listByLineOrComma()?.forEach { stun ->
+                    val stunHost = stun.substringBefore(":")
+                    if (stunHost.isNotBlank() && !stunHost.isIpAddress()) {
+                        domainListDNSDirectForce.add("full:$stunHost")
+                    }
+                }
             }
         }
 

@@ -573,6 +573,18 @@
         <item>gecko</item>
     </string-array>
 
+    <string-array name="hysteria_realm_ip_version">
+        <item>@string/ip_version_any</item>
+        <item>IPv4</item>
+        <item>IPv6</item>
+    </string-array>
+
+    <string-array name="hysteria_realm_ip_version_value">
+        <item>0</item>
+        <item>4</item>
+        <item>6</item>
+    </string-array>
+
     <string-array name="tuic_version">
         <item>5</item>
         <item>4</item>

@@ -903,4 +903,18 @@
     <string name="default_fallback_delay">Fallback Delay (ms)</string>
     <string name="default_fallback_delay_summary">Connection timeout before falling back to cellular network (default 300ms)</string>
 
+    <string name="hysteria_realm_cat">Hysteria 2 Realm (NAT Rendezvous)</string>
+    <string name="hysteria_realm_enabled">Enable Realm Rendezvous</string>
+    <string name="hysteria_realm_enabled_sum">Connect to Hysteria 2 server behind NAT through Realm service</string>
+    <string name="hysteria_realm_server_url">Realm Server URL</string>
+    <string name="hysteria_realm_id">Realm Slot ID (realm_id)</string>
+    <string name="hysteria_realm_token">Realm Token (Bearer Token)</string>
+    <string name="hysteria_realm_stun_servers">STUN Servers</string>
+    <string name="hysteria_realm_stun_servers_sum">STUN server addresses (e.g. stun.l.google.com:19302), separated by newline or comma</string>
+    <string name="hysteria_realm_ip_version">Realm IP Version</string>
+    <string name="hysteria_realm_port_mapping">UPnP / NAT-PMP Port Mapping</string>
+    <string name="hysteria_realm_port_mapping_sum">Maintain port mapping on local gateway to improve hole punching</string>
+    <string name="hysteria_realm_port_mapping_timeout">Port Mapping Timeout (s)</string>
+    <string name="hysteria_realm_port_mapping_lifetime">Port Mapping Lease Lifetime (s)</string>
+
 </resources>

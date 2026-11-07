@@ -18,8 +18,10 @@ fun parseHysteria1(url: String): HysteriaBean {
         "invalid hysteria link $url"
     )
     return HysteriaBean().apply {
+        initializeDefaultValues()
         protocolVersion = 1
         serverAddress = link.host
+        serverPort = link.port
         serverPorts = link.port.toString()
         name = link.fragment
 
@@ -63,8 +65,10 @@ fun parseHysteria2(url: String): HysteriaBean {
         .replace("hy2://", "https://")
         .toHttpUrlOrNull() ?: error("invalid hysteria link $url")
     return HysteriaBean().apply {
+        initializeDefaultValues()
         protocolVersion = 2
         serverAddress = link.host
+        serverPort = link.port
         serverPorts = link.port.toString()
         authPayload = if (link.password.isNotBlank()) {
             link.username + ":" + link.password
@@ -108,6 +112,30 @@ fun parseHysteria2(url: String): HysteriaBean {
         }
         (link.queryParameter("hop_interval_max") ?: link.queryParameter("hop-interval-max"))?.toIntOrNull()?.also {
             hopIntervalMax = it
+        }
+        val hasRealm = link.queryParameter("realm") == "1" ||
+                link.queryParameter("realm") == "true" ||
+                !link.queryParameter("realm_server").isNullOrBlank() ||
+                !link.queryParameter("realm_server_url").isNullOrBlank()
+        if (hasRealm) {
+            enableRealm = true
+            realmServerURL = link.queryParameter("realm_server")
+                ?: link.queryParameter("realm_server_url")
+                ?: ""
+            realmId = link.queryParameter("realm_id") ?: ""
+            realmToken = link.queryParameter("realm_token") ?: ""
+            realmStunServers = (link.queryParameter("realm_stun")
+                ?: link.queryParameter("stun_servers")
+                ?: "").replace(",", "\n")
+            realmIPVersion = link.queryParameter("realm_ip_version")?.toIntOrNull() ?: 0
+            realmPortMapping = link.queryParameter("realm_port_mapping") == "1" ||
+                    link.queryParameter("realm_port_mapping") == "true"
+            link.queryParameter("realm_port_mapping_timeout")?.toIntOrNull()?.let {
+                realmPortMappingTimeout = it
+            }
+            link.queryParameter("realm_port_mapping_lifetime")?.toIntOrNull()?.let {
+                realmPortMappingLifetime = it
+            }
         }
     }
 }
@@ -185,6 +213,33 @@ fun HysteriaBean.toUri(): String {
         }
         if (hopIntervalMax != null && hopIntervalMax > 0) {
             builder.addQueryParameter("hop_interval_max", hopIntervalMax.toString())
+        }
+        if (enableRealm == true) {
+            builder.addQueryParameter("realm", "1")
+            if (!realmServerURL.isNullOrBlank()) {
+                builder.addQueryParameter("realm_server", realmServerURL)
+            }
+            if (!realmId.isNullOrBlank()) {
+                builder.addQueryParameter("realm_id", realmId)
+            }
+            if (!realmToken.isNullOrBlank()) {
+                builder.addQueryParameter("realm_token", realmToken)
+            }
+            if (!realmStunServers.isNullOrBlank()) {
+                builder.addQueryParameter("realm_stun", realmStunServers.replace("\n", ","))
+            }
+            if (realmIPVersion != null && realmIPVersion > 0) {
+                builder.addQueryParameter("realm_ip_version", realmIPVersion.toString())
+            }
+            if (realmPortMapping == true) {
+                builder.addQueryParameter("realm_port_mapping", "1")
+                if (realmPortMappingTimeout != null && realmPortMappingTimeout > 0) {
+                    builder.addQueryParameter("realm_port_mapping_timeout", realmPortMappingTimeout.toString())
+                }
+                if (realmPortMappingLifetime != null && realmPortMappingLifetime > 0) {
+                    builder.addQueryParameter("realm_port_mapping_lifetime", realmPortMappingLifetime.toString())
+                }
+            }
         }
     }
     return builder.toLink(if (protocolVersion == 2) "hy2" else "hysteria")
@@ -402,16 +457,44 @@ fun buildSingBoxOutboundHysteriaBean(bean: HysteriaBean): SingBoxOptions.SingBox
 
         2 -> SingBoxOptions.Outbound_Hysteria2Options().apply {
             type = "hysteria2"
-            server = bean.serverAddress
-            val port = bean.serverPorts.toIntOrNull()
-            if (port != null) {
-                server_port = port
+            if (bean.enableRealm == true && !bean.realmServerURL.isNullOrBlank()) {
+                server = ""
+                server_port = null
+                server_ports = null
+                realm = SingBoxOptions.Hysteria2Realm().apply {
+                    server_url = bean.realmServerURL.trim()
+                    if (!bean.realmToken.isNullOrBlank()) {
+                        token = bean.realmToken.trim()
+                    }
+                    realm_id = bean.realmId?.trim() ?: ""
+                    stun_servers = bean.realmStunServers?.listByLineOrComma()?.toMutableList() ?: mutableListOf()
+                    if (bean.realmIPVersion != null && bean.realmIPVersion != 0) {
+                        ip_version = bean.realmIPVersion
+                    }
+                    if (bean.realmPortMapping == true) {
+                        port_mapping = SingBoxOptions.Hysteria2RealmPortMapping().apply {
+                            enabled = true
+                            if (bean.realmPortMappingTimeout != null && bean.realmPortMappingTimeout > 0) {
+                                timeout = "${bean.realmPortMappingTimeout}s"
+                            }
+                            if (bean.realmPortMappingLifetime != null && bean.realmPortMappingLifetime > 0) {
+                                lifetime = "${bean.realmPortMappingLifetime}s"
+                            }
+                        }
+                    }
+                }
             } else {
-                server_ports = hopPortsToSingboxList(bean.serverPorts)
-            }
-            hop_interval = "${bean.hopInterval}s"
-            if (bean.hopIntervalMax != null && bean.hopIntervalMax > 0) {
-                hop_interval_max = "${bean.hopIntervalMax}s"
+                server = bean.serverAddress
+                val port = bean.serverPorts.toIntOrNull()
+                if (port != null) {
+                    server_port = port
+                } else {
+                    server_ports = hopPortsToSingboxList(bean.serverPorts)
+                }
+                hop_interval = "${bean.hopInterval}s"
+                if (bean.hopIntervalMax != null && bean.hopIntervalMax > 0) {
+                    hop_interval_max = "${bean.hopIntervalMax}s"
+                }
             }
             up_mbps = bean.uploadMbps
             down_mbps = bean.downloadMbps
@@ -448,6 +531,11 @@ fun buildSingBoxOutboundHysteriaBean(bean: HysteriaBean): SingBoxOptions.SingBox
             tls = SingBoxOptions.OutboundTLSOptions().apply {
                 if (!bean.sni.isNullOrBlank()) {
                     server_name = bean.sni
+                } else if (bean.enableRealm == true && !bean.realmServerURL.isNullOrBlank()) {
+                    try {
+                        val host = java.net.URI(bean.realmServerURL).host
+                        if (!host.isNullOrBlank()) server_name = host
+                    } catch (_: Exception) {}
                 }
                 alpn = listOf("h3")
                 if (!bean.caText.isNullOrBlank()) {

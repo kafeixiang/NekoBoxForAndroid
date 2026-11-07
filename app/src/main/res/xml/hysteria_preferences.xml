@@ -132,4 +132,67 @@
             app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
+    <PreferenceCategory
+        app:key="hysteriaRealmCat"
+        app:title="@string/hysteria_realm_cat">
+
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_cast_connected_24"
+            app:key="serverHysteriaRealmEnabled"
+            app:summary="@string/hysteria_realm_enabled_sum"
+            app:title="@string/hysteria_realm_enabled" />
+
+        <EditTextPreference
+            app:icon="@drawable/ic_baseline_https_24"
+            app:key="serverHysteriaRealmServerURL"
+            app:title="@string/hysteria_realm_server_url"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:icon="@drawable/ic_baseline_fingerprint_24"
+            app:key="serverHysteriaRealmId"
+            app:title="@string/hysteria_realm_id"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:dialogLayout="@layout/layout_password_dialog"
+            app:icon="@drawable/ic_settings_password"
+            app:key="serverHysteriaRealmToken"
+            app:title="@string/hysteria_realm_token" />
+
+        <EditTextPreference
+            app:icon="@drawable/ic_hardware_router"
+            app:key="serverHysteriaRealmStunServers"
+            app:summary="@string/hysteria_realm_stun_servers_sum"
+            app:title="@string/hysteria_realm_stun_servers" />
+
+        <moe.matsuri.nb4a.ui.SimpleMenuPreference
+            app:defaultValue="0"
+            app:entries="@array/hysteria_realm_ip_version"
+            app:entryValues="@array/hysteria_realm_ip_version_value"
+            app:icon="@drawable/ic_baseline_layers_24"
+            app:key="serverHysteriaRealmIPVersion"
+            app:title="@string/hysteria_realm_ip_version"
+            app:useSimpleSummaryProvider="true" />
+
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_transform_24"
+            app:key="serverHysteriaRealmPortMapping"
+            app:summary="@string/hysteria_realm_port_mapping_sum"
+            app:title="@string/hysteria_realm_port_mapping" />
+
+        <EditTextPreference
+            app:defaultValue="10"
+            app:key="serverHysteriaRealmPortMappingTimeout"
+            app:title="@string/hysteria_realm_port_mapping_timeout"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:defaultValue="600"
+            app:key="serverHysteriaRealmPortMappingLifetime"
+            app:title="@string/hysteria_realm_port_mapping_lifetime"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
 </PreferenceScreen> 

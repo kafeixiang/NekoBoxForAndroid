@@ -103,7 +103,7 @@ public abstract class AbstractBean extends Serializable {
 
     public void serialize(ByteBufferOutput output) {
         output.writeString(serverAddress);
-        output.writeInt(serverPort);
+        output.writeInt(serverPort != null ? serverPort : 0);
     }
 
     public void deserialize(ByteBufferInput input) {

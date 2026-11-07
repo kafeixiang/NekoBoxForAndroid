@@ -40,6 +40,15 @@ class HysteriaSettingsActivity : ProfileSettingsActivity<HysteriaBean>() {
         DataStore.serverHysteriaBbrProfile = bbrProfile
         DataStore.serverHysteriaDisableChromeParrot = disableChromeParrot
         DataStore.serverHysteriaObfsType = obfsType
+        DataStore.serverHysteriaRealmEnabled = enableRealm ?: false
+        DataStore.serverHysteriaRealmServerURL = realmServerURL ?: ""
+        DataStore.serverHysteriaRealmToken = realmToken ?: ""
+        DataStore.serverHysteriaRealmId = realmId ?: ""
+        DataStore.serverHysteriaRealmStunServers = realmStunServers ?: ""
+        DataStore.serverHysteriaRealmIPVersion = realmIPVersion ?: 0
+        DataStore.serverHysteriaRealmPortMapping = realmPortMapping ?: false
+        DataStore.serverHysteriaRealmPortMappingTimeout = realmPortMappingTimeout ?: 10
+        DataStore.serverHysteriaRealmPortMappingLifetime = realmPortMappingLifetime ?: 600
     }
 
     override fun HysteriaBean.serialize() {
@@ -66,6 +75,15 @@ class HysteriaSettingsActivity : ProfileSettingsActivity<HysteriaBean>() {
         bbrProfile = DataStore.serverHysteriaBbrProfile
         disableChromeParrot = DataStore.serverHysteriaDisableChromeParrot
         obfsType = DataStore.serverHysteriaObfsType
+        enableRealm = DataStore.serverHysteriaRealmEnabled
+        realmServerURL = DataStore.serverHysteriaRealmServerURL
+        realmToken = DataStore.serverHysteriaRealmToken
+        realmId = DataStore.serverHysteriaRealmId
+        realmStunServers = DataStore.serverHysteriaRealmStunServers
+        realmIPVersion = DataStore.serverHysteriaRealmIPVersion
+        realmPortMapping = DataStore.serverHysteriaRealmPortMapping
+        realmPortMappingTimeout = DataStore.serverHysteriaRealmPortMappingTimeout
+        realmPortMappingLifetime = DataStore.serverHysteriaRealmPortMappingLifetime
     }
 
     override fun PreferenceFragmentCompat.createPreferences(
@@ -84,6 +102,46 @@ class HysteriaSettingsActivity : ProfileSettingsActivity<HysteriaBean>() {
 
         val protocol = findPreference<SimpleMenuPreference>(Key.SERVER_PROTOCOL)!!
         val alpn = findPreference<EditTextPreference>(Key.SERVER_ALPN)!!
+
+        val realmCat = findPreference<androidx.preference.PreferenceCategory>("hysteriaRealmCat")
+        val realmEnabled = findPreference<SwitchPreference>(Key.SERVER_HYSTERIA_REALM_ENABLED)
+        val realmServerURL = findPreference<EditTextPreference>(Key.SERVER_HYSTERIA_REALM_SERVER_URL)
+        val realmId = findPreference<EditTextPreference>(Key.SERVER_HYSTERIA_REALM_ID)
+        val realmToken = findPreference<EditTextPreference>(Key.SERVER_HYSTERIA_REALM_TOKEN)
+        val realmStun = findPreference<EditTextPreference>(Key.SERVER_HYSTERIA_REALM_STUN_SERVERS)
+        val realmIPVersion = findPreference<SimpleMenuPreference>(Key.SERVER_HYSTERIA_REALM_IP_VERSION)
+        val realmPortMapping = findPreference<SwitchPreference>(Key.SERVER_HYSTERIA_REALM_PORT_MAPPING)
+        val realmPortMappingTimeout = findPreference<EditTextPreference>(Key.SERVER_HYSTERIA_REALM_PORT_MAPPING_TIMEOUT)
+        val realmPortMappingLifetime = findPreference<EditTextPreference>(Key.SERVER_HYSTERIA_REALM_PORT_MAPPING_LIFETIME)
+
+        realmToken?.summaryProvider = PasswordSummaryProvider
+        realmPortMappingTimeout?.setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
+        realmPortMappingLifetime?.setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
+
+        fun updateRealmVisibility(isV2: Boolean, isRealm: Boolean) {
+            realmCat?.isVisible = isV2
+            if (!isV2) return
+            realmServerURL?.isVisible = isRealm
+            realmId?.isVisible = isRealm
+            realmToken?.isVisible = isRealm
+            realmStun?.isVisible = isRealm
+            realmIPVersion?.isVisible = isRealm
+            realmPortMapping?.isVisible = isRealm
+            val pm = isRealm && (realmPortMapping?.isChecked == true)
+            realmPortMappingTimeout?.isVisible = pm
+            realmPortMappingLifetime?.isVisible = pm
+        }
+
+        realmEnabled?.setOnPreferenceChangeListener { _, newValue ->
+            updateRealmVisibility(DataStore.protocolVersion == 2, newValue as Boolean)
+            true
+        }
+        realmPortMapping?.setOnPreferenceChangeListener { _, newValue ->
+            val pm = (newValue as Boolean) && (realmEnabled?.isChecked == true)
+            realmPortMappingTimeout?.isVisible = pm
+            realmPortMappingLifetime?.isVisible = pm
+            true
+        }
 
         fun updateVersion(v: Int) {
             val isV2 = v == 2
@@ -104,6 +162,8 @@ class HysteriaSettingsActivity : ProfileSettingsActivity<HysteriaBean>() {
             findPreference<SwitchPreference>(Key.SERVER_HYSTERIA_DISABLE_CHROME_PARROT)?.isVisible = isV2
             findPreference<SimpleMenuPreference>(Key.SERVER_HYSTERIA_OBFS_TYPE)?.isVisible = isV2
             findPreference<EditTextPreference>(Key.SERVER_HOP_INTERVAL_MAX)?.isVisible = isV2
+
+            updateRealmVisibility(isV2, realmEnabled?.isChecked == true)
         }
         findPreference<SimpleMenuPreference>(Key.PROTOCOL_VERSION)!!.setOnPreferenceChangeListener { _, newValue ->
             updateVersion(newValue.toString().toIntOrNull() ?: 1)

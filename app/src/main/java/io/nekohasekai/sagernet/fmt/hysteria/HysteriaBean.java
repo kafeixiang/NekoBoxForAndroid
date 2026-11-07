@@ -41,6 +41,17 @@ public class HysteriaBean extends AbstractBean {
     public Integer geckoMinPacketSize;
     public Integer geckoMaxPacketSize;
 
+    // HY2 Realm (sing-box 1.15)
+    public Boolean enableRealm;
+    public String realmServerURL;
+    public String realmToken;
+    public String realmId;
+    public String realmStunServers;
+    public Integer realmIPVersion;
+    public Boolean realmPortMapping;
+    public Integer realmPortMappingTimeout;
+    public Integer realmPortMappingLifetime;
+
     // HY1
 
     public String alpn;
@@ -57,6 +68,7 @@ public class HysteriaBean extends AbstractBean {
 
     @Override
     public boolean canMapping() {
+        if (Boolean.TRUE.equals(enableRealm)) return false;
         return (protocol != null ? protocol : PROTOCOL_UDP) != PROTOCOL_FAKETCP;
     }
 
@@ -94,41 +106,61 @@ public class HysteriaBean extends AbstractBean {
         if (obfsType == null) obfsType = "salamander";
         if (geckoMinPacketSize == null) geckoMinPacketSize = 0;
         if (geckoMaxPacketSize == null) geckoMaxPacketSize = 0;
+
+        if (enableRealm == null) enableRealm = false;
+        if (realmServerURL == null) realmServerURL = "";
+        if (realmToken == null) realmToken = "";
+        if (realmId == null) realmId = "";
+        if (realmStunServers == null) realmStunServers = "";
+        if (realmIPVersion == null) realmIPVersion = 0;
+        if (realmPortMapping == null) realmPortMapping = false;
+        if (realmPortMappingTimeout == null) realmPortMappingTimeout = 10;
+        if (realmPortMappingLifetime == null) realmPortMappingLifetime = 600;
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(9);
+        output.writeInt(10);
         super.serialize(output);
 
-        output.writeInt(protocolVersion);
+        output.writeInt(protocolVersion != null ? protocolVersion : 2);
 
-        output.writeInt(authPayloadType);
-        output.writeString(authPayload);
-        output.writeInt(protocol);
-        output.writeString(obfuscation);
-        output.writeString(sni);
-        output.writeString(alpn);
+        output.writeInt(authPayloadType != null ? authPayloadType : TYPE_NONE);
+        output.writeString(authPayload != null ? authPayload : "");
+        output.writeInt(protocol != null ? protocol : PROTOCOL_UDP);
+        output.writeString(obfuscation != null ? obfuscation : "");
+        output.writeString(sni != null ? sni : "");
+        output.writeString(alpn != null ? alpn : "");
 
-        output.writeInt(uploadMbps);
-        output.writeInt(downloadMbps);
-        output.writeBoolean(allowInsecure);
+        output.writeInt(uploadMbps != null ? uploadMbps : 0);
+        output.writeInt(downloadMbps != null ? downloadMbps : 0);
+        output.writeBoolean(allowInsecure != null ? allowInsecure : false);
 
-        output.writeString(caText);
-        output.writeInt(streamReceiveWindow);
-        output.writeInt(connectionReceiveWindow);
-        output.writeBoolean(disableMtuDiscovery);
-        output.writeInt(hopInterval);
-        output.writeString(serverPorts);
+        output.writeString(caText != null ? caText : "");
+        output.writeInt(streamReceiveWindow != null ? streamReceiveWindow : 0);
+        output.writeInt(connectionReceiveWindow != null ? connectionReceiveWindow : 0);
+        output.writeBoolean(disableMtuDiscovery != null ? disableMtuDiscovery : false);
+        output.writeInt(hopInterval != null ? hopInterval : 10);
+        output.writeString(serverPorts != null ? serverPorts : "");
 
-        output.writeString(bbrProfile);
-        output.writeBoolean(disableChromeParrot);
-        output.writeString(pinSHA256);
-        output.writeString(obfsType);
-        output.writeInt(geckoMinPacketSize);
-        output.writeInt(geckoMaxPacketSize);
+        output.writeString(bbrProfile != null ? bbrProfile : "");
+        output.writeBoolean(disableChromeParrot != null ? disableChromeParrot : false);
+        output.writeString(pinSHA256 != null ? pinSHA256 : "");
+        output.writeString(obfsType != null ? obfsType : "salamander");
+        output.writeInt(geckoMinPacketSize != null ? geckoMinPacketSize : 0);
+        output.writeInt(geckoMaxPacketSize != null ? geckoMaxPacketSize : 0);
         // v9
         output.writeInt(hopIntervalMax != null ? hopIntervalMax : 0);
+        // v10 Realm
+        output.writeBoolean(enableRealm != null ? enableRealm : false);
+        output.writeString(realmServerURL != null ? realmServerURL : "");
+        output.writeString(realmToken != null ? realmToken : "");
+        output.writeString(realmId != null ? realmId : "");
+        output.writeString(realmStunServers != null ? realmStunServers : "");
+        output.writeInt(realmIPVersion != null ? realmIPVersion : 0);
+        output.writeBoolean(realmPortMapping != null ? realmPortMapping : false);
+        output.writeInt(realmPortMappingTimeout != null ? realmPortMappingTimeout : 10);
+        output.writeInt(realmPortMappingLifetime != null ? realmPortMappingLifetime : 600);
     }
 
     @Override
@@ -198,10 +230,34 @@ public class HysteriaBean extends AbstractBean {
         } else {
             hopIntervalMax = 0;
         }
+        if (version >= 10) {
+            enableRealm = input.readBoolean();
+            realmServerURL = input.readString();
+            realmToken = input.readString();
+            realmId = input.readString();
+            realmStunServers = input.readString();
+            realmIPVersion = input.readInt();
+            realmPortMapping = input.readBoolean();
+            realmPortMappingTimeout = input.readInt();
+            realmPortMappingLifetime = input.readInt();
+        } else {
+            enableRealm = false;
+            realmServerURL = "";
+            realmToken = "";
+            realmId = "";
+            realmStunServers = "";
+            realmIPVersion = 0;
+            realmPortMapping = false;
+            realmPortMappingTimeout = 10;
+            realmPortMappingLifetime = 600;
+        }
     }
 
     @Override
     public String displayAddress() {
+        if (Boolean.TRUE.equals(enableRealm) && realmServerURL != null && !realmServerURL.isEmpty()) {
+            return (realmId != null && !realmId.isEmpty() ? realmId + "@" : "") + realmServerURL;
+        }
         return NetsKt.wrapIPV6Host(serverAddress) + ":" + serverPorts;
     }
 

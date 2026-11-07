@@ -670,6 +670,32 @@ public class SingBoxOptions {
 
     }
 
+    public static class Hysteria2RealmPortMapping extends SingBoxOption {
+
+        public Boolean enabled;
+
+        public String timeout;
+
+        public String lifetime;
+
+    }
+
+    public static class Hysteria2Realm extends SingBoxOption {
+
+        public String server_url;
+
+        public String token;
+
+        public String realm_id;
+
+        public List<String> stun_servers;
+
+        public Integer ip_version;
+
+        public Hysteria2RealmPortMapping port_mapping;
+
+    }
+
     public static class Hysteria2User extends SingBoxOption {
 
         public String name;
@@ -4996,6 +5022,8 @@ public class SingBoxOptions {
         public Integer initial_packet_size;
 
         public Boolean disable_path_mtu_discovery;
+
+        public Hysteria2Realm realm;
 
     }
 

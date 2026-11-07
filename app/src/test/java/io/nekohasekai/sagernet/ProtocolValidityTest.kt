@@ -6,6 +6,7 @@ import io.nekohasekai.sagernet.fmt.hysteria.buildSingBoxOutboundHysteriaBean
 import io.nekohasekai.sagernet.fmt.hysteria.canUseSingBox
 import io.nekohasekai.sagernet.fmt.hysteria.parseHysteria1
 import io.nekohasekai.sagernet.fmt.hysteria.parseHysteria2
+import io.nekohasekai.sagernet.fmt.hysteria.toUri
 import io.nekohasekai.sagernet.fmt.juicity.JuicityBean
 import io.nekohasekai.sagernet.fmt.juicity.buildSingBoxOutboundJuicityBean
 import io.nekohasekai.sagernet.fmt.juicity.parseJuicity
@@ -148,6 +149,63 @@ class ProtocolValidityTest {
         assertNotNull(outbound.obfs)
         assertEquals("salamander", outbound.obfs.type)
         assertEquals("obfspass", outbound.obfs.password)
+    }
+
+    @Test
+    fun testHysteria2RealmParsingAndBuilding() {
+        val link = "hy2://testpass@1.2.3.4:443?realm=1&realm_server=https://realm.example.com&realm_id=slot123&realm_token=mytoken&realm_stun=stun.l.google.com:19302,stun.cloudflare.com&realm_ip_version=4&realm_port_mapping=1&realm_port_mapping_timeout=15&realm_port_mapping_lifetime=900#test-hy2-realm"
+        val bean = parseHysteria2(link)
+
+        assertEquals(true, bean.enableRealm)
+        assertEquals("https://realm.example.com", bean.realmServerURL)
+        assertEquals("slot123", bean.realmId)
+        assertEquals("mytoken", bean.realmToken)
+        assertTrue(bean.realmStunServers.contains("stun.l.google.com:19302"))
+        assertEquals(4, bean.realmIPVersion)
+        assertEquals(true, bean.realmPortMapping)
+        assertEquals(15, bean.realmPortMappingTimeout)
+        assertEquals(900, bean.realmPortMappingLifetime)
+
+        // Test outbound config generation
+        val outbound = buildSingBoxOutboundHysteriaBean(bean) as SingBoxOptions.Outbound_Hysteria2Options
+        assertEquals("hysteria2", outbound.type)
+        // With realm, server and server_ports MUST be empty/omitted
+        assertNull(outbound.server_port)
+        assertTrue(outbound.server.isNullOrEmpty())
+        assertNull(outbound.server_ports)
+
+        assertNotNull(outbound.realm)
+        assertEquals("https://realm.example.com", outbound.realm.server_url)
+        assertEquals("slot123", outbound.realm.realm_id)
+        assertEquals("mytoken", outbound.realm.token)
+        assertEquals(2, outbound.realm.stun_servers.size)
+        assertEquals(4, outbound.realm.ip_version)
+        assertNotNull(outbound.realm.port_mapping)
+        assertEquals(true, outbound.realm.port_mapping.enabled)
+        assertEquals("15s", outbound.realm.port_mapping.timeout)
+        assertEquals("900s", outbound.realm.port_mapping.lifetime)
+        assertEquals("realm.example.com", outbound.tls.server_name)
+
+        // Test clone & Kryo roundtrip
+        val cloned = bean.clone()
+        assertEquals(true, cloned.enableRealm)
+        assertEquals("https://realm.example.com", cloned.realmServerURL)
+        assertEquals("slot123", cloned.realmId)
+        assertEquals("mytoken", cloned.realmToken)
+        assertEquals(4, cloned.realmIPVersion)
+        assertEquals(true, cloned.realmPortMapping)
+        assertEquals(15, cloned.realmPortMappingTimeout)
+        assertEquals(900, cloned.realmPortMappingLifetime)
+
+        // Test URI serialization and re-parsing
+        val uri = bean.toUri()
+        assertTrue(uri.contains("realm=1"))
+        assertTrue(uri.contains("realm_id=slot123"))
+        val reParsed = parseHysteria2(uri)
+        assertEquals(true, reParsed.enableRealm)
+        assertEquals("https://realm.example.com", reParsed.realmServerURL)
+        assertEquals("slot123", reParsed.realmId)
+        assertEquals("mytoken", reParsed.realmToken)
     }
 
     @Test

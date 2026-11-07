@@ -242,6 +242,15 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverHysteriaBbrProfile by profileCacheStore.string(Key.SERVER_HYSTERIA_BBR_PROFILE)
     var serverHysteriaDisableChromeParrot by profileCacheStore.boolean(Key.SERVER_HYSTERIA_DISABLE_CHROME_PARROT)
     var serverHysteriaObfsType by profileCacheStore.string(Key.SERVER_HYSTERIA_OBFS_TYPE)
+    var serverHysteriaRealmEnabled by profileCacheStore.boolean(Key.SERVER_HYSTERIA_REALM_ENABLED)
+    var serverHysteriaRealmServerURL by profileCacheStore.string(Key.SERVER_HYSTERIA_REALM_SERVER_URL)
+    var serverHysteriaRealmToken by profileCacheStore.string(Key.SERVER_HYSTERIA_REALM_TOKEN)
+    var serverHysteriaRealmId by profileCacheStore.string(Key.SERVER_HYSTERIA_REALM_ID)
+    var serverHysteriaRealmStunServers by profileCacheStore.string(Key.SERVER_HYSTERIA_REALM_STUN_SERVERS)
+    var serverHysteriaRealmIPVersion by profileCacheStore.stringToInt(Key.SERVER_HYSTERIA_REALM_IP_VERSION) { 0 }
+    var serverHysteriaRealmPortMapping by profileCacheStore.boolean(Key.SERVER_HYSTERIA_REALM_PORT_MAPPING)
+    var serverHysteriaRealmPortMappingTimeout by profileCacheStore.stringToInt(Key.SERVER_HYSTERIA_REALM_PORT_MAPPING_TIMEOUT) { 10 }
+    var serverHysteriaRealmPortMappingLifetime by profileCacheStore.stringToInt(Key.SERVER_HYSTERIA_REALM_PORT_MAPPING_LIFETIME) { 600 }
 
     var routeName by profileCacheStore.string(Key.ROUTE_NAME)
     var routeDomain by profileCacheStore.string(Key.ROUTE_DOMAIN)
