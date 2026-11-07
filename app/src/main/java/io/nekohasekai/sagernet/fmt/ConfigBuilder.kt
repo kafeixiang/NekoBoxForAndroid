@@ -8,6 +8,8 @@ import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.database.ProxyEntity.Companion.TYPE_CONFIG
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.fmt.ConfigBuildResult.IndexEntity
+import io.nekohasekai.sagernet.fmt.direct.DirectBean
+import io.nekohasekai.sagernet.fmt.direct.buildSingBoxOutboundDirectBean
 import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean
 import io.nekohasekai.sagernet.fmt.hysteria.buildSingBoxOutboundHysteriaBean
 import io.nekohasekai.sagernet.fmt.internal.ChainBean
@@ -384,6 +386,9 @@ fun buildConfig(
 
                         is MieruBean ->
                             buildSingBoxOutboundMieruBean(bean)
+
+                        is DirectBean ->
+                            buildSingBoxOutboundDirectBean(bean)
 
                         else -> throw IllegalStateException("can't reach")
                     }
