@@ -92,6 +92,9 @@
                         android:id="@+id/action_new_tor"
                         android:title="@string/action_tor" />
                     <item
+                        android:id="@+id/action_new_trusttunnel"
+                        android:title="@string/action_trusttunnel" />
+                    <item
                         android:id="@+id/action_new_ssh"
                         android:title="@string/action_ssh" />
                     <item

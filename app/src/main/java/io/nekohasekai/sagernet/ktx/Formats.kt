@@ -15,6 +15,7 @@ import io.nekohasekai.sagernet.fmt.socks.parseSOCKS
 import io.nekohasekai.sagernet.fmt.trojan.parseTrojan
 import io.nekohasekai.sagernet.fmt.tuic.parseTuic
 import io.nekohasekai.sagernet.fmt.juicity.parseJuicity
+import io.nekohasekai.sagernet.fmt.trusttunnel.parseTrustTunnel
 import io.nekohasekai.sagernet.fmt.trojan_go.parseTrojanGo
 import io.nekohasekai.sagernet.fmt.v2ray.parseV2Ray
 import moe.matsuri.nb4a.proxy.anytls.parseAnytls
@@ -224,6 +225,14 @@ suspend fun parseProxies(text: String): List<AbstractBean> {
             Logs.d("Try parse Juicity link: $this")
             runCatching {
                 entities.add(parseJuicity(this))
+            }.onFailure {
+                Logs.w(it)
+            }
+        } else if (startsWith("tt://") || startsWith("trusttunnel://")) {
+            val link = if (startsWith("trusttunnel://")) replace("trusttunnel://", "tt://") else this
+            Logs.d("Try parse TrustTunnel link: $this")
+            runCatching {
+                entities.add(parseTrustTunnel(link))
             }.onFailure {
                 Logs.w(it)
             }

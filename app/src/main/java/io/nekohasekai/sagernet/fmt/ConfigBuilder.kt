@@ -20,6 +20,8 @@ import io.nekohasekai.sagernet.fmt.tailscale.TailscaleBean
 import io.nekohasekai.sagernet.fmt.tailscale.buildSingBoxOutboundTailscaleBean
 import io.nekohasekai.sagernet.fmt.tor.TorBean
 import io.nekohasekai.sagernet.fmt.tor.buildSingBoxOutboundTorBean
+import io.nekohasekai.sagernet.fmt.trusttunnel.TrustTunnelBean
+import io.nekohasekai.sagernet.fmt.trusttunnel.buildSingBoxOutboundTrustTunnelBean
 import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean
 import io.nekohasekai.sagernet.fmt.hysteria.buildSingBoxOutboundHysteriaBean
 import io.nekohasekai.sagernet.fmt.internal.ChainBean
@@ -414,6 +416,9 @@ fun buildConfig(
 
                         is TorBean ->
                             buildSingBoxOutboundTorBean(bean)
+
+                        is TrustTunnelBean ->
+                            buildSingBoxOutboundTrustTunnelBean(bean)
 
                         else -> throw IllegalStateException("can't reach")
                     }
