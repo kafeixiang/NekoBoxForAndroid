@@ -55,8 +55,9 @@ jobs:
         env:
           BUILD_PLUGIN: none
         run: |
+          source buildScript/init/env_ndk.sh
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
-          echo "ndk.dir=${ANDROID_HOME}/ndk/25.0.8775105" >> local.properties
+          echo "ndk.dir=${ANDROID_NDK_HOME}" >> local.properties
           export LOCAL_PROPERTIES="${{ secrets.LOCAL_PROPERTIES }}"
           export KEYSTORE_PASS="${{ secrets.KEYSTORE_PASS }}"
           export ALIAS_NAME="${{ secrets.ALIAS_NAME }}"
