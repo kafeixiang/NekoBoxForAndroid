@@ -23,7 +23,7 @@ class HysteriaSettingsActivity : ProfileSettingsActivity<HysteriaBean>() {
         DataStore.serverPorts = serverPorts
         DataStore.serverObfs = obfuscation
         DataStore.serverAuthType = authPayloadType
-        DataStore.serverProtocolInt = protocol
+        DataStore.serverProtocolInt = protocol ?: HysteriaBean.PROTOCOL_UDP
         DataStore.serverPassword = authPayload
         DataStore.serverSNI = sni
         DataStore.serverALPN = alpn
@@ -35,6 +35,11 @@ class HysteriaSettingsActivity : ProfileSettingsActivity<HysteriaBean>() {
         DataStore.serverConnectionReceiveWindow = connectionReceiveWindow
         DataStore.serverDisableMtuDiscovery = disableMtuDiscovery
         DataStore.serverHopInterval = hopInterval
+        DataStore.serverHopIntervalMax = hopIntervalMax ?: 0
+        DataStore.serverPinnedCertChainSha256 = pinSHA256
+        DataStore.serverHysteriaBbrProfile = bbrProfile
+        DataStore.serverHysteriaDisableChromeParrot = disableChromeParrot
+        DataStore.serverHysteriaObfsType = obfsType
     }
 
     override fun HysteriaBean.serialize() {
@@ -56,6 +61,11 @@ class HysteriaSettingsActivity : ProfileSettingsActivity<HysteriaBean>() {
         connectionReceiveWindow = DataStore.serverConnectionReceiveWindow
         disableMtuDiscovery = DataStore.serverDisableMtuDiscovery
         hopInterval = DataStore.serverHopInterval
+        hopIntervalMax = DataStore.serverHopIntervalMax
+        pinSHA256 = DataStore.serverPinnedCertChainSha256
+        bbrProfile = DataStore.serverHysteriaBbrProfile
+        disableChromeParrot = DataStore.serverHysteriaDisableChromeParrot
+        obfsType = DataStore.serverHysteriaObfsType
     }
 
     override fun PreferenceFragmentCompat.createPreferences(
@@ -76,36 +86,24 @@ class HysteriaSettingsActivity : ProfileSettingsActivity<HysteriaBean>() {
         val alpn = findPreference<EditTextPreference>(Key.SERVER_ALPN)!!
 
         fun updateVersion(v: Int) {
-            if (v == 2) {
-                authPayload.isVisible = true
-                //
-                authType.isVisible = false
-                protocol.isVisible = false
-                alpn.isVisible = false
-                //
-                findPreference<EditTextPreference>(Key.SERVER_STREAM_RECEIVE_WINDOW)!!.isVisible =
-                    false
-                findPreference<EditTextPreference>(Key.SERVER_CONNECTION_RECEIVE_WINDOW)!!.isVisible =
-                    false
-                findPreference<SwitchPreference>(Key.SERVER_DISABLE_MTU_DISCOVERY)!!.isVisible =
-                    false
-                //
-                authPayload.title = resources.getString(R.string.password)
-            } else {
-                authType.isVisible = true
-                authPayload.isVisible = true
-                protocol.isVisible = true
-                alpn.isVisible = true
-                //
-                findPreference<EditTextPreference>(Key.SERVER_STREAM_RECEIVE_WINDOW)!!.isVisible =
-                    true
-                findPreference<EditTextPreference>(Key.SERVER_CONNECTION_RECEIVE_WINDOW)!!.isVisible =
-                    true
-                findPreference<SwitchPreference>(Key.SERVER_DISABLE_MTU_DISCOVERY)!!.isVisible =
-                    true
-                //
-                authPayload.title = resources.getString(R.string.hysteria_auth_payload)
-            }
+            val isV2 = v == 2
+            authPayload.isVisible = true
+            authType.isVisible = !isV2
+            protocol.isVisible = !isV2
+            alpn.isVisible = !isV2
+            authPayload.title = resources.getString(if (isV2) R.string.password else R.string.hysteria_auth_payload)
+
+            // Both HY1 and HY2 (sing-box 1.15 QUICOptions) support receive windows and MTU discovery
+            findPreference<EditTextPreference>(Key.SERVER_STREAM_RECEIVE_WINDOW)?.isVisible = true
+            findPreference<EditTextPreference>(Key.SERVER_CONNECTION_RECEIVE_WINDOW)?.isVisible = true
+            findPreference<SwitchPreference>(Key.SERVER_DISABLE_MTU_DISCOVERY)?.isVisible = true
+
+            // HY2 specific sing-box 1.15 features
+            findPreference<EditTextPreference>(Key.SERVER_PINNED_CERT_CHAIN_SHA256)?.isVisible = isV2
+            findPreference<SimpleMenuPreference>(Key.SERVER_HYSTERIA_BBR_PROFILE)?.isVisible = isV2
+            findPreference<SwitchPreference>(Key.SERVER_HYSTERIA_DISABLE_CHROME_PARROT)?.isVisible = isV2
+            findPreference<SimpleMenuPreference>(Key.SERVER_HYSTERIA_OBFS_TYPE)?.isVisible = isV2
+            findPreference<EditTextPreference>(Key.SERVER_HOP_INTERVAL_MAX)?.isVisible = isV2
         }
         findPreference<SimpleMenuPreference>(Key.PROTOCOL_VERSION)!!.setOnPreferenceChangeListener { _, newValue ->
             updateVersion(newValue.toString().toIntOrNull() ?: 1)
@@ -134,6 +132,9 @@ class HysteriaSettingsActivity : ProfileSettingsActivity<HysteriaBean>() {
         }
 
         findPreference<EditTextPreference>(Key.SERVER_HOP_INTERVAL)!!.apply {
+            setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
+        }
+        findPreference<EditTextPreference>(Key.SERVER_HOP_INTERVAL_MAX)?.apply {
             setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
         }
     }
