@@ -101,16 +101,8 @@ class SnellSettingsActivity : ProfileSettingsActivity<SnellBean>() {
     }
 
     private fun updateObfsModeOptions(version: Int, obfsModePref: SimpleMenuPreference) {
-        if (version in 4..5) {
-            obfsModePref.entries = arrayOf("None", "HTTP")
-            obfsModePref.entryValues = arrayOf("", "http")
-            if (obfsModePref.value == "tls") {
-                obfsModePref.value = ""
-            }
-        } else if (version <= 3) {
-            obfsModePref.setEntries(R.array.snell_obfs_modes_entry)
-            obfsModePref.setEntryValues(R.array.snell_obfs_modes_value)
-        }
+        obfsModePref.setEntries(R.array.snell_obfs_modes_entry)
+        obfsModePref.setEntryValues(R.array.snell_obfs_modes_value)
     }
 
     private fun updateVersionFields(
