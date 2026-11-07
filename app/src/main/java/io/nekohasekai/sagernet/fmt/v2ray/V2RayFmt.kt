@@ -314,6 +314,12 @@ fun StandardV2RayBean.parseDuckSoft(url: HttpUrl) {
     url.queryParameter("fp")?.let {
         utlsFingerprint = it
     }
+    url.queryParameter("spoof")?.let {
+        tlsSpoof = it
+    }
+    url.queryParameter("spoof_method")?.let {
+        tlsSpoofMethod = it
+    }
 }
 
 // 不确定是谁的格式
@@ -505,28 +511,28 @@ fun StandardV2RayBean.toUriVMessVLESSTrojan(isTrojan: Boolean): String {
 
     if (isVLESS) {
         // Add encryption if configured
-        if (vlessEncryption.isNotBlank() && vlessEncryption != "none") {
+        if (!vlessEncryption.isNullOrBlank() && vlessEncryption != "none") {
             builder.addQueryParameter("encryption", vlessEncryption)
         } else {
             builder.addQueryParameter("encryption", "none")
         }
 
-        if (encryption != "auto") builder.addQueryParameter("flow", encryption)
+        if (!encryption.isNullOrBlank() && encryption != "auto") builder.addQueryParameter("flow", encryption)
     }
 
     when (type) {
         "tcp" -> {}
         "ws", "http", "httpupgrade" -> {
-            if (host.isNotBlank()) {
+            if (!host.isNullOrBlank()) {
                 builder.addQueryParameter("host", host)
             }
-            if (path.isNotBlank()) {
+            if (!path.isNullOrBlank()) {
                 builder.addQueryParameter("path", path)
             }
             if (type == "ws") {
-                if (wsMaxEarlyData > 0) {
+                if (wsMaxEarlyData != null && wsMaxEarlyData > 0) {
                     builder.addQueryParameter("ed", "$wsMaxEarlyData")
-                    if (earlyDataHeaderName.isNotBlank()) {
+                    if (!earlyDataHeaderName.isNullOrBlank()) {
                         builder.addQueryParameter("eh", earlyDataHeaderName)
                     }
                 }
@@ -537,10 +543,10 @@ fun StandardV2RayBean.toUriVMessVLESSTrojan(isTrojan: Boolean): String {
         }
 
         "kcp" -> {
-            if (headerType.isNotBlank() && headerType != "none") {
+            if (!headerType.isNullOrBlank() && headerType != "none") {
                 builder.addQueryParameter("headerType", headerType)
             }
-            if (mKcpSeed.isNotBlank()) {
+            if (!mKcpSeed.isNullOrBlank()) {
                 builder.addQueryParameter("seed", mKcpSeed)
             }
             if (kcpMtu != null && kcpMtu!! > 0) {
@@ -555,50 +561,56 @@ fun StandardV2RayBean.toUriVMessVLESSTrojan(isTrojan: Boolean): String {
         }
 
         "xhttp" -> {
-            if (host.isNotBlank()) {
+            if (!host.isNullOrBlank()) {
                 builder.addQueryParameter("host", host)
             }
-            if (path.isNotBlank()) {
+            if (!path.isNullOrBlank()) {
                 builder.addQueryParameter("path", path)
             }
-            if (xhttpMode.isNotBlank()) {
+            if (!xhttpMode.isNullOrBlank()) {
                 builder.addQueryParameter("mode", xhttpMode)
             }
-            if (xhttpExtra.isNotBlank()) {
+            if (!xhttpExtra.isNullOrBlank()) {
                 builder.addQueryParameter("extra", XhttpExtraConverter.singBoxToXray(xhttpExtra))
             }
         }
 
         "grpc" -> {
-            if (path.isNotBlank()) {
+            if (!path.isNullOrBlank()) {
                 builder.setQueryParameter("serviceName", path)
             }
         }
     }
 
-    if (security.isNotBlank() && security != "none") {
+    if (!security.isNullOrBlank() && security != "none") {
         builder.addQueryParameter("security", security)
         when (security) {
             "tls" -> {
-                if (sni.isNotBlank()) {
+                if (!sni.isNullOrBlank()) {
                     builder.addQueryParameter("sni", sni)
                 }
-                if (alpn.isNotBlank()) {
+                if (!alpn.isNullOrBlank()) {
                     builder.addQueryParameter("alpn", alpn.replace("\n", ","))
                 }
-                if (certificates.isNotBlank()) {
+                if (!certificates.isNullOrBlank()) {
                     builder.addQueryParameter("cert", certificates)
                 }
-                if (allowInsecure) {
+                if (allowInsecure == true) {
                     builder.addQueryParameter("allowInsecure", "1")
                 }
-                if (utlsFingerprint.isNotBlank()) {
+                if (!utlsFingerprint.isNullOrBlank()) {
                     builder.addQueryParameter("fp", utlsFingerprint)
                 }
-                if (realityPubKey.isNotBlank()) {
+                if (!realityPubKey.isNullOrBlank()) {
                     builder.setQueryParameter("security", "reality")
                     builder.addQueryParameter("pbk", realityPubKey)
                     builder.addQueryParameter("sid", realityShortId)
+                }
+                if (!tlsSpoof.isNullOrBlank()) {
+                    builder.addQueryParameter("spoof", tlsSpoof)
+                    if (!tlsSpoofMethod.isNullOrBlank() && tlsSpoofMethod != "wrong-sequence") {
+                        builder.addQueryParameter("spoof_method", tlsSpoofMethod)
+                    }
                 }
             }
         }
@@ -614,7 +626,7 @@ fun StandardV2RayBean.toUriVMessVLESSTrojan(isTrojan: Boolean): String {
         }
     }
 
-    if (name.isNotBlank()) {
+    if (!name.isNullOrBlank()) {
         builder.encodedFragment(name.urlSafe())
     }
 
@@ -632,23 +644,23 @@ fun buildSingBoxOutboundStreamSettings(bean: StandardV2RayBean): V2RayTransportO
                 type = "ws"
                 headers = mutableMapOf()
 
-                if (bean.host.isNotBlank()) {
+                if (!bean.host.isNullOrBlank()) {
                     headers["Host"] = bean.host
                 }
 
-                if (bean.path.contains("?ed=")) {
+                if (!bean.path.isNullOrBlank() && bean.path.contains("?ed=")) {
                     path = bean.path.substringBefore("?ed=")
                     max_early_data = bean.path.substringAfter("?ed=").toIntOrNull() ?: 2048
                     early_data_header_name = "Sec-WebSocket-Protocol"
                 } else {
-                    path = bean.path.takeIf { it.isNotBlank() } ?: "/"
+                    path = bean.path?.takeIf { it.isNotBlank() } ?: "/"
                 }
 
-                if (bean.wsMaxEarlyData > 0) {
+                if (bean.wsMaxEarlyData != null && bean.wsMaxEarlyData > 0) {
                     max_early_data = bean.wsMaxEarlyData
                 }
 
-                if (bean.earlyDataHeaderName.isNotBlank()) {
+                if (!bean.earlyDataHeaderName.isNullOrBlank()) {
                     early_data_header_name = bean.earlyDataHeaderName
                 }
             }
@@ -678,10 +690,10 @@ fun buildSingBoxOutboundStreamSettings(bean: StandardV2RayBean): V2RayTransportO
             return V2RayTransportOptions_HTTPOptions().apply {
                 type = "http"
                 if (!bean.isTLS()) method = "GET" // v2ray tcp header
-                if (bean.host.isNotBlank()) {
+                if (!bean.host.isNullOrBlank()) {
                     host = bean.host.split(",")
                 }
-                path = bean.path.takeIf { it.isNotBlank() } ?: "/"
+                path = bean.path?.takeIf { it.isNotBlank() } ?: "/"
             }
         }
 
@@ -709,13 +721,13 @@ fun buildSingBoxOutboundStreamSettings(bean: StandardV2RayBean): V2RayTransportO
         "xhttp" -> {
             val baseConfig = V2RayTransportOptions_XHTTPOptions().apply {
                 type = "xhttp"
-                mode = bean.xhttpMode.takeIf { it.isNotBlank() } ?: "auto"
-                host = bean.host.takeIf { it.isNotBlank() }
-                path = bean.path.takeIf { it.isNotBlank() } ?: "/"
+                mode = bean.xhttpMode?.takeIf { it.isNotBlank() } ?: "auto"
+                host = bean.host?.takeIf { it.isNotBlank() }
+                path = bean.path?.takeIf { it.isNotBlank() } ?: "/"
             }
             
             // Merge xhttpExtra JSON config if present
-            if (bean.xhttpExtra.isNotBlank()) {
+            if (!bean.xhttpExtra.isNullOrBlank()) {
                 try {
                     val gson = Gson()
                     val baseJson = JSONObject(gson.toJson(baseConfig))
@@ -774,12 +786,27 @@ fun buildSingBoxOutboundTLS(bean: StandardV2RayBean): OutboundTLSOptions? {
     if (bean.security != "tls") return null
     return OutboundTLSOptions().apply {
         enabled = true
-        insecure = bean.allowInsecure || DataStore.globalAllowInsecure
-        if (bean.sni.isNotBlank()) server_name = bean.sni
-        if (bean.alpn.isNotBlank()) alpn = bean.alpn.listByLineOrComma()
-        if (bean.certificates.isNotBlank()) certificate = bean.certificates
+        insecure = bean.allowInsecure == true || (try { DataStore.globalAllowInsecure } catch (_: Throwable) { false })
+        if (try { DataStore.enableTLSFragment } catch (_: Throwable) { false }) {
+            fragment = true
+        }
+        if (try { DataStore.tlsRecordFragment } catch (_: Throwable) { false }) {
+            record_fragment = true
+        }
+        if (!bean.sni.isNullOrBlank()) server_name = bean.sni
+        if (!bean.alpn.isNullOrBlank()) alpn = bean.alpn.listByLineOrComma()
+        if (!bean.certificates.isNullOrBlank()) {
+            val cert = bean.certificates.trim()
+            if (cert.startsWith("sha256:", ignoreCase = true) || cert.startsWith("sha256/", ignoreCase = true)) {
+                certificate_sha256 = listOf(cert.substring(7).trim())
+            } else if (cert.length == 64 && cert.all { it in "0123456789abcdefABCDEF" }) {
+                certificate_sha256 = listOf(cert)
+            } else {
+                certificate = bean.certificates
+            }
+        }
         var fp = bean.utlsFingerprint
-        if (bean.realityPubKey.isNotBlank()) {
+        if (!bean.realityPubKey.isNullOrBlank()) {
             reality = OutboundRealityOptions().apply {
                 enabled = true
                 public_key = bean.realityPubKey
@@ -787,19 +814,35 @@ fun buildSingBoxOutboundTLS(bean: StandardV2RayBean): OutboundTLSOptions? {
             }
             if (fp.isNullOrBlank()) fp = "chrome"
         }
-        if (fp.isNotBlank()) {
+        if (!fp.isNullOrBlank()) {
             utls = OutboundUTLSOptions().apply {
                 enabled = true
                 fingerprint = fp
             }
         }
-        if (bean.enableECH) {
+        if (bean.enableECH == true) {
             ech = OutboundECHOptions().apply {
                 enabled = true
-                if (bean.echConfig.isNotBlank()) {
+                if (!bean.echConfig.isNullOrBlank()) {
                     config = bean.echConfig.lines()
                 }
             }
+        }
+        if (!bean.tlsSpoof.isNullOrBlank()) {
+            spoof = bean.tlsSpoof.trim()
+            spoof_method = bean.tlsSpoofMethod.takeIf { !it.isNullOrBlank() } ?: "wrong-sequence"
+        }
+        if (!bean.tlsMinVersion.isNullOrBlank()) {
+            min_version = bean.tlsMinVersion
+        }
+        if (!bean.tlsMaxVersion.isNullOrBlank()) {
+            max_version = bean.tlsMaxVersion
+        }
+        if (!bean.tlsCipherSuites.isNullOrBlank()) {
+            cipher_suites = bean.tlsCipherSuites.listByLineOrComma()
+        }
+        if (bean.tlsHandshakeTimeout != null && bean.tlsHandshakeTimeout > 0) {
+            handshake_timeout = bean.tlsHandshakeTimeout.toLong()
         }
     }
 }
@@ -823,16 +866,16 @@ fun buildSingBoxOutboundStandardV2RayBean(bean: StandardV2RayBean): Outbound {
                 server = bean.serverAddress
                 server_port = bean.serverPort
                 uuid = bean.uuid
-                if (bean.encryption.isNotBlank() && bean.encryption != "auto") {
+                if (!bean.encryption.isNullOrBlank() && bean.encryption != "auto") {
                     flow = bean.encryption
                 }
-                if (bean.vlessEncryption.isNotBlank() && bean.vlessEncryption != "none") {
+                if (!bean.vlessEncryption.isNullOrBlank() && bean.vlessEncryption != "none") {
                     encryption = bean.vlessEncryption
                 }
                 when (bean.packetEncoding) {
-                    0 -> packet_encoding = ""
                     1 -> packet_encoding = "packetaddr"
                     2 -> packet_encoding = "xudp"
+                    else -> packet_encoding = ""
                 }
                 tls = buildSingBoxOutboundTLS(bean)
                 transport = buildSingBoxOutboundStreamSettings(bean)
@@ -843,11 +886,11 @@ fun buildSingBoxOutboundStandardV2RayBean(bean: StandardV2RayBean): Outbound {
                 server_port = bean.serverPort
                 uuid = bean.uuid
                 alter_id = bean.alterId
-                security = bean.encryption.takeIf { it.isNotBlank() } ?: "auto"
+                security = bean.encryption?.takeIf { it.isNotBlank() } ?: "auto"
                 when (bean.packetEncoding) {
-                    0 -> packet_encoding = ""
                     1 -> packet_encoding = "packetaddr"
                     2 -> packet_encoding = "xudp"
+                    else -> packet_encoding = ""
                 }
                 tls = buildSingBoxOutboundTLS(bean)
                 transport = buildSingBoxOutboundStreamSettings(bean)
