@@ -59,8 +59,8 @@ public class MieruBean extends AbstractBean {
         output.writeString(protocol);
         output.writeString(username);
         output.writeString(password);
-        if (protocol.equals("UDP")) {
-            output.writeInt(mtu);
+        if ("UDP".equalsIgnoreCase(protocol)) {
+            output.writeInt(mtu != null ? mtu : 1400);
         }
         output.writeString(serverPorts);
         output.writeString(multiplexing);
@@ -75,7 +75,7 @@ public class MieruBean extends AbstractBean {
         protocol = input.readString();
         username = input.readString();
         password = input.readString();
-        if (protocol.equals("UDP")) {
+        if ("UDP".equalsIgnoreCase(protocol)) {
             mtu = input.readInt();
         }
         if (version >= 1) {

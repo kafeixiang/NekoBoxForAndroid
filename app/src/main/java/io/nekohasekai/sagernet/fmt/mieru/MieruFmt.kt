@@ -41,11 +41,18 @@ fun buildSingBoxOutboundMieruBean(bean: MieruBean): SingBoxOptions.Outbound_Mier
         type = "mieru"
         server = bean.serverAddress
         if (!bean.serverPorts.isNullOrBlank()) {
-            server_ports = bean.serverPorts.split(",").map { it.trim() }.filter { it.isNotEmpty() }
+            val ports = bean.serverPorts.split(",").map { it.trim() }.filter { it.isNotEmpty() }
+            if (ports.size == 1 && !ports[0].contains("-")) {
+                server_port = ports[0].toIntOrNull() ?: bean.serverPort
+            } else {
+                server_ports = ports.map {
+                    if (it.contains("-")) it else "$it-$it"
+                }
+            }
         } else {
             server_port = bean.serverPort
         }
-        transport = bean.protocol
+        transport = bean.protocol?.uppercase() ?: "TCP"
         username = bean.username
         password = bean.password
         if (!bean.multiplexing.isNullOrBlank() && bean.multiplexing != "MULTIPLEXING_OFF") {

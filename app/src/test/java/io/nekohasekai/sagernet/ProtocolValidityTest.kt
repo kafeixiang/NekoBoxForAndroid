@@ -552,6 +552,52 @@ class ProtocolValidityTest {
     }
 
     @Test
+    fun testMieruParsingAndBuilding() {
+        // Test Mieru with port ranges and multiplexing
+        val bean = MieruBean().apply {
+            serverAddress = "mieru.example.com"
+            serverPorts = "2000-3000, 8443"
+            protocol = "tcp"
+            username = "testuser"
+            password = "testpassword"
+            multiplexing = "MULTIPLEXING_MIDDLE"
+        }
+        val outbound = buildSingBoxOutboundMieruBean(bean)
+        assertEquals("mieru", outbound.type)
+        assertEquals("mieru.example.com", outbound.server)
+        assertEquals("TCP", outbound.transport)
+        assertEquals("testuser", outbound.username)
+        assertEquals("testpassword", outbound.password)
+        assertEquals("MULTIPLEXING_MIDDLE", outbound.multiplexing)
+        assertEquals(2, outbound.server_ports.size)
+        assertEquals("2000-3000", outbound.server_ports[0])
+        assertEquals("8443-8443", outbound.server_ports[1])
+
+        // Test Mieru with single port
+        val singlePortBean = MieruBean().apply {
+            serverAddress = "1.2.3.4"
+            serverPorts = "8443"
+            protocol = "UDP"
+            username = "u"
+            password = "p"
+            mtu = 1350
+        }
+        val singleOutbound = buildSingBoxOutboundMieruBean(singlePortBean)
+        assertEquals(8443, singleOutbound.server_port)
+        assertNull(singleOutbound.server_ports)
+        assertEquals("UDP", singleOutbound.transport)
+
+        // Test clone & Kryo roundtrip
+        val cloned = singlePortBean.clone()
+        assertEquals("1.2.3.4", cloned.serverAddress)
+        assertEquals("8443", cloned.serverPorts)
+        assertEquals("UDP", cloned.protocol)
+        assertEquals("u", cloned.username)
+        assertEquals("p", cloned.password)
+        assertEquals(1350, cloned.mtu)
+    }
+
+    @Test
     fun testClashMetaYamlParsing() = runBlocking {
         val yaml = """
             proxies:
