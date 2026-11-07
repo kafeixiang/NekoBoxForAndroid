@@ -90,20 +90,29 @@ fun generateRuleSet(ruleSetString: List<String>, ruleSet: MutableList<RuleSet>) 
                     path = it
                 })
             }
+
+            it.isNotBlank() -> {
+                ruleSet.add(RuleSet().apply {
+                    type = "local"
+                    tag = it
+                    format = "binary"
+                    path = it
+                })
+            }
         }
     }
 }
 
 fun SingBoxOptions.Rule_DefaultOptions.makeSingBoxRule(list: List<String>, isIP: Boolean) {
     if (isIP) {
-        ip_cidr = mutableListOf<String>()
-        rule_set = mutableListOf<String>()
+        if (ip_cidr == null) ip_cidr = mutableListOf<String>()
+        if (rule_set == null) rule_set = mutableListOf<String>()
     } else {
-        rule_set = mutableListOf<String>()
-        domain = mutableListOf<String>()
-        domain_suffix = mutableListOf<String>()
-        domain_regex = mutableListOf<String>()
-        domain_keyword = mutableListOf<String>()
+        if (rule_set == null) rule_set = mutableListOf<String>()
+        if (domain == null) domain = mutableListOf<String>()
+        if (domain_suffix == null) domain_suffix = mutableListOf<String>()
+        if (domain_regex == null) domain_regex = mutableListOf<String>()
+        if (domain_keyword == null) domain_keyword = mutableListOf<String>()
     }
     list.forEach {
         if (isIP) {
@@ -160,4 +169,108 @@ fun SingBoxOptions.Rule_DefaultOptions.checkEmpty(): Boolean {
     //
     if (!_hack_custom_config.isNullOrBlank()) return false
     return true
+}
+
+fun buildDNSServer(
+    link: String,
+    tag: String,
+    detour: String? = null,
+    domainResolver: String? = null,
+): SingBoxOptions.DNSServerOptions {
+    val serverOpt = SingBoxOptions.DNSServerOptions().apply {
+        this.tag = tag
+        this.detour = detour
+    }
+
+    if (link == "local") {
+        serverOpt.type = "local"
+        return serverOpt
+    }
+    if (link == "fakeip") {
+        serverOpt.type = "fakeip"
+        serverOpt.inet4_range = "198.18.0.0/15"
+        serverOpt.inet6_range = "fc00::/18"
+        return serverOpt
+    }
+    if (link == "mdns") {
+        serverOpt.type = "mdns"
+        return serverOpt
+    }
+    if (link == "resolved") {
+        serverOpt.type = "resolved"
+        return serverOpt
+    }
+
+    val (scheme, remainder) = if (link.contains("://")) {
+        link.substringBefore("://") to link.substringAfter("://")
+    } else {
+        "udp" to link
+    }
+
+    val serverPart: String
+    val pathPart: String
+    if (remainder.contains("/")) {
+        serverPart = remainder.substringBefore("/")
+        pathPart = "/" + remainder.substringAfter("/")
+    } else {
+        serverPart = remainder
+        pathPart = ""
+    }
+
+    val host: String
+    val port: Int?
+    if (serverPart.startsWith("[") && serverPart.contains("]")) {
+        host = serverPart.substring(1, serverPart.indexOf("]"))
+        val after = serverPart.substringAfter("]", "")
+        port = if (after.startsWith(":")) after.substring(1).toIntOrNull() else null
+    } else if (serverPart.contains(":")) {
+        host = serverPart.substringBefore(":")
+        port = serverPart.substringAfter(":").toIntOrNull()
+    } else {
+        host = serverPart
+        port = null
+    }
+
+    serverOpt.server = host
+    serverOpt.server_port = port
+    if (pathPart.isNotEmpty()) {
+        serverOpt.path = pathPart
+    }
+
+    when (scheme.lowercase()) {
+        "https" -> {
+            serverOpt.type = "https"
+            serverOpt.tls = SingBoxOptions.OutboundTLSOptions().apply { enabled = true }
+        }
+        "h3", "http3" -> {
+            serverOpt.type = "h3"
+            serverOpt.tls = SingBoxOptions.OutboundTLSOptions().apply { enabled = true }
+        }
+        "tls" -> {
+            serverOpt.type = "tls"
+            serverOpt.tls = SingBoxOptions.OutboundTLSOptions().apply { enabled = true }
+        }
+        "quic" -> {
+            serverOpt.type = "quic"
+            serverOpt.tls = SingBoxOptions.OutboundTLSOptions().apply { enabled = true }
+        }
+        "tcp" -> {
+            serverOpt.type = "tcp"
+        }
+        "mdns" -> {
+            serverOpt.type = "mdns"
+        }
+        "resolved" -> {
+            serverOpt.type = "resolved"
+        }
+        else -> {
+            serverOpt.type = "udp"
+        }
+    }
+
+    if (domainResolver != null) {
+        serverOpt.domain_resolver = domainResolver
+    }
+
+    return serverOpt
 }

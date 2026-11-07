@@ -48,16 +48,28 @@ object Util {
     }
 
     fun b64EncodeUrlSafe(b: ByteArray): String {
-        return String(Base64.encode(b, Base64.NO_PADDING or Base64.NO_WRAP or Base64.URL_SAFE))
+        return try {
+            String(Base64.encode(b, Base64.NO_PADDING or Base64.NO_WRAP or Base64.URL_SAFE))
+        } catch (_: Throwable) {
+            java.util.Base64.getUrlEncoder().withoutPadding().encodeToString(b)
+        }
     }
 
     // v2rayN Style
     fun b64EncodeOneLine(b: ByteArray): String {
-        return String(Base64.encode(b, Base64.NO_WRAP))
+        return try {
+            String(Base64.encode(b, Base64.NO_WRAP))
+        } catch (_: Throwable) {
+            java.util.Base64.getEncoder().withoutPadding().encodeToString(b)
+        }
     }
 
     fun b64EncodeDefault(b: ByteArray): String {
-        return String(Base64.encode(b, Base64.DEFAULT))
+        return try {
+            String(Base64.encode(b, Base64.DEFAULT))
+        } catch (_: Throwable) {
+            java.util.Base64.getEncoder().encodeToString(b)
+        }
     }
 
     fun b64Decode(b: String): ByteArray {
@@ -75,9 +87,21 @@ object Util {
         for (flag in flags) {
             try {
                 ret = Base64.decode(str, flag)
-            } catch (_: Exception) {
+            } catch (_: Throwable) {
             }
             if (ret != null) return ret
+        }
+
+        try {
+            return java.util.Base64.getUrlDecoder().decode(b)
+        } catch (_: Throwable) {
+        }
+
+        try {
+            var padded = str
+            while (padded.length % 4 != 0) padded += "="
+            return java.util.Base64.getDecoder().decode(padded)
+        } catch (_: Throwable) {
         }
 
         throw IllegalStateException("Cannot decode base64")

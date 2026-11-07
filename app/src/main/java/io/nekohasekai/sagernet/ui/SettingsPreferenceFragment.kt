@@ -169,6 +169,31 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         tunImplementation.onPreferenceChangeListener = reloadListener
         acquireWakeLock.onPreferenceChangeListener = reloadListener
         globalCustomConfig.onPreferenceChangeListener = reloadListener
+
+        findPreference<Preference>(Key.OVERRIDE_ANDROID_VPN)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.TCP_MULTI_PATH)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.UDP_FRAGMENT)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.ENABLE_TLS_FRAGMENT)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.TLS_RECORD_FRAGMENT)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.TCP_FAST_OPEN)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.TUN_UDP_MAPPING)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.OPTIMISTIC_DNS)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.FAKE_DNS_EXCLUDE)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.DNS_CLIENT_SUBNET)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.DNS_CACHE_CAPACITY)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.DNS_DISABLE_CACHE)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.DNS_DISABLE_EXPIRE)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.DNS_INDEPENDENT_CACHE)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.DNS_REVERSE_MAPPING)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.STRICT_ROUTE)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.TUN_UDP_TIMEOUT)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.TUN_UDP_FILTERING)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.TUN_EXCLUDE_MPTCP)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.STORE_CACHE_FILE)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.ENABLE_NTP)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.NTP_SERVER)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.DEFAULT_NETWORK_STRATEGY)?.onPreferenceChangeListener = reloadListener
+        findPreference<Preference>(Key.DEFAULT_FALLBACK_DELAY)?.onPreferenceChangeListener = reloadListener
         hideFromRecentApps.setOnPreferenceChangeListener { _, newValue ->
             (activity as? MainActivity)?.applyHideFromRecentApps(newValue as Boolean)
             // needReload()
