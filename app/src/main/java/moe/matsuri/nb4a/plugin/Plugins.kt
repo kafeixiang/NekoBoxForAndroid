@@ -61,11 +61,27 @@ object Plugins {
     fun getPluginExternal(pluginId: String): ProviderInfo? {
         if (pluginId.isBlank()) return null
 
+        try {
+            if (SagerNet.application == null) return null
+        } catch (_: Throwable) {
+            return null
+        }
+
         // try queryIntentContentProviders
-        var providers = getExtPluginOld(pluginId)
+        var providers = try {
+            getExtPluginOld(pluginId)
+        } catch (_: Throwable) {
+            emptyList()
+        }
 
         // try PackageCache
-        if (providers.isEmpty()) providers = getExtPluginNew(pluginId)
+        if (providers.isEmpty()) {
+            providers = try {
+                getExtPluginNew(pluginId)
+            } catch (_: Throwable) {
+                emptyList()
+            }
+        }
 
         // not found
         if (providers.isEmpty()) return null

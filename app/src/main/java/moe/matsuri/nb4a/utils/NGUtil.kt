@@ -91,13 +91,19 @@ object NGUtil {
     fun tryDecodeBase64(text: String): String? {
         try {
             return Base64.decode(text, Base64.NO_WRAP).toString(charset("UTF-8"))
-        } catch (e: Exception) {
-            Logs.i( "Parse base64 standard failed $e")
+        } catch (_: Throwable) {
         }
         try {
             return Base64.decode(text, Base64.NO_WRAP.or(Base64.URL_SAFE)).toString(charset("UTF-8"))
-        } catch (e: Exception) {
-            Logs.i( "Parse base64 url safe failed $e")
+        } catch (_: Throwable) {
+        }
+        try {
+            return String(java.util.Base64.getDecoder().decode(text), Charsets.UTF_8)
+        } catch (_: Throwable) {
+        }
+        try {
+            return String(java.util.Base64.getUrlDecoder().decode(text), Charsets.UTF_8)
+        } catch (_: Throwable) {
         }
         return null
     }
@@ -108,9 +114,12 @@ object NGUtil {
     fun encode(text: String): String {
         return try {
             Base64.encodeToString(text.toByteArray(charset("UTF-8")), Base64.NO_WRAP)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            ""
+        } catch (_: Throwable) {
+            try {
+                java.util.Base64.getEncoder().withoutPadding().encodeToString(text.toByteArray(Charsets.UTF_8))
+            } catch (_: Throwable) {
+                ""
+            }
         }
     }
 

@@ -16,7 +16,6 @@ import (
 	"github.com/sagernet/sing-box/common/tls"
 	C "github.com/sagernet/sing-box/constant"
 	"github.com/sagernet/sing-box/log"
-	"github.com/sagernet/sing-box/option"
 	"github.com/sagernet/sing/common/bufio"
 	E "github.com/sagernet/sing/common/exceptions"
 	"github.com/sagernet/sing/common/logger"
@@ -25,24 +24,19 @@ import (
 
 	"github.com/exclavenetwork/sing-juicity"
 	"github.com/gofrs/uuid/v5"
+	"libcore/plugin/pluginoption"
 )
 
-const TypeJuicity = "juicity"
-
-type JuicityOutboundOptions struct {
-	option.DialerOptions
-	option.ServerOptions
-	UUID     string `json:"uuid,omitempty"`
-	Password string `json:"password,omitempty"`
-	option.OutboundTLSOptionsContainer
-	PinCertSha256 string `json:"pin_cert_sha256,omitempty"`
-}
-
 func RegisterOutbound(registry *outbound.Registry) {
-	outbound.Register[JuicityOutboundOptions](registry, TypeJuicity, NewOutbound)
+	outbound.Register[pluginoption.JuicityOutboundOptions](registry, pluginoption.TypeJuicity, NewOutbound)
 }
 
-var _ adapter.Outbound = (*Outbound)(nil)
+var (
+	_ adapter.Outbound                = (*Outbound)(nil)
+	_ adapter.OutboundWithMultiplex   = (*Outbound)(nil)
+	_ adapter.InterfaceUpdateListener = (*Outbound)(nil)
+	_ adapter.IdleConnectionKeeper    = (*Outbound)(nil)
+)
 
 type Outbound struct {
 	outbound.Adapter
@@ -50,7 +44,7 @@ type Outbound struct {
 	client *juicity.Client
 }
 
-func NewOutbound(ctx context.Context, router adapter.Router, logger log.ContextLogger, tag string, options JuicityOutboundOptions) (adapter.Outbound, error) {
+func NewOutbound(ctx context.Context, router adapter.Router, logger log.ContextLogger, tag string, options pluginoption.JuicityOutboundOptions) (adapter.Outbound, error) {
 	if options.TLS == nil || !options.TLS.Enabled {
 		return nil, C.ErrTLSRequired
 	}
@@ -100,7 +94,7 @@ func NewOutbound(ctx context.Context, router adapter.Router, logger log.ContextL
 		return nil, err
 	}
 	return &Outbound{
-		Adapter: outbound.NewAdapterWithDialerOptions(TypeJuicity, tag, []string{N.NetworkTCP, N.NetworkUDP}, options.DialerOptions),
+		Adapter: outbound.NewAdapterWithDialerOptions(pluginoption.TypeJuicity, tag, []string{N.NetworkTCP, N.NetworkUDP}, options.DialerOptions),
 		logger:  logger,
 		client:  client,
 	}, nil
@@ -119,38 +113,62 @@ func (o *Outbound) DialContext(ctx context.Context, network string, destination 
 		o.logger.InfoContext(ctx, "outbound connection to ", destination)
 		return o.client.DialConn(ctx, destination)
 	case N.NetworkUDP:
-		conn, err := o.ListenPacket(ctx, destination)
+		ctx, metadata := adapter.ExtendContext(ctx)
+		metadata.Outbound = o.Tag()
+		metadata.Destination = destination
+		o.logger.InfoContext(ctx, "outbound packet connection to ", destination)
+		packetConn, err := o.ListenPacket(ctx, destination)
 		if err != nil {
 			return nil, err
 		}
-		return bufio.NewBindPacketConn(conn, destination), nil
+		return bufio.NewBindPacketConn(packetConn, destination), nil
 	default:
-		return nil, E.New("unsupported network: ", network)
+		return nil, E.Extend(N.ErrUnknownNetwork, network)
 	}
 }
 
 func (o *Outbound) ListenPacket(ctx context.Context, destination M.Socksaddr) (net.PacketConn, error) {
-	ctx, metadata := adapter.ExtendContext(ctx)
-	metadata.Outbound = o.Tag()
-	metadata.Destination = destination
-	o.logger.InfoContext(ctx, "outbound packet connection to ", destination)
 	return o.client.ListenPacket(ctx, destination)
+}
+
+func (o *Outbound) InterfaceUpdated(ctx context.Context) {
+	_ = o.client.CloseWithError(E.New("network changed"))
+}
+
+func (o *Outbound) MultiplexEnabled() bool {
+	return true
+}
+
+func (o *Outbound) SetKeepIdleConnections(keep bool) {
+	o.client.SetKeepIdleConnections(keep)
+}
+
+func (o *Outbound) CloseIdleConnections() {
+	o.client.CloseIdleConnections()
+}
+
+func (o *Outbound) Start(stage adapter.StartStage, scope *adapter.Scope) error {
+	if stage != adapter.StartStateInitialize {
+		return nil
+	}
+	scope.Add(func() error {
+		return o.client.CloseWithError(os.ErrClosed)
+	})
+	return nil
 }
 
 // https://github.com/juicity/juicity/blob/412dbe43e091788c5464eb2d6e9c169bdf39f19c/cmd/client/run.go#L86-L96
 func tryDecodeBase64(raw string) ([]byte, error) {
 	var errors []error
-	decoders := []*base64.Encoding{base64.URLEncoding, base64.StdEncoding}
-	for _, decoder := range decoders {
-		decoded, err := decoder.DecodeString(raw)
-		if err == nil {
-			return decoded, nil
-		}
-		errors = append(errors, err)
-	}
-	decoded, err := hex.DecodeString(raw)
+	var b []byte
+	b, err := base64.StdEncoding.DecodeString(raw)
 	if err == nil {
-		return decoded, nil
+		return b, nil
+	}
+	errors = append(errors, err)
+	b, err = hex.DecodeString(raw)
+	if err == nil {
+		return b, nil
 	}
 	errors = append(errors, err)
 	return nil, E.Cause(E.Errors(errors...), "try decoding base64")

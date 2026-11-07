@@ -39,6 +39,7 @@ import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ui.profile.*
 import moe.matsuri.nb4a.SingBoxOptions.BrutalOptions
 import moe.matsuri.nb4a.SingBoxOptions.MultiplexOptions
+import moe.matsuri.nb4a.plugin.Plugins
 import moe.matsuri.nb4a.proxy.anytls.AnyTLSBean
 import moe.matsuri.nb4a.proxy.anytls.AnyTLSSettingsActivity
 import moe.matsuri.nb4a.proxy.anytls.toUri
@@ -337,6 +338,20 @@ data class ProxyEntity(
             TYPE_NEKO -> true
             else -> false
         }
+    }
+
+    fun canRunOrInternal(): Boolean {
+        if (!needExternal()) return true
+        val pluginId = when (type) {
+            TYPE_TROJAN_GO -> "trojan-go-plugin"
+            TYPE_MIERU -> "mieru-plugin"
+            TYPE_NAIVE -> "naive-plugin"
+            TYPE_HYSTERIA -> "hysteria-plugin"
+            TYPE_NEKO -> nekoBean?.plgId ?: ""
+            else -> ""
+        }
+        if (pluginId.isBlank()) return false
+        return Plugins.getPluginExternal(pluginId) != null
     }
 
     fun singMux(): MultiplexOptions? {
