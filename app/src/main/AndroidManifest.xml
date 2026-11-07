@@ -200,6 +200,9 @@
             android:name="io.nekohasekai.sagernet.ui.profile.MASQUESettingsActivity"
             android:configChanges="uiMode" />
         <activity
+            android:name="io.nekohasekai.sagernet.ui.profile.OpenVPNSettingsActivity"
+            android:configChanges="uiMode" />
+        <activity
             android:name="io.nekohasekai.sagernet.ui.profile.ChainSettingsActivity"
             android:configChanges="uiMode" />
         <activity

@@ -27,6 +27,11 @@ import io.nekohasekai.sagernet.fmt.direct.DirectBean
 import io.nekohasekai.sagernet.fmt.direct.toUri
 import io.nekohasekai.sagernet.fmt.masque.MASQUEBean
 import io.nekohasekai.sagernet.fmt.masque.toUri
+import io.nekohasekai.sagernet.fmt.openvpn.OpenVPNBean
+import io.nekohasekai.sagernet.fmt.openvpn.OpenVPNFmt
+import io.nekohasekai.sagernet.fmt.openconnect.OpenConnectBean
+import io.nekohasekai.sagernet.fmt.tailscale.TailscaleBean
+import io.nekohasekai.sagernet.fmt.tor.TorBean
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.socks.toUri
 import io.nekohasekai.sagernet.fmt.ssh.SSHBean
@@ -89,6 +94,10 @@ data class ProxyEntity(
     var snellBean: SnellBean? = null,
     var directBean: DirectBean? = null,
     var masqueBean: MASQUEBean? = null,
+    var openvpnBean: OpenVPNBean? = null,
+    var openconnectBean: OpenConnectBean? = null,
+    var tailscaleBean: TailscaleBean? = null,
+    var torBean: TorBean? = null,
 ) : Serializable() {
 
     companion object {
@@ -113,6 +122,7 @@ data class ProxyEntity(
         const val TYPE_SNELL = 24
         const val TYPE_DIRECT = 25
         const val TYPE_MASQUE = 26
+        const val TYPE_OPENVPN = 27
 
         const val TYPE_CONFIG = 998
         const val TYPE_NEKO = 999
@@ -205,6 +215,7 @@ data class ProxyEntity(
             TYPE_SNELL -> snellBean = KryoConverters.snellDeserialize(byteArray)
             TYPE_DIRECT -> directBean = KryoConverters.directDeserialize(byteArray)
             TYPE_MASQUE -> masqueBean = KryoConverters.masqueDeserialize(byteArray)
+            TYPE_OPENVPN -> openvpnBean = KryoConverters.openvpnDeserialize(byteArray)
         }
     }
 
@@ -231,6 +242,7 @@ data class ProxyEntity(
         TYPE_SNELL -> "Snell"
         TYPE_DIRECT -> "Direct"
         TYPE_MASQUE -> "MASQUE"
+        TYPE_OPENVPN -> "OpenVPN"
         else -> "Undefined type $type"
     }
 
@@ -261,6 +273,7 @@ data class ProxyEntity(
             TYPE_SNELL -> snellBean
             TYPE_DIRECT -> directBean
             TYPE_MASQUE -> masqueBean
+            TYPE_OPENVPN -> openvpnBean
             else -> error("Undefined type $type")
         } ?: error("Null ${displayType()} profile")
     }
@@ -471,6 +484,10 @@ data class ProxyEntity(
         nekoBean = null
         directBean = null
         masqueBean = null
+        openvpnBean = null
+        openconnectBean = null
+        tailscaleBean = null
+        torBean = null
 
         when (bean) {
             is SOCKSBean -> {
@@ -568,6 +585,11 @@ data class ProxyEntity(
                 masqueBean = bean
             }
 
+            is OpenVPNBean -> {
+                type = TYPE_OPENVPN
+                openvpnBean = bean
+            }
+
             is ChainBean -> {
                 type = TYPE_CHAIN
                 chainBean = bean
@@ -612,6 +634,7 @@ data class ProxyEntity(
                 TYPE_SNELL -> SnellSettingsActivity::class.java
                 TYPE_DIRECT -> DirectSettingsActivity::class.java
                 TYPE_MASQUE -> MASQUESettingsActivity::class.java
+                TYPE_OPENVPN -> OpenVPNSettingsActivity::class.java
                 else -> throw IllegalArgumentException()
             }
         ).apply {

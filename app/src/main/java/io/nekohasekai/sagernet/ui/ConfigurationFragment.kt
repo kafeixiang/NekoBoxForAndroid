@@ -93,6 +93,7 @@ import io.nekohasekai.sagernet.ui.profile.ShadowsocksRSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.SnellSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.DirectSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.MASQUESettingsActivity
+import io.nekohasekai.sagernet.ui.profile.OpenVPNSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.SocksSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.TrojanGoSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.TrojanSettingsActivity
@@ -580,6 +581,10 @@ class ConfigurationFragment @JvmOverloads constructor(
 
             R.id.action_new_masque -> {
                 startActivity(Intent(requireActivity(), MASQUESettingsActivity::class.java))
+            }
+
+            R.id.action_new_openvpn -> {
+                startActivity(Intent(requireActivity(), OpenVPNSettingsActivity::class.java))
             }
 
             R.id.action_new_wg -> {
