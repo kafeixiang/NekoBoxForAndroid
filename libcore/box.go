@@ -33,20 +33,35 @@ func init() {
 var mainInstance *BoxInstance
 
 func VersionBox() string {
-	version := []string{
-		"sing-box: " + constant.Version,
-		runtime.Version() + "@" + runtime.GOOS + "/" + runtime.GOARCH,
-	}
-
+	boxVersion := constant.Version
 	var tags string
 	debugInfo, loaded := debug.ReadBuildInfo()
 	if loaded {
+		if boxVersion == "" || boxVersion == "unknown" {
+			for _, setting := range debugInfo.Settings {
+				if setting.Key == "vcs.revision" && setting.Value != "" {
+					rev := setting.Value
+					if len(rev) > 8 {
+						rev = rev[:8]
+					}
+					boxVersion = rev
+					break
+				}
+			}
+		}
 		for _, setting := range debugInfo.Settings {
 			switch setting.Key {
 			case "-tags":
 				tags = setting.Value
 			}
 		}
+	}
+	if boxVersion == "" || boxVersion == "unknown" {
+		boxVersion = "sing-box"
+	}
+	version := []string{
+		"sing-box: " + boxVersion,
+		runtime.Version() + "@" + runtime.GOOS + "/" + runtime.GOARCH,
 	}
 
 	if tags != "" {

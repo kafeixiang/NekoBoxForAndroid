@@ -105,7 +105,19 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                             MaterialAboutActionItem.Builder()
                                 .icon(R.drawable.ic_baseline_layers_24)
                                 .text(getString(R.string.version_x, "sing-box"))
-                                .subText(Libcore.versionBox())
+                                .subText(
+                                    runCatching {
+                                        val raw = Libcore.versionBox()
+                                        val dynamicVer = BuildConfig.SING_BOX_VERSION.takeIf { it.isNotBlank() && it != "unknown" } ?: "1.15.0"
+                                        if (raw.isNullOrBlank()) {
+                                            "sing-box: $dynamicVer"
+                                        } else if (raw.contains("sing-box: unknown")) {
+                                            raw.replace("sing-box: unknown", "sing-box: $dynamicVer")
+                                        } else {
+                                            raw
+                                        }
+                                    }.getOrElse { "sing-box: ${BuildConfig.SING_BOX_VERSION}" }
+                                )
                                 .setOnClickAction { }
                                 .build())
                         // 删除捐款相关功能
