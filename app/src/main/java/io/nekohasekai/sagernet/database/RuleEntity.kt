@@ -23,8 +23,34 @@ data class RuleEntity(
     var network: String = "",
     var source: String = "",
     var protocol: String = "",
+    @ColumnInfo(defaultValue = "")
+    var ruleset: String = "",
     var outbound: Long = 0,
     var packages: Set<String> = emptySet(),
+    @ColumnInfo(defaultValue = "0")
+    var invert: Boolean = false,
+    @ColumnInfo(defaultValue = "0")
+    var ipIsPrivate: Boolean = false,
+    @ColumnInfo(defaultValue = "0")
+    var sourceIpIsPrivate: Boolean = false,
+    @ColumnInfo(defaultValue = "")
+    var networkType: String = "",
+    @ColumnInfo(defaultValue = "")
+    var wifiSsid: String = "",
+    @ColumnInfo(defaultValue = "")
+    var wifiBssid: String = "",
+    @ColumnInfo(defaultValue = "0")
+    var ruleSetIpCIDRMatchSource: Boolean = false,
+    @ColumnInfo(defaultValue = "")
+    var rejectMethod: String = "",
+    @ColumnInfo(defaultValue = "0")
+    var ipVersion: Int = 0,
+    @ColumnInfo(defaultValue = "")
+    var client: String = "",
+    @ColumnInfo(defaultValue = "0")
+    var networkIsExpensive: Boolean = false,
+    @ColumnInfo(defaultValue = "0")
+    var networkIsConstrained: Boolean = false,
 ) : Parcelable {
 
     fun displayName(): String {
@@ -36,11 +62,24 @@ data class RuleEntity(
         if (config.isNotBlank()) summary += "[config]\n"
         if (domains.isNotBlank()) summary += "$domains\n"
         if (ip.isNotBlank()) summary += "$ip\n"
+        if (ruleset.isNotBlank()) summary += "rule-set: $ruleset\n"
         if (source.isNotBlank()) summary += "src ip: $source\n"
         if (sourcePort.isNotBlank()) summary += "src port: $sourcePort\n"
         if (port.isNotBlank()) summary += "dst port: $port\n"
         if (network.isNotBlank()) summary += "network: $network\n"
+        if (networkType.isNotBlank()) summary += "net type: $networkType\n"
+        if (wifiSsid.isNotBlank()) summary += "ssid: $wifiSsid\n"
+        if (wifiBssid.isNotBlank()) summary += "bssid: $wifiBssid\n"
         if (protocol.isNotBlank()) summary += "protocol: $protocol\n"
+        if (ipIsPrivate) summary += "dst: private\n"
+        if (sourceIpIsPrivate) summary += "src: private\n"
+        if (rejectMethod.isNotBlank()) summary += "reject: $rejectMethod\n"
+        if (ipVersion == 4) summary += "ip: v4\n"
+        if (ipVersion == 6) summary += "ip: v6\n"
+        if (client.isNotBlank()) summary += "client: $client\n"
+        if (networkIsExpensive) summary += "[expensive net]\n"
+        if (networkIsConstrained) summary += "[constrained net]\n"
+        if (invert) summary += "[invert]\n"
         if (packages.isNotEmpty()) summary += app.getString(
             R.string.apps_message, packages.size
         ) + "\n"
