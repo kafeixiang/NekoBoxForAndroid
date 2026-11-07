@@ -95,6 +95,9 @@
                         android:id="@+id/action_new_trusttunnel"
                         android:title="@string/action_trusttunnel" />
                     <item
+                        android:id="@+id/action_new_shadowquic"
+                        android:title="@string/action_shadowquic" />
+                    <item
                         android:id="@+id/action_new_ssh"
                         android:title="@string/action_ssh" />
                     <item

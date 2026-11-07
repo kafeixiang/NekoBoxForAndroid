@@ -16,6 +16,7 @@ import io.nekohasekai.sagernet.fmt.trojan.parseTrojan
 import io.nekohasekai.sagernet.fmt.tuic.parseTuic
 import io.nekohasekai.sagernet.fmt.juicity.parseJuicity
 import io.nekohasekai.sagernet.fmt.trusttunnel.parseTrustTunnel
+import io.nekohasekai.sagernet.fmt.shadowquic.parseShadowQUIC
 import io.nekohasekai.sagernet.fmt.trojan_go.parseTrojanGo
 import io.nekohasekai.sagernet.fmt.v2ray.parseV2Ray
 import moe.matsuri.nb4a.proxy.anytls.parseAnytls
@@ -233,6 +234,14 @@ suspend fun parseProxies(text: String): List<AbstractBean> {
             Logs.d("Try parse TrustTunnel link: $this")
             runCatching {
                 entities.add(parseTrustTunnel(link))
+            }.onFailure {
+                Logs.w(it)
+            }
+        } else if (startsWith("sq://") || startsWith("shadowquic://")) {
+            val link = if (startsWith("shadowquic://")) replace("shadowquic://", "sq://") else this
+            Logs.d("Try parse ShadowQUIC link: $this")
+            runCatching {
+                entities.add(parseShadowQUIC(link))
             }.onFailure {
                 Logs.w(it)
             }

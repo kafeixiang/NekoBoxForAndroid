@@ -4,6 +4,7 @@ import (
 	"github.com/sagernet/sing-box/adapter/outbound"
 
 	"libcore/plugin/juicity"
+	"libcore/plugin/shadowquic"
 	"libcore/plugin/trusttunnel"
 )
 
@@ -11,5 +12,6 @@ import (
 // This allows adding and extending protocols seamlessly without modifying sing-box upstream code.
 func RegisterPlugins(registry *outbound.Registry) {
 	juicity.RegisterOutbound(registry)
+	shadowquic.RegisterOutbound(registry)
 	trusttunnel.RegisterOutbound(registry)
 }
