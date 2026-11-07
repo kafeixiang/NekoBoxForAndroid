@@ -63,6 +63,7 @@ import io.nekohasekai.sagernet.fmt.openconnect.OpenConnectBean
 import io.nekohasekai.sagernet.fmt.openconnect.buildSingBoxEndpointOpenConnectBean
 import io.nekohasekai.sagernet.fmt.openvpn.OpenVPNBean
 import io.nekohasekai.sagernet.fmt.openvpn.buildSingBoxEndpointOpenVPNBean
+import io.nekohasekai.sagernet.fmt.openvpn.parseOpenVPNConfig
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.shadowsocksr.buildSingBoxOutboundShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.tailscale.TailcatBean
@@ -1058,6 +1059,103 @@ class ProtocolValidityTest {
         assertEquals("AES-256-GCM", endpoint.cipher)
         assertEquals("SHA256", endpoint.auth)
         assertEquals(1500, endpoint.mtu)
+
+        // Test clone & Kryo roundtrip
+        val cloned = bean.clone()
+        assertEquals("test-openvpn", cloned.name)
+        assertEquals("1.2.3.4", cloned.serverAddress)
+        assertEquals(1194, cloned.serverPort)
+        assertEquals("udp", cloned.network)
+        assertEquals("vpnuser", cloned.username)
+        assertEquals("vpnpassword", cloned.password)
+        assertEquals("AES-256-GCM", cloned.cipher)
+        assertEquals("SHA256", cloned.auth)
+        assertEquals(1500, cloned.mtu)
+
+        // Test OpenVPN full config parsing
+        val ovpnConfig = """
+            client
+            dev tun
+            proto udp
+            remote vpn.example.com 1194
+            resolv-retry infinite
+            nobind
+            remote-cert-tls server
+            cipher AES-256-GCM
+            auth SHA256
+            tun-mtu 1420
+            redirect-gateway def1
+            <ca>
+            -----BEGIN CERTIFICATE-----
+            MIIB...
+            -----END CERTIFICATE-----
+            </ca>
+            <cert>
+            -----BEGIN CERTIFICATE-----
+            MIIC...
+            -----END CERTIFICATE-----
+            </cert>
+            <key>
+            -----BEGIN RSA PRIVATE KEY-----
+            MIIE...
+            -----END RSA PRIVATE KEY-----
+            </key>
+            <auth-user-pass>
+            myuser
+            mypass
+            </auth-user-pass>
+        """.trimIndent()
+
+        val parsedBean = parseOpenVPNConfig(ovpnConfig)
+        assertEquals("vpn.example.com", parsedBean.serverAddress)
+        assertEquals(1194, parsedBean.serverPort)
+        assertEquals("udp", parsedBean.network)
+        assertEquals("myuser", parsedBean.username)
+        assertEquals("mypass", parsedBean.password)
+        assertEquals("server", parsedBean.remoteCertificateEKU)
+        assertEquals("AES-256-GCM", parsedBean.cipher)
+        assertEquals("AES-256-GCM", parsedBean.dataCiphers)
+        assertEquals("SHA256", parsedBean.auth)
+        assertEquals(1420, parsedBean.mtu)
+        assertEquals(true, parsedBean.redirectGateway)
+        assertTrue(parsedBean.certificate.contains("BEGIN CERTIFICATE"))
+        assertTrue(parsedBean.clientCertificate.contains("BEGIN CERTIFICATE"))
+        assertTrue(parsedBean.clientKey.contains("BEGIN RSA PRIVATE KEY"))
+
+        val builtEndpoint = buildSingBoxEndpointOpenVPNBean(parsedBean)
+        assertEquals("openvpn-client", builtEndpoint.type)
+        assertEquals("vpn.example.com", builtEndpoint.server)
+        assertEquals(1194, builtEndpoint.server_port)
+        assertEquals("udp", builtEndpoint.network)
+        assertEquals("myuser", builtEndpoint.username)
+        assertEquals("mypass", builtEndpoint.password)
+        assertEquals("AES-256-GCM", builtEndpoint.cipher)
+        assertEquals(listOf("AES-256-GCM"), builtEndpoint.data_ciphers)
+        assertEquals("SHA256", builtEndpoint.auth)
+        assertEquals(1420, builtEndpoint.mtu)
+        assertEquals(true, builtEndpoint.redirect_gateway)
+        assertNotNull(builtEndpoint.tls)
+        assertEquals("server", builtEndpoint.tls.remote_certificate_eku)
+        assertEquals(1, builtEndpoint.tls.certificate.size)
+        assertEquals(1, builtEndpoint.tls.client_certificate.size)
+        assertEquals(1, builtEndpoint.tls.client_key.size)
+
+        // Test global Formats.parseProxies with OpenVPN config
+        val proxies = runBlocking { io.nekohasekai.sagernet.ktx.parseProxies(ovpnConfig) }
+        assertEquals(1, proxies.size)
+        assertTrue(proxies[0] is OpenVPNBean)
+        val fromFormat = proxies[0] as OpenVPNBean
+        assertEquals("vpn.example.com", fromFormat.serverAddress)
+        assertEquals(1194, fromFormat.serverPort)
+        assertEquals("myuser", fromFormat.username)
+
+        // Test RawUpdater with file name
+        val rawProxies = runBlocking { RawUpdater.parseRaw(ovpnConfig, "my-vpn-node.ovpn") }
+        assertNotNull(rawProxies)
+        assertEquals(1, rawProxies!!.size)
+        assertTrue(rawProxies[0] is OpenVPNBean)
+        assertEquals("my-vpn-node", rawProxies[0].name)
+        assertEquals("vpn.example.com", rawProxies[0].serverAddress)
     }
 
     @Test

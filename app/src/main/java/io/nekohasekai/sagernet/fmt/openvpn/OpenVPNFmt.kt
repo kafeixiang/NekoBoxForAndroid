@@ -8,7 +8,7 @@ import moe.matsuri.nb4a.utils.listByLineOrComma
 fun looksLikeOpenVPNConfig(conf: String): Boolean {
     return conf.lineSequence().any { rawLine ->
         val line = rawLine.trim()
-        line == "client" || line.startsWith("remote ")
+        line == "client" || line.startsWith("remote ") || line.startsWith("remote\t")
     }
 }
 
@@ -114,12 +114,36 @@ fun parseOpenVPNConfig(conf: String): OpenVPNBean {
         val values = arguments.drop(1)
         when (directive) {
             "remote" -> {
-                val server = values.getOrNull(0).orEmpty()
+                var server = values.getOrNull(0).orEmpty()
                 if (server.isBlank() || foundRemote) continue
+                var port = values.getOrNull(1)?.toIntOrNull()
+                if (port == null && server.contains(':')) {
+                    if (server.startsWith('[') && server.contains("]:")) {
+                        val hostPart = server.substringBeforeLast("]:").removePrefix("[")
+                        val portPart = server.substringAfterLast("]:").toIntOrNull()
+                        if (portPart != null) {
+                            server = hostPart
+                            port = portPart
+                        }
+                    } else if (server.count { it == ':' } == 1) {
+                        val parts = server.split(':')
+                        val portPart = parts[1].toIntOrNull()
+                        if (portPart != null) {
+                            server = parts[0]
+                            port = portPart
+                        }
+                    }
+                }
                 bean.serverAddress = server
-                bean.serverPort = values.getOrNull(1)?.toIntOrNull() ?: 1194
+                bean.serverPort = port ?: 1194
                 values.getOrNull(2)?.let { bean.network = parseOpenVPNNetwork(it) }
                 foundRemote = true
+            }
+
+            "port", "rport" -> values.firstOrNull()?.toIntOrNull()?.let {
+                if (bean.serverPort == 1194 || bean.serverPort == 0) {
+                    bean.serverPort = it
+                }
             }
 
             "proto" -> values.firstOrNull()?.let { bean.network = parseOpenVPNNetwork(it) }
@@ -148,8 +172,11 @@ fun parseOpenVPNConfig(conf: String): OpenVPNBean {
 
             "data-ciphers" -> bean.dataCiphers = values.joinToString("\n") { it.replace(':', '\n') }
 
-            "cipher" -> if (bean.dataCiphers.isBlank()) bean.dataCiphers =
-                values.firstOrNull().orEmpty()
+            "cipher" -> {
+                val c = values.firstOrNull().orEmpty()
+                if (bean.cipher.isBlank()) bean.cipher = c
+                if (bean.dataCiphers.isBlank()) bean.dataCiphers = c
+            }
 
             "auth" -> bean.auth = values.firstOrNull().orEmpty()
 

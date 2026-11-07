@@ -78,8 +78,8 @@ public class OpenVPNBean extends AbstractBean {
         output.writeString(dataCiphers);
         output.writeString(auth);
         output.writeString(compression);
-        output.writeBoolean(redirectGateway);
-        output.writeInt(mtu);
+        output.writeBoolean(redirectGateway != null ? redirectGateway : false);
+        output.writeInt(mtu != null ? mtu : 1500);
         output.writeString(serverNameType);
         output.writeString(peerFingerprint);
         output.writeString(remoteCertificateKU);
