@@ -39,14 +39,14 @@ public class ShadowQUICBean extends AbstractBean {
     public void serialize(ByteBufferOutput output) {
         output.writeInt(1);
         super.serialize(output);
-        output.writeString(username);
-        output.writeString(password);
-        output.writeString(sni);
-        output.writeString(alpn);
-        output.writeString(congestionControl);
-        output.writeBoolean(udpOverStream);
-        output.writeBoolean(zeroRttHandshake);
-        output.writeBoolean(sunnyQuic);
+        output.writeString(username != null ? username : "");
+        output.writeString(password != null ? password : "");
+        output.writeString(sni != null ? sni : "");
+        output.writeString(alpn != null ? alpn : "");
+        output.writeString(congestionControl != null ? congestionControl : "bbr");
+        output.writeBoolean(udpOverStream != null ? udpOverStream : false);
+        output.writeBoolean(zeroRttHandshake != null ? zeroRttHandshake : false);
+        output.writeBoolean(sunnyQuic != null ? sunnyQuic : false);
     }
 
     @Override
@@ -61,6 +61,14 @@ public class ShadowQUICBean extends AbstractBean {
         udpOverStream = input.readBoolean();
         zeroRttHandshake = input.readBoolean();
         sunnyQuic = input.readBoolean();
+    }
+
+    @Override
+    public String displayAddress() {
+        if (serverAddress == null || serverAddress.isEmpty()) {
+            return "127.0.0.1:" + (serverPort != null ? serverPort : 443);
+        }
+        return super.displayAddress();
     }
 
     @Override

@@ -1640,7 +1640,8 @@ class ProtocolValidityTest {
             "io.nekohasekai.sagernet.ui.profile.TailscaleSettingsActivity",
             "io.nekohasekai.sagernet.ui.profile.TorSettingsActivity",
             "io.nekohasekai.sagernet.ui.profile.MieruSettingsActivity",
-            "io.nekohasekai.sagernet.ui.profile.ShadowsocksRSettingsActivity"
+            "io.nekohasekai.sagernet.ui.profile.ShadowsocksRSettingsActivity",
+            "io.nekohasekai.sagernet.ui.profile.ShadowQUICSettingsActivity"
         )
         for (className in expectedActivities) {
             val clazz = Class.forName(className)
@@ -1650,5 +1651,33 @@ class ProtocolValidityTest {
                 io.nekohasekai.sagernet.ui.profile.ProfileSettingsActivity::class.java.isAssignableFrom(clazz)
             )
         }
+    }
+
+    @Test
+    fun testShadowQUICSerializationNullSafetyAndAliases() {
+        val emptyBean = ShadowQUICBean()
+        assertEquals("127.0.0.1:443", emptyBean.displayAddress())
+        val cloned = emptyBean.clone()
+        assertNotNull(cloned)
+        assertFalse(cloned.canTCPing())
+
+        // Test alternative prefix & param aliases
+        val aliasLink = "shadowquic://sq-user:sq-pass@9.9.9.9:1443?server_name=camouflage.example.com&udp_over_stream=1&zero_rtt_handshake=1&sunnyquic=1#alias-node"
+        val parsed = parseShadowQUIC(aliasLink)
+        assertEquals("9.9.9.9", parsed.serverAddress)
+        assertEquals(1443, parsed.serverPort)
+        assertEquals("sq-user", parsed.username)
+        assertEquals("sq-pass", parsed.password)
+        assertEquals("camouflage.example.com", parsed.sni)
+        assertEquals(true, parsed.udpOverStream)
+        assertEquals(true, parsed.zeroRttHandshake)
+        assertEquals(true, parsed.sunnyQuic)
+        assertEquals("alias-node", parsed.name)
+
+        val uri = parsed.toUri()
+        assertTrue(uri.startsWith("sq://"))
+        assertTrue(uri.contains("udp_mode=stream"))
+        assertTrue(uri.contains("zero_rtt=true"))
+        assertTrue(uri.contains("sunny_quic=true"))
     }
 }

@@ -950,13 +950,13 @@ object RawUpdater : GroupUpdater() {
                         }
 
                         "shadowquic", "sq" -> {
-                            val bean = ShadowQUICBean()
+                            val bean = ShadowQUICBean().apply { initializeDefaultValues() }
                             for (opt in proxy) {
                                 if (opt.value == null) continue
                                 when (opt.key.replace("_", "-")) {
                                     "name" -> bean.name = opt.value.toString()
-                                    "server" -> bean.serverAddress = opt.value.toString()
-                                    "port" -> bean.serverPort = opt.value.toString().toIntOrNull() ?: 443
+                                    "server", "host", "address" -> bean.serverAddress = opt.value.toString()
+                                    "port", "server-port" -> bean.serverPort = opt.value.toString().toIntOrNull() ?: 443
                                     "username", "user" -> bean.username = opt.value.toString()
                                     "password", "pass" -> bean.password = opt.value.toString()
                                     "sni", "server-name" -> bean.sni = opt.value.toString()
@@ -966,11 +966,12 @@ object RawUpdater : GroupUpdater() {
                                             else -> v.toString()
                                         }
                                     }
-                                    "congestion", "congestion-controller" -> bean.congestionControl = opt.value.toString()
-                                    "udp-mode", "udp-mod" -> {
-                                        bean.udpOverStream = opt.value.toString().lowercase() == "stream"
+                                    "congestion", "congestion-control", "congestion-controller" -> bean.congestionControl = opt.value.toString()
+                                    "udp-mode", "udp-mod", "udp-over-stream" -> {
+                                        val v = opt.value.toString().lowercase()
+                                        bean.udpOverStream = v == "stream" || v == "true" || v == "1"
                                     }
-                                    "zero-rtt" -> bean.zeroRttHandshake = opt.value.toString() == "true" || opt.value.toString() == "1"
+                                    "zero-rtt", "zero-rtt-handshake" -> bean.zeroRttHandshake = opt.value.toString() == "true" || opt.value.toString() == "1"
                                     "sunny-quic", "sunnyquic" -> bean.sunnyQuic = opt.value.toString() == "true" || opt.value.toString() == "1"
                                 }
                             }
