@@ -40,6 +40,7 @@ import io.nekohasekai.sagernet.fmt.v2ray.toUriVMessVLESSTrojan
 import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
 import io.nekohasekai.sagernet.fmt.wireguard.buildSingBoxOutboundWireguardBean
 import io.nekohasekai.sagernet.fmt.wireguard.parseWireGuardLink
+import io.nekohasekai.sagernet.fmt.wireguard.toUri
 import io.nekohasekai.sagernet.group.RawUpdater
 import kotlinx.coroutines.runBlocking
 import moe.matsuri.nb4a.SingBoxOptions
@@ -119,6 +120,58 @@ class ProtocolValidityTest {
         assertEquals(51820, outbound.peers[0].port)
         assertEquals(listOf(1, 2, 3), outbound.peers[0].reserved)
         assertEquals(25, outbound.peers[0].persistent_keepalive_interval)
+
+        // Test toUri roundtrip
+        val uri = bean.toUri()
+        val reBean = parseWireGuardLink(uri)
+        assertEquals(bean.serverAddress, reBean.serverAddress)
+        assertEquals(bean.serverPort, reBean.serverPort)
+        assertEquals(bean.privateKey, reBean.privateKey)
+        assertEquals(bean.peerPublicKey, reBean.peerPublicKey)
+        assertEquals(bean.peerPreSharedKey, reBean.peerPreSharedKey)
+        assertEquals(bean.reserved, reBean.reserved)
+
+        // Test base64 reserved bytes
+        val base64ReservedLink = "wireguard://privkey@1.2.3.4:51820?publickey=pubkey&reserved=AQID"
+        val base64ReservedBean = parseWireGuardLink(base64ReservedLink)
+        val base64Outbound = buildSingBoxOutboundWireguardBean(base64ReservedBean)
+        assertEquals(listOf(1, 2, 3), base64Outbound.peers[0].reserved)
+
+        // Test native .conf parsing
+        val wgConf = """
+            [Interface]
+            PrivateKey = aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa=
+            Address = 10.0.0.2/32, fd00::2/128
+            DNS = 1.1.1.1
+            MTU = 1360
+
+            [Peer]
+            PublicKey = bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb=
+            PresharedKey = ccccccccccccccccccccccccccccccccccccccccccc=
+            Endpoint = 198.51.100.1:51820
+            AllowedIPs = 0.0.0.0/0, ::/0
+            PersistentKeepalive = 21
+            Reserved = 1, 2, 3
+        """.trimIndent()
+        val parsedConfBeans = RawUpdater.parseWireGuard(wgConf)
+        assertEquals(1, parsedConfBeans.size)
+        val confBean = parsedConfBeans[0]
+        assertEquals("198.51.100.1", confBean.serverAddress)
+        assertEquals(51820, confBean.serverPort)
+        assertEquals("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa=", confBean.privateKey)
+        assertEquals("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb=", confBean.peerPublicKey)
+        assertEquals("ccccccccccccccccccccccccccccccccccccccccccc=", confBean.peerPreSharedKey)
+        assertEquals(1360, confBean.mtu)
+        assertEquals(21, confBean.persistentKeepalive)
+        assertEquals("1, 2, 3", confBean.reserved)
+
+        // Test RawUpdater with .conf filename
+        val fileProxies = runBlocking { RawUpdater.parseRaw(wgConf, "wg0.conf") }
+        assertNotNull(fileProxies)
+        assertEquals(1, fileProxies!!.size)
+        val fileBean = fileProxies[0] as WireGuardBean
+        assertEquals("198.51.100.1", fileBean.serverAddress)
+        assertEquals(51820, fileBean.serverPort)
     }
 
     @Test

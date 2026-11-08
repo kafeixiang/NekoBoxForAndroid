@@ -1122,8 +1122,14 @@ object RawUpdater : GroupUpdater() {
             val peerBean = bean.clone()
             peerBean.serverAddress = endpoint.substringBeforeLast(":")
             peerBean.serverPort = endpoint.substringAfterLast(":").toIntOrNull() ?: continue
-            peerBean.peerPublicKey = peer["PublicKey"] ?: continue
-            peerBean.peerPreSharedKey = peer["PresharedKey"]
+            peerBean.peerPublicKey = peer["PublicKey"] ?: peer["public_key"] ?: continue
+            peerBean.peerPreSharedKey = peer["PresharedKey"] ?: peer["PreSharedKey"] ?: peer["preshared_key"] ?: peer["psk"]
+            peer["PersistentKeepalive"]?.toIntOrNull()?.let {
+                peerBean.persistentKeepalive = it
+            }
+            (peer["Reserved"] ?: peer["reserved"] ?: iface["Reserved"] ?: iface["reserved"])?.let {
+                peerBean.reserved = it
+            }
             beans.add(peerBean.applyDefaultValues())
         }
         if (beans.isEmpty()) error("Empty available peer list")
