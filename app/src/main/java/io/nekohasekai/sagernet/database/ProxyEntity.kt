@@ -67,6 +67,7 @@ import moe.matsuri.nb4a.proxy.config.ConfigBean
 import moe.matsuri.nb4a.proxy.config.ConfigSettingActivity
 import moe.matsuri.nb4a.proxy.neko.*
 import moe.matsuri.nb4a.proxy.shadowtls.ShadowTLSSettingsActivity
+import moe.matsuri.nb4a.proxy.shadowtls.toUri
 
 @Entity(
     tableName = "proxy_entities", indices = [Index("groupId", name = "groupId")]
@@ -362,6 +363,7 @@ data class ProxyEntity(
             is TailscaleBean -> toUri()
             is TailcatBean -> toUri()
             is TorBean -> toUri()
+            is ShadowTLSBean -> toUri()
             is NekoBean -> ""
             else -> toUniversalLink()
         }

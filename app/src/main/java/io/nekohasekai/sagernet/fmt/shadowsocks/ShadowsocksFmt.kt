@@ -10,6 +10,9 @@ fun ShadowsocksBean.fixPluginName() {
     if (plugin.startsWith("simple-obfs")) {
         plugin = plugin.replaceFirst("simple-obfs", "obfs-local")
     }
+    if (plugin.startsWith("shadowtls")) {
+        plugin = plugin.replaceFirst("shadowtls", "shadow-tls")
+    }
 }
 
 fun parseShadowsocks(url: String): ShadowsocksBean {
@@ -93,6 +96,7 @@ fun parseShadowsocks(url: String): ShadowsocksBean {
             }
             val remarks = url.substringAfter("#").unUrlSafe()
             if (remarks.isNotBlank()) name = remarks
+            fixPluginName()
         }
     }
 
@@ -163,12 +167,12 @@ fun buildSingBoxOutboundShadowsocksBean(bean: ShadowsocksBean): SingBoxOptions.O
         if (bean.plugin.isNotBlank()) {
             val p = bean.plugin.substringBefore(";")
             val pOpts = if (bean.plugin.contains(";")) bean.plugin.substringAfter(";") else ""
-            if (p != "none" && p != "shadow-tls") {
+            if (p != "none" && p != "shadow-tls" && p != "shadowtls") {
                 plugin = p
                 plugin_opts = pOpts
             }
         }
-        if (bean.sUoT == true || bean.plugin.startsWith("shadow-tls")) {
+        if (bean.sUoT == true || bean.plugin.startsWith("shadow-tls") || bean.plugin.startsWith("shadowtls")) {
             udp_over_tcp = SingBoxOptions.UDPOverTCPOptions().apply {
                 enabled = true
                 version = bean.sUoTVersion ?: 2

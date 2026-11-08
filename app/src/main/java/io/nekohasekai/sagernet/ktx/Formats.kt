@@ -30,6 +30,7 @@ import io.nekohasekai.sagernet.fmt.trojan_go.parseTrojanGo
 import io.nekohasekai.sagernet.fmt.v2ray.parseV2Ray
 import io.nekohasekai.sagernet.fmt.wireguard.parseWireGuardLink
 import moe.matsuri.nb4a.proxy.anytls.parseAnytls
+import moe.matsuri.nb4a.proxy.shadowtls.parseShadowTLSLink
 import moe.matsuri.nb4a.utils.JavaUtil.gson
 import moe.matsuri.nb4a.utils.Util
 import okhttp3.HttpUrl
@@ -321,6 +322,13 @@ suspend fun parseProxies(text: String): List<AbstractBean> {
             Logs.d("Try parse WireGuard link: $this")
             runCatching {
                 entities.add(parseWireGuardLink(this))
+            }.onFailure {
+                Logs.w(it)
+            }
+        } else if (startsWith("shadowtls://") || startsWith("shadow-tls://")) {
+            Logs.d("Try parse ShadowTLS link: $this")
+            runCatching {
+                entities.add(parseShadowTLSLink(this))
             }.onFailure {
                 Logs.w(it)
             }

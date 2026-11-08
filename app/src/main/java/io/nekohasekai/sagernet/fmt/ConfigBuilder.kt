@@ -548,7 +548,7 @@ fun buildConfig(
                     // udp over tcp
                     try {
                         val sUoT = bean.javaClass.getField("sUoT").get(bean)
-                        val isSSWithShadowTLS = bean is ShadowsocksBean && bean.plugin.startsWith("shadow-tls")
+                        val isSSWithShadowTLS = bean is ShadowsocksBean && (bean.plugin.startsWith("shadow-tls") || bean.plugin.startsWith("shadowtls"))
                         if ((sUoT is Boolean && sUoT) || isSSWithShadowTLS) {
                             val uotVer = try {
                                 bean.javaClass.getField("sUoTVersion").get(bean) as? Int ?: 2
@@ -654,19 +654,20 @@ fun buildConfig(
                 pastOutbound = currentOutbound
                 pastEntity = proxyEntity
 
-                if (bean is ShadowsocksBean && bean.plugin.isNotBlank() && bean.plugin.substringBefore(";") == "shadow-tls") {
+                if (bean is ShadowsocksBean && (bean.plugin.startsWith("shadow-tls") || bean.plugin.startsWith("shadowtls"))) {
+                    val pluginType = bean.plugin.substringBefore(";")
                     val shadowtlsTag = "$tagOut-shadowtls"
                     currentOutbound._hack_config_map["detour"] = shadowtlsTag
                     (currentOutbound as? Outbound_ShadowsocksOptions)?.detour = shadowtlsTag
 
                     val opts = PluginOptions(
-                        "shadow-tls",
+                        pluginType,
                         if (bean.plugin.contains(";")) bean.plugin.substringAfter(";") else ""
                     )
-                    val tlsHost = opts["host"] ?: opts["sni"] ?: bean.serverAddress
-                    val tlsPassword = opts["password"] ?: ""
+                    val tlsHost = opts["host"] ?: opts["sni"] ?: opts["server_name"] ?: opts["servername"] ?: bean.serverAddress
+                    val tlsPassword = opts["password"] ?: opts["passwd"] ?: opts["pwd"] ?: opts["secret"] ?: ""
                     val tlsVersion = opts["version"]?.toIntOrNull() ?: 3
-                    val tlsFingerprint = opts["fingerprint"] ?: opts["client-fingerprint"]
+                    val tlsFingerprint = opts["fingerprint"] ?: opts["client-fingerprint"] ?: opts["fp"]
 
                     val shadowtlsOutbound = Outbound_ShadowTLSOptions().apply {
                         type = "shadowtls"

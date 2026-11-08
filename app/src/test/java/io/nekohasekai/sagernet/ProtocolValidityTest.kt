@@ -50,6 +50,8 @@ import moe.matsuri.nb4a.proxy.anytls.parseAnytls
 import moe.matsuri.nb4a.proxy.anytls.toUri
 import moe.matsuri.nb4a.proxy.shadowtls.ShadowTLSBean
 import moe.matsuri.nb4a.proxy.shadowtls.buildSingBoxOutboundShadowTLSBean
+import moe.matsuri.nb4a.proxy.shadowtls.parseShadowTLSLink
+import moe.matsuri.nb4a.proxy.shadowtls.toUri
 import com.github.shadowsocks.plugin.PluginOptions
 import io.nekohasekai.sagernet.fmt.juicity.canUseSingBox
 import io.nekohasekai.sagernet.fmt.mieru.MieruBean
@@ -1001,6 +1003,31 @@ class ProtocolValidityTest {
         assertNull(outbound.plugin_opts)
         assertNotNull(outbound.udp_over_tcp)
         assertEquals(true, outbound.udp_over_tcp.enabled)
+
+        // Test parseShadowsocks with shadowtls alias (without hyphen)
+        val aliasLink = "ss://MjAyMi1ibGFrZTMtYWVzLTEyOC1nY206c3NwYXNzd29yZA==@1.2.3.4:443?plugin=shadowtls%3Bhost%3Dgateway.icloud.com%3Bpassword%3Dstlspass%3Bversion%3D3#test-alias"
+        val aliasBean = parseShadowsocks(aliasLink)
+        assertEquals("shadow-tls;host=gateway.icloud.com;password=stlspass;version=3", aliasBean.plugin)
+
+        // Test parseShadowTLSLink and toUri round-trip
+        val stlsLink = "shadow-tls://secretpass@my.shadowtls.net:8443?host=gateway.icloud.com&version=3&fingerprint=chrome#my-stls"
+        val parsedStls = parseShadowTLSLink(stlsLink)
+        assertEquals("my.shadowtls.net", parsedStls.serverAddress)
+        assertEquals(8443, parsedStls.serverPort)
+        assertEquals("secretpass", parsedStls.password)
+        assertEquals(3, parsedStls.version)
+        assertEquals("gateway.icloud.com", parsedStls.sni)
+        assertEquals("chrome", parsedStls.utlsFingerprint)
+        assertEquals("my-stls", parsedStls.name)
+
+        val exportedUri = parsedStls.toUri()
+        val reParsedStls = parseShadowTLSLink(exportedUri)
+        assertEquals(parsedStls.serverAddress, reParsedStls.serverAddress)
+        assertEquals(parsedStls.serverPort, reParsedStls.serverPort)
+        assertEquals(parsedStls.password, reParsedStls.password)
+        assertEquals(parsedStls.version, reParsedStls.version)
+        assertEquals(parsedStls.sni, reParsedStls.sni)
+        assertEquals(parsedStls.utlsFingerprint, reParsedStls.utlsFingerprint)
     }
 
     @Test
@@ -1059,6 +1086,22 @@ class ProtocolValidityTest {
         assertEquals("standalonepassword", stlsOutbound.password)
         assertNotNull(stlsOutbound.tls)
         assertEquals("gateway.icloud.com", stlsOutbound.tls.server_name)
+
+        // Test toUri on parsed Clash standalone ShadowTLS
+        val uri = stlsBean.toUri()
+        assertTrue(uri.startsWith("shadow-tls://"))
+        val fromUri = parseShadowTLSLink(uri)
+        assertEquals(stlsBean.serverAddress, fromUri.serverAddress)
+        assertEquals(stlsBean.serverPort, fromUri.serverPort)
+        assertEquals(stlsBean.password, fromUri.password)
+
+        // Test Formats.parseProxies with shadowtls:// and shadow-tls://
+        val proxiesFromLink = io.nekohasekai.sagernet.ktx.parseProxies("shadow-tls://secret@1.1.1.1:443?host=cloudflare.com#cf")
+        assertEquals(1, proxiesFromLink.size)
+        val linkBean = proxiesFromLink[0] as ShadowTLSBean
+        assertEquals("1.1.1.1", linkBean.serverAddress)
+        assertEquals("secret", linkBean.password)
+        assertEquals("cloudflare.com", linkBean.sni)
     }
 
     @Test
