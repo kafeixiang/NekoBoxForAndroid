@@ -50,20 +50,20 @@ public class TailscaleBean extends AbstractBean {
     public void serialize(ByteBufferOutput output) {
         output.writeInt(1);
         super.serialize(output);
-        output.writeString(stateDirectory);
-        output.writeString(authKey);
-        output.writeString(controlURL);
-        output.writeBoolean(ephemeral);
-        output.writeString(hostname);
-        output.writeBoolean(acceptRoutes);
-        output.writeString(exitNode);
-        output.writeBoolean(exitNodeAllowLANAccess);
-        output.writeString(advertiseRoutes);
-        output.writeBoolean(advertiseExitNode);
-        output.writeString(advertiseTags);
-        output.writeInt(listenPort);
-        output.writeBoolean(sshServer);
-        output.writeBoolean(advertiseFakeDNSRoutes);
+        output.writeString(stateDirectory != null ? stateDirectory : "");
+        output.writeString(authKey != null ? authKey : "");
+        output.writeString(controlURL != null ? controlURL : "");
+        output.writeBoolean(ephemeral != null ? ephemeral : false);
+        output.writeString(hostname != null ? hostname : "");
+        output.writeBoolean(acceptRoutes != null ? acceptRoutes : false);
+        output.writeString(exitNode != null ? exitNode : "");
+        output.writeBoolean(exitNodeAllowLANAccess != null ? exitNodeAllowLANAccess : false);
+        output.writeString(advertiseRoutes != null ? advertiseRoutes : "");
+        output.writeBoolean(advertiseExitNode != null ? advertiseExitNode : false);
+        output.writeString(advertiseTags != null ? advertiseTags : "");
+        output.writeInt(listenPort != null ? listenPort : 0);
+        output.writeBoolean(sshServer != null ? sshServer : false);
+        output.writeBoolean(advertiseFakeDNSRoutes != null ? advertiseFakeDNSRoutes : false);
     }
 
     @Override
@@ -101,7 +101,9 @@ public class TailscaleBean extends AbstractBean {
     @NotNull
     @Override
     public String displayAddress() {
-        return controlURL != null ? controlURL : "";
+        if (controlURL != null && !controlURL.isEmpty()) return controlURL;
+        if (exitNode != null && !exitNode.isEmpty()) return exitNode;
+        return "";
     }
 
     @Override

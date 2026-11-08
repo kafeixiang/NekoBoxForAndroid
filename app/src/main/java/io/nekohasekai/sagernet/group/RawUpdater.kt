@@ -16,6 +16,8 @@ import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.shadowsocksr.parseShadowsocksR
 import io.nekohasekai.sagernet.fmt.snell.parseClashSnell
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
+import io.nekohasekai.sagernet.fmt.tailscale.parseTailcatOutbound
+import io.nekohasekai.sagernet.fmt.tailscale.parseTailscaleEndpoint
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
 import io.nekohasekai.sagernet.fmt.openconnect.looksLikeOpenConnectConfig
 import io.nekohasekai.sagernet.fmt.openconnect.parseOpenConnectConfig
@@ -872,6 +874,16 @@ object RawUpdater : GroupUpdater() {
                             proxies.add(bean)
                         }
 
+                        "tailscale" -> {
+                            val bean = parseTailscaleEndpoint(proxy)
+                            proxies.add(bean)
+                        }
+
+                        "tailcat" -> {
+                            val bean = parseTailcatOutbound(proxy)
+                            proxies.add(bean)
+                        }
+
                         "wireguard" -> {
                             val bean = WireGuardBean()
                             val localAddrs = mutableListOf<String>()
@@ -1129,6 +1141,26 @@ object RawUpdater : GroupUpdater() {
                             if (ty == null || ty == "" ||
                                 ty == "dns" || ty == "block" || ty == "direct" || ty == "selector" || ty == "urltest"
                             ) {
+                                null
+                            } else {
+                                it
+                            }
+                        }.map {
+                            ConfigBean().apply {
+                                applyDefaultValues()
+                                type = 1
+                                config = it.toStringPretty()
+                                name = it.getStr("tag")
+                            }
+                        }
+                }
+
+                json.has("endpoints") -> {
+                    return json.getJSONArray("endpoints")
+                        .filterIsInstance<JSONObject>()
+                        .mapNotNull {
+                            val ty = it.getStr("type")
+                            if (ty == null || ty == "") {
                                 null
                             } else {
                                 it

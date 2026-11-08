@@ -18,6 +18,8 @@ import io.nekohasekai.sagernet.fmt.shadowsocks.parseShadowsocks
 import io.nekohasekai.sagernet.fmt.shadowsocksr.parseShadowsocksR
 import io.nekohasekai.sagernet.fmt.snell.parseSnell
 import io.nekohasekai.sagernet.fmt.socks.parseSOCKS
+import io.nekohasekai.sagernet.fmt.tailscale.parseTailcat
+import io.nekohasekai.sagernet.fmt.tailscale.parseTailscale
 import io.nekohasekai.sagernet.fmt.trojan.parseTrojan
 import io.nekohasekai.sagernet.fmt.tuic.parseTuic
 import io.nekohasekai.sagernet.fmt.juicity.parseJuicity
@@ -290,6 +292,20 @@ suspend fun parseProxies(text: String): List<AbstractBean> {
             Logs.d("Try parse OpenConnect link: $this")
             runCatching {
                 entities.add(parseOpenConnect(this))
+            }.onFailure {
+                Logs.w(it)
+            }
+        } else if (startsWith("tailscale://")) {
+            Logs.d("Try parse Tailscale link: $this")
+            runCatching {
+                entities.add(parseTailscale(this))
+            }.onFailure {
+                Logs.w(it)
+            }
+        } else if (startsWith("tailcat://")) {
+            Logs.d("Try parse Tailcat link: $this")
+            runCatching {
+                entities.add(parseTailcat(this))
             }.onFailure {
                 Logs.w(it)
             }

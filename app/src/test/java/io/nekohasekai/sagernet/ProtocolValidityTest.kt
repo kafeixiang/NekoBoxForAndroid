@@ -73,6 +73,11 @@ import io.nekohasekai.sagernet.fmt.tailscale.TailcatBean
 import io.nekohasekai.sagernet.fmt.tailscale.TailscaleBean
 import io.nekohasekai.sagernet.fmt.tailscale.buildSingBoxEndpointTailscaleBean
 import io.nekohasekai.sagernet.fmt.tailscale.buildSingBoxOutboundTailcatBean
+import io.nekohasekai.sagernet.fmt.tailscale.parseTailcat
+import io.nekohasekai.sagernet.fmt.tailscale.parseTailcatOutbound
+import io.nekohasekai.sagernet.fmt.tailscale.parseTailscale
+import io.nekohasekai.sagernet.fmt.tailscale.parseTailscaleEndpoint
+import io.nekohasekai.sagernet.fmt.tailscale.toUri
 import io.nekohasekai.sagernet.fmt.tor.TorBean
 import io.nekohasekai.sagernet.fmt.tor.buildSingBoxOutboundTorBean
 import io.nekohasekai.sagernet.fmt.trusttunnel.TrustTunnelBean
@@ -1287,6 +1292,180 @@ class ProtocolValidityTest {
         assertEquals("tskey-auth-12345", tailscaleEndpoint.auth_key)
         assertEquals("https://controlplane.tailscale.com", tailscaleEndpoint.control_url)
         assertEquals("neko-client", tailscaleEndpoint.hostname)
+    }
+
+    @Test
+    fun testTailscaleUriRoundtripAndParsing() {
+        val original = TailscaleBean().apply {
+            name = "MyTailscaleNode"
+            authKey = "tskey-auth-abcdef123456"
+            controlURL = "https://headscale.example.com:443"
+            hostname = "client-phone"
+            exitNode = "exit-node-tokyo"
+            ephemeral = true
+            acceptRoutes = true
+            exitNodeAllowLANAccess = true
+            advertiseRoutes = "10.0.0.0/24\n192.168.1.0/24"
+            advertiseExitNode = true
+            advertiseTags = "tag:server\ntag:prod"
+            listenPort = 41641
+            sshServer = true
+            advertiseFakeDNSRoutes = true
+            stateDirectory = "/var/lib/tailscale"
+        }
+
+        // Test NPE safety with null fields in Kryo clone
+        val nullBean = TailscaleBean()
+        val clonedNull = nullBean.clone()
+        assertNotNull(clonedNull)
+
+        // Test Kryo serialization roundtrip
+        val cloned = original.clone()
+        assertEquals(original.authKey, cloned.authKey)
+        assertEquals(original.controlURL, cloned.controlURL)
+        assertEquals(original.hostname, cloned.hostname)
+        assertEquals(original.exitNode, cloned.exitNode)
+        assertEquals(original.ephemeral, cloned.ephemeral)
+        assertEquals(original.acceptRoutes, cloned.acceptRoutes)
+        assertEquals(original.exitNodeAllowLANAccess, cloned.exitNodeAllowLANAccess)
+        assertEquals(original.advertiseRoutes, cloned.advertiseRoutes)
+        assertEquals(original.advertiseExitNode, cloned.advertiseExitNode)
+        assertEquals(original.advertiseTags, cloned.advertiseTags)
+        assertEquals(original.listenPort, cloned.listenPort)
+        assertEquals(original.sshServer, cloned.sshServer)
+        assertEquals(original.advertiseFakeDNSRoutes, cloned.advertiseFakeDNSRoutes)
+
+        // Test toUri and parseTailscale
+        val uri = original.toUri()
+        assertTrue(uri.startsWith("tailscale://"))
+        val parsed = parseTailscale(uri)
+        assertEquals(original.authKey, parsed.authKey)
+        assertEquals(original.controlURL, parsed.controlURL)
+        assertEquals(original.hostname, parsed.hostname)
+        assertEquals(original.exitNode, parsed.exitNode)
+        assertEquals(original.ephemeral, parsed.ephemeral)
+        assertEquals(original.acceptRoutes, parsed.acceptRoutes)
+        assertEquals(original.exitNodeAllowLANAccess, parsed.exitNodeAllowLANAccess)
+        assertEquals(original.advertiseRoutes, parsed.advertiseRoutes)
+        assertEquals(original.advertiseExitNode, parsed.advertiseExitNode)
+        assertEquals(original.advertiseTags, parsed.advertiseTags)
+        assertEquals(original.listenPort, parsed.listenPort)
+        assertEquals(original.sshServer, parsed.sshServer)
+        assertEquals(original.name, parsed.name)
+
+        // Test Formats.parseProxies
+        val parsedList = runBlocking { io.nekohasekai.sagernet.ktx.parseProxies(uri) }
+        assertEquals(1, parsedList.size)
+        assertTrue(parsedList[0] is TailscaleBean)
+        val fromSub = parsedList[0] as TailscaleBean
+        assertEquals(original.authKey, fromSub.authKey)
+        assertEquals(original.hostname, fromSub.hostname)
+
+        // Test parseTailscaleEndpoint from Map
+        val map = mapOf<String, Any?>(
+            "tag" to "tailscale-node",
+            "auth_key" to "tskey-auth-xyz",
+            "control_url" to "https://hs.test.org",
+            "hostname" to "node-abc",
+            "exit_node" to "exit-us",
+            "ephemeral" to true,
+            "accept_routes" to true,
+            "advertise_routes" to listOf("10.10.0.0/16"),
+            "listen_port" to 45678,
+            "ssh_server" to true
+        )
+        val fromMap = parseTailscaleEndpoint(map)
+        assertEquals("tailscale-node", fromMap.name)
+        assertEquals("tskey-auth-xyz", fromMap.authKey)
+        assertEquals("https://hs.test.org", fromMap.controlURL)
+        assertEquals("node-abc", fromMap.hostname)
+        assertEquals("exit-us", fromMap.exitNode)
+        assertEquals(true, fromMap.ephemeral)
+        assertEquals(true, fromMap.acceptRoutes)
+        assertEquals("10.10.0.0/16", fromMap.advertiseRoutes)
+        assertEquals(45678, fromMap.listenPort)
+        assertEquals(true, fromMap.sshServer)
+
+        // Test ProxyEntity integration
+        val entity = ProxyEntity().apply { putBean(original) }
+        assertEquals(ProxyEntity.TYPE_TAILSCALE, entity.type)
+        assertTrue(entity.haveStandardLink())
+        assertEquals(uri, entity.toStdLink())
+    }
+
+    @Test
+    fun testTailcatUriRoundtripAndParsing() {
+        val original = TailcatBean().apply {
+            name = "MyTailcatNode"
+            privateKey = "privKeyB64=="
+            serverPublicKey = "srvPubB64=="
+            serverDiscoKey = "srvDiscoB64=="
+            preSharedKey = "pskB64=="
+            derpMapURL = "https://derp.example.com/map"
+            derpRegion = 2
+            derpServers = "derp1.example.com\nderp2.example.com"
+        }
+
+        // Test NPE safety with null fields in Kryo clone
+        val nullBean = TailcatBean()
+        val clonedNull = nullBean.clone()
+        assertNotNull(clonedNull)
+
+        // Test Kryo serialization roundtrip
+        val cloned = original.clone()
+        assertEquals(original.privateKey, cloned.privateKey)
+        assertEquals(original.serverPublicKey, cloned.serverPublicKey)
+        assertEquals(original.serverDiscoKey, cloned.serverDiscoKey)
+        assertEquals(original.preSharedKey, cloned.preSharedKey)
+        assertEquals(original.derpMapURL, cloned.derpMapURL)
+        assertEquals(original.derpRegion, cloned.derpRegion)
+        assertEquals(original.derpServers, cloned.derpServers)
+
+        // Test toUri and parseTailcat
+        val uri = original.toUri()
+        assertTrue(uri.startsWith("tailcat://"))
+        val parsed = parseTailcat(uri)
+        assertEquals(original.privateKey, parsed.privateKey)
+        assertEquals(original.serverPublicKey, parsed.serverPublicKey)
+        assertEquals(original.serverDiscoKey, parsed.serverDiscoKey)
+        assertEquals(original.preSharedKey, parsed.preSharedKey)
+        assertEquals(original.derpMapURL, parsed.derpMapURL)
+        assertEquals(original.derpRegion, parsed.derpRegion)
+        assertEquals(original.derpServers, parsed.derpServers)
+        assertEquals(original.name, parsed.name)
+
+        // Test Formats.parseProxies
+        val parsedList = runBlocking { io.nekohasekai.sagernet.ktx.parseProxies(uri) }
+        assertEquals(1, parsedList.size)
+        assertTrue(parsedList[0] is TailcatBean)
+        val fromSub = parsedList[0] as TailcatBean
+        assertEquals(original.serverPublicKey, fromSub.serverPublicKey)
+        assertEquals(original.serverDiscoKey, fromSub.serverDiscoKey)
+
+        // Test parseTailcatOutbound from Map
+        val map = mapOf<String, Any?>(
+            "tag" to "tailcat-p2p",
+            "private_key" to "pk123",
+            "server_public_key" to "spk456",
+            "server_disco_key" to "sdk789",
+            "pre_shared_key" to "psk101",
+            "derp_region" to 3,
+            "derp_servers" to listOf("derp.a.com", "derp.b.com")
+        )
+        val fromMap = parseTailcatOutbound(map)
+        assertEquals("tailcat-p2p", fromMap.name)
+        assertEquals("pk123", fromMap.privateKey)
+        assertEquals("spk456", fromMap.serverPublicKey)
+        assertEquals("sdk789", fromMap.serverDiscoKey)
+        assertEquals("psk101", fromMap.preSharedKey)
+        assertEquals(3, fromMap.derpRegion)
+        assertEquals("derp.a.com\nderp.b.com", fromMap.derpServers)
+
+        // Test ProxyEntity integration
+        val entity = ProxyEntity().apply { putBean(original) }
+        assertEquals(ProxyEntity.TYPE_TAILCAT, entity.type)
+        assertTrue(entity.haveStandardLink())
+        assertEquals(uri, entity.toStdLink())
     }
 
     @Test

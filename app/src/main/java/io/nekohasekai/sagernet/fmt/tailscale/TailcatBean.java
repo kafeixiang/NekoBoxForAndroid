@@ -36,13 +36,13 @@ public class TailcatBean extends AbstractBean {
     public void serialize(ByteBufferOutput output) {
         output.writeInt(0);
         super.serialize(output);
-        output.writeString(privateKey);
-        output.writeString(serverPublicKey);
-        output.writeString(serverDiscoKey);
-        output.writeString(preSharedKey);
-        output.writeString(derpMapURL);
-        output.writeInt(derpRegion);
-        output.writeString(derpServers);
+        output.writeString(privateKey != null ? privateKey : "");
+        output.writeString(serverPublicKey != null ? serverPublicKey : "");
+        output.writeString(serverDiscoKey != null ? serverDiscoKey : "");
+        output.writeString(preSharedKey != null ? preSharedKey : "");
+        output.writeString(derpMapURL != null ? derpMapURL : "");
+        output.writeInt(derpRegion != null ? derpRegion : 0);
+        output.writeString(derpServers != null ? derpServers : "");
     }
 
     @Override
@@ -70,6 +70,7 @@ public class TailcatBean extends AbstractBean {
     public String displayAddress() {
         if (serverPublicKey != null && !serverPublicKey.isEmpty()) return serverPublicKey;
         if (derpMapURL != null && !derpMapURL.isEmpty()) return derpMapURL;
+        if (derpServers != null && !derpServers.isEmpty()) return derpServers;
         return "";
     }
 
