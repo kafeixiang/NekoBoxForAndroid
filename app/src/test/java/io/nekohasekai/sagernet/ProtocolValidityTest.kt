@@ -1453,7 +1453,7 @@ class ProtocolValidityTest {
             "server_disco_key" to "sdk789",
             "pre_shared_key" to "psk101",
             "derp_region" to 3,
-            "derp_servers" to listOf("derp.a.com", "derp.b.com")
+            "derp_servers" to listOf("derp.a.com", mapOf("host" to "derp.custom.com", "derp_port" to 8443))
         )
         val fromMap = parseTailcatOutbound(map)
         assertEquals("tailcat-p2p", fromMap.name)
@@ -1462,7 +1462,15 @@ class ProtocolValidityTest {
         assertEquals("sdk789", fromMap.serverDiscoKey)
         assertEquals("psk101", fromMap.preSharedKey)
         assertEquals(3, fromMap.derpRegion)
-        assertEquals("derp.a.com\nderp.b.com", fromMap.derpServers)
+        assertEquals("derp.a.com\nderp.custom.com:8443", fromMap.derpServers)
+
+        // Test custom DERP server host & port extraction in outbound builder
+        val outboundWithPort = buildSingBoxOutboundTailcatBean(fromMap)
+        assertEquals(2, outboundWithPort.derp_servers?.size)
+        assertEquals("derp.a.com", outboundWithPort.derp_servers?.get(0)?.host)
+        assertNull(outboundWithPort.derp_servers?.get(0)?.derp_port)
+        assertEquals("derp.custom.com", outboundWithPort.derp_servers?.get(1)?.host)
+        assertEquals(8443, outboundWithPort.derp_servers?.get(1)?.derp_port)
 
         // Test ProxyEntity integration
         val entity = ProxyEntity().apply { putBean(original) }

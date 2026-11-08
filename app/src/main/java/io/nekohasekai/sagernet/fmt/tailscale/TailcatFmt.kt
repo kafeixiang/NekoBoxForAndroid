@@ -23,7 +23,16 @@ fun buildSingBoxOutboundTailcatBean(bean: TailcatBean): SingBoxOptions.Outbound_
         } else {
             derp_servers = servers.map { server ->
                 SingBoxOptions.TailcatDERPServer().apply {
-                    host = server
+                    val trimmed = server.trim()
+                    if (trimmed.startsWith("[") && trimmed.contains("]:")) {
+                        host = trimmed.substringAfter("[").substringBefore("]")
+                        derp_port = trimmed.substringAfter("]:").toIntOrNull()
+                    } else if (trimmed.contains(":") && !trimmed.startsWith("[")) {
+                        host = trimmed.substringBeforeLast(":")
+                        derp_port = trimmed.substringAfterLast(":").toIntOrNull()
+                    } else {
+                        host = trimmed
+                    }
                 }
             }
         }
@@ -70,25 +79,44 @@ fun parseTailcat(url: String): TailcatBean {
             name = link.fragment!!.unUrlSafe()
         }
 
-        (link.queryParameter("public_key") ?: link.queryParameter("server_public_key") ?: link.queryParameter("serverPublicKey"))?.let {
+        (link.queryParameter("public_key")
+            ?: link.queryParameter("server_public_key")
+            ?: link.queryParameter("server-public-key")
+            ?: link.queryParameter("serverPublicKey"))?.let {
             serverPublicKey = it.unUrlSafe()
         }
-        (link.queryParameter("disco_key") ?: link.queryParameter("server_disco_key") ?: link.queryParameter("serverDiscoKey"))?.let {
+        (link.queryParameter("disco_key")
+            ?: link.queryParameter("server_disco_key")
+            ?: link.queryParameter("server-disco-key")
+            ?: link.queryParameter("serverDiscoKey"))?.let {
             serverDiscoKey = it.unUrlSafe()
         }
-        (link.queryParameter("psk") ?: link.queryParameter("pre_shared_key") ?: link.queryParameter("preSharedKey"))?.let {
+        (link.queryParameter("psk")
+            ?: link.queryParameter("pre_shared_key")
+            ?: link.queryParameter("pre-shared-key")
+            ?: link.queryParameter("preSharedKey"))?.let {
             preSharedKey = it.unUrlSafe()
         }
-        link.queryParameter("private_key")?.let {
+        (link.queryParameter("private_key")
+            ?: link.queryParameter("private-key")
+            ?: link.queryParameter("privateKey"))?.let {
             privateKey = it.unUrlSafe()
         }
-        link.queryParameter("derp_map_url")?.let {
+        (link.queryParameter("derp_map_url")
+            ?: link.queryParameter("derp-map-url")
+            ?: link.queryParameter("derpMapURL"))?.let {
             derpMapURL = it.unUrlSafe()
         }
-        link.queryParameter("derp_region")?.toIntOrNull()?.let {
+        (link.queryParameter("derp_region")
+            ?: link.queryParameter("derp-region")
+            ?: link.queryParameter("derpRegion"))?.toIntOrNull()?.let {
             derpRegion = it
         }
-        link.queryParameter("derp_servers")?.let {
+        (link.queryParameter("derp_servers")
+            ?: link.queryParameter("derp-servers")
+            ?: link.queryParameter("derp_server")
+            ?: link.queryParameter("derp-server")
+            ?: link.queryParameter("derpServers"))?.let {
             derpServers = it.unUrlSafe().replace(",", "\n")
         }
         if (serverPublicKey.isNullOrBlank() && link.host != "tailcat.local") {
@@ -107,13 +135,17 @@ fun parseTailcatOutbound(map: Map<String, Any?>): TailcatBean = TailcatBean().ap
             "server-public-key", "serverpublickey", "public-key" -> serverPublicKey = value.toString()
             "server-disco-key", "serverdiscokey", "disco-key" -> serverDiscoKey = value.toString()
             "pre-shared-key", "preshared-key", "psk" -> preSharedKey = value.toString()
-            "derp-map-url" -> derpMapURL = value.toString()
-            "derp-region" -> derpRegion = value.toString().toIntOrNull() ?: 0
-            "derp-servers" -> derpServers = when (value) {
+            "derp-map-url", "derpmapurl" -> derpMapURL = value.toString()
+            "derp-region", "derpregion" -> derpRegion = value.toString().toIntOrNull() ?: 0
+            "derp-servers", "derpservers" -> derpServers = when (value) {
                 is List<*> -> value.mapNotNull { server ->
                     when (server) {
                         is String -> server
-                        is Map<*, *> -> server["host"]?.toString()
+                        is Map<*, *> -> {
+                            val h = server["host"]?.toString() ?: ""
+                            val p = server["derp_port"]?.toString() ?: server["derp-port"]?.toString()
+                            if (h.isNotEmpty() && p != null) "$h:$p" else h
+                        }
                         else -> null
                     }
                 }.joinToString("\n")
