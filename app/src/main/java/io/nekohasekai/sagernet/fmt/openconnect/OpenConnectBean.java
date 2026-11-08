@@ -111,7 +111,7 @@ public class OpenConnectBean extends AbstractBean {
         output.writeString(authGroup);
         output.writeString(reportedOS);
         output.writeString(userAgent);
-        output.writeBoolean(allowInsecureCrypto);
+        output.writeBoolean(allowInsecureCrypto != null ? allowInsecureCrypto : false);
         output.writeString(certificateAuthority);
         output.writeString(clientCertificate);
         output.writeString(clientKey);
@@ -121,14 +121,16 @@ public class OpenConnectBean extends AbstractBean {
         output.writeString(mcaKeyPassword);
 
         // version 1
-        output.writeInt(formEntries.size());
-        for (FormEntry entry : formEntries) {
-            entry.serialize(output);
+        output.writeInt(formEntries != null ? formEntries.size() : 0);
+        if (formEntries != null) {
+            for (FormEntry entry : formEntries) {
+                entry.serialize(output);
+            }
         }
 
         // version 2
         output.writeString(localHostname);
-        output.writeBoolean(tlsInsecure);
+        output.writeBoolean(tlsInsecure != null ? tlsInsecure : false);
         output.writeString(tlsServerName);
         output.writeString(tlsPeerFingerprint);
     }

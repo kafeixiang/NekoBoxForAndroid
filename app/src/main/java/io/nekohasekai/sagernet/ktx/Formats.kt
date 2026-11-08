@@ -8,6 +8,9 @@ import io.nekohasekai.sagernet.fmt.hysteria.parseHysteria1
 import io.nekohasekai.sagernet.fmt.hysteria.parseHysteria2
 import io.nekohasekai.sagernet.fmt.masque.parseMASQUE
 import io.nekohasekai.sagernet.fmt.naive.parseNaive
+import io.nekohasekai.sagernet.fmt.openconnect.looksLikeOpenConnectConfig
+import io.nekohasekai.sagernet.fmt.openconnect.parseOpenConnect
+import io.nekohasekai.sagernet.fmt.openconnect.parseOpenConnectConfig
 import io.nekohasekai.sagernet.fmt.openvpn.looksLikeOpenVPNConfig
 import io.nekohasekai.sagernet.fmt.openvpn.parseOpenVPNConfig
 import io.nekohasekai.sagernet.fmt.parseUniversal
@@ -116,6 +119,12 @@ suspend fun parseProxies(text: String): List<AbstractBean> {
     if (looksLikeOpenVPNConfig(text)) {
         runCatching {
             return listOf(parseOpenVPNConfig(text))
+        }.onFailure {
+            Logs.w(it)
+        }
+    } else if (looksLikeOpenConnectConfig(text)) {
+        runCatching {
+            return listOf(parseOpenConnectConfig(text))
         }.onFailure {
             Logs.w(it)
         }
@@ -274,6 +283,13 @@ suspend fun parseProxies(text: String): List<AbstractBean> {
             Logs.d("Try parse MASQUE link: $this")
             runCatching {
                 entities.add(parseMASQUE(this))
+            }.onFailure {
+                Logs.w(it)
+            }
+        } else if (startsWith("anyconnect://") || startsWith("openconnect://")) {
+            Logs.d("Try parse OpenConnect link: $this")
+            runCatching {
+                entities.add(parseOpenConnect(this))
             }.onFailure {
                 Logs.w(it)
             }

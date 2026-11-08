@@ -61,6 +61,9 @@ import io.nekohasekai.sagernet.fmt.naive.parseNaive
 import io.nekohasekai.sagernet.fmt.naive.toUri
 import io.nekohasekai.sagernet.fmt.openconnect.OpenConnectBean
 import io.nekohasekai.sagernet.fmt.openconnect.buildSingBoxEndpointOpenConnectBean
+import io.nekohasekai.sagernet.fmt.openconnect.parseOpenConnect
+import io.nekohasekai.sagernet.fmt.openconnect.parseOpenConnectConfig
+import io.nekohasekai.sagernet.fmt.openconnect.toUri
 import io.nekohasekai.sagernet.fmt.openvpn.OpenVPNBean
 import io.nekohasekai.sagernet.fmt.openvpn.buildSingBoxEndpointOpenVPNBean
 import io.nekohasekai.sagernet.fmt.openvpn.parseOpenVPNConfig
@@ -1174,6 +1177,83 @@ class ProtocolValidityTest {
         assertEquals("ocuser", endpoint.username)
         assertEquals("ocpassword", endpoint.password)
         assertEquals("anyconnect", endpoint.flavor)
+
+        // Test clone & Kryo roundtrip
+        val cloned = bean.clone()
+        assertEquals("test-openconnect", cloned.name)
+        assertEquals("1.2.3.4:443", cloned.server)
+        assertEquals("ocuser", cloned.username)
+        assertEquals("ocpassword", cloned.password)
+        assertEquals("anyconnect", cloned.flavor)
+
+        // Test OpenConnect URI roundtrip
+        val uri = bean.toUri()
+        val reParsed = parseOpenConnect(uri)
+        assertEquals("1.2.3.4:443", reParsed.server)
+        assertEquals("1.2.3.4", reParsed.serverAddress)
+        assertEquals(443, reParsed.serverPort)
+        assertEquals("ocuser", reParsed.username)
+        assertEquals("ocpassword", reParsed.password)
+        assertEquals("test-openconnect", reParsed.name)
+
+        // Test global Formats.parseProxies with anyconnect URI
+        val uriProxies = runBlocking { io.nekohasekai.sagernet.ktx.parseProxies(uri) }
+        assertEquals(1, uriProxies.size)
+        assertTrue(uriProxies[0] is OpenConnectBean)
+        val fromUri = uriProxies[0] as OpenConnectBean
+        assertEquals("1.2.3.4:443", fromUri.server)
+        assertEquals("ocuser", fromUri.username)
+
+        // Test OpenConnect config file parsing
+        val ocConfig = """
+            server = vpn.company.com:443
+            protocol = anyconnect
+            user = john_doe
+            password = secretpass
+            authgroup = EmployeeVPN
+            cafile = /etc/ssl/certs/company-ca.pem
+            allow-insecure-crypto
+        """.trimIndent()
+
+        val parsedFromConfig = parseOpenConnectConfig(ocConfig)
+        assertEquals("vpn.company.com:443", parsedFromConfig.server)
+        assertEquals("vpn.company.com", parsedFromConfig.serverAddress)
+        assertEquals(443, parsedFromConfig.serverPort)
+        assertEquals("anyconnect", parsedFromConfig.flavor)
+        assertEquals("john_doe", parsedFromConfig.username)
+        assertEquals("secretpass", parsedFromConfig.password)
+        assertEquals("EmployeeVPN", parsedFromConfig.authGroup)
+        assertEquals("/etc/ssl/certs/company-ca.pem", parsedFromConfig.certificateAuthority)
+        assertEquals(true, parsedFromConfig.allowInsecureCrypto)
+
+        val builtFromConfig = buildSingBoxEndpointOpenConnectBean(parsedFromConfig)
+        assertEquals("openconnect", builtFromConfig.type)
+        assertEquals("vpn.company.com:443", builtFromConfig.server)
+        assertEquals("anyconnect", builtFromConfig.flavor)
+        assertEquals("john_doe", builtFromConfig.username)
+        assertEquals("secretpass", builtFromConfig.password)
+        assertEquals("EmployeeVPN", builtFromConfig.auth_group)
+        assertEquals(true, builtFromConfig.allow_insecure_crypto)
+        assertNotNull(builtFromConfig.tls)
+        assertEquals(listOf("/etc/ssl/certs/company-ca.pem"), builtFromConfig.tls.certificate_authority)
+
+        // Test global Formats.parseProxies with OpenConnect config text
+        val confProxies = runBlocking { io.nekohasekai.sagernet.ktx.parseProxies(ocConfig) }
+        assertEquals(1, confProxies.size)
+        assertTrue(confProxies[0] is OpenConnectBean)
+        val fromConf = confProxies[0] as OpenConnectBean
+        assertEquals("vpn.company.com:443", fromConf.server)
+        assertEquals("john_doe", fromConf.username)
+
+        // Test RawUpdater with config file
+        val rawProxies = runBlocking { RawUpdater.parseRaw(ocConfig, "company-vpn.conf") }
+        assertNotNull(rawProxies)
+        assertEquals(1, rawProxies!!.size)
+        assertTrue(rawProxies[0] is OpenConnectBean)
+        val ocBean = rawProxies[0] as OpenConnectBean
+        assertEquals("company-vpn", ocBean.name)
+        assertEquals("vpn.company.com:443", ocBean.server)
+        assertEquals("vpn.company.com", ocBean.serverAddress)
     }
 
     @Test

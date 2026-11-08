@@ -17,6 +17,8 @@ import io.nekohasekai.sagernet.fmt.shadowsocksr.parseShadowsocksR
 import io.nekohasekai.sagernet.fmt.snell.parseClashSnell
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
+import io.nekohasekai.sagernet.fmt.openconnect.looksLikeOpenConnectConfig
+import io.nekohasekai.sagernet.fmt.openconnect.parseOpenConnectConfig
 import io.nekohasekai.sagernet.fmt.openvpn.looksLikeOpenVPNConfig
 import io.nekohasekai.sagernet.fmt.openvpn.parseOpenVPNConfig
 import io.nekohasekai.sagernet.fmt.trojan_go.parseTrojanGo
@@ -1022,6 +1024,16 @@ object RawUpdater : GroupUpdater() {
             try {
                 val bean = parseOpenVPNConfig(text)
                 if (fileName.isNotBlank()) bean.name = fileName.removeSuffix(".ovpn").removeSuffix(".conf")
+                proxies.add(bean)
+                return proxies
+            } catch (e: Exception) {
+                Logs.w(e)
+            }
+        } else if (looksLikeOpenConnectConfig(text)) {
+            // openconnect
+            try {
+                val bean = parseOpenConnectConfig(text)
+                if (fileName.isNotBlank()) bean.name = fileName.removeSuffix(".conf")
                 proxies.add(bean)
                 return proxies
             } catch (e: Exception) {

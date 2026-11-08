@@ -28,6 +28,7 @@ import io.nekohasekai.sagernet.fmt.direct.DirectBean
 import io.nekohasekai.sagernet.fmt.direct.toUri
 import io.nekohasekai.sagernet.fmt.masque.MASQUEBean
 import io.nekohasekai.sagernet.fmt.masque.toUri
+import io.nekohasekai.sagernet.fmt.openconnect.toUri
 import io.nekohasekai.sagernet.fmt.openvpn.OpenVPNBean
 import io.nekohasekai.sagernet.fmt.openconnect.OpenConnectBean
 import io.nekohasekai.sagernet.fmt.tailscale.TailscaleBean
@@ -328,7 +329,7 @@ data class ProxyEntity(
             is ConfigBean -> false
             is DirectBean -> false
             is OpenVPNBean -> false
-            is OpenConnectBean -> false
+            is OpenConnectBean -> true
             is TailscaleBean -> false
             is TailcatBean -> false
             is TorBean -> false
@@ -355,6 +356,7 @@ data class ProxyEntity(
             is SnellBean -> toUri()
             is DirectBean -> toUri()
             is MASQUEBean -> toUri()
+            is OpenConnectBean -> toUri()
             is NekoBean -> ""
             else -> toUniversalLink()
         }
