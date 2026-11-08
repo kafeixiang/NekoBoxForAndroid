@@ -30,10 +30,10 @@ public class TorBean extends AbstractBean {
     public void serialize(ByteBufferOutput output) {
         output.writeInt(0);
         super.serialize(output);
-        output.writeString(executablePath);
-        output.writeString(extraArgs);
-        output.writeString(dataDirectory);
-        output.writeString(torrc);
+        output.writeString(executablePath != null ? executablePath : "");
+        output.writeString(extraArgs != null ? extraArgs : "");
+        output.writeString(dataDirectory != null ? dataDirectory : "");
+        output.writeString(torrc != null ? torrc : "");
     }
 
     @Override
@@ -56,7 +56,9 @@ public class TorBean extends AbstractBean {
     @NotNull
     @Override
     public String displayAddress() {
-        return "";
+        if (executablePath != null && !executablePath.isEmpty()) return executablePath;
+        if (dataDirectory != null && !dataDirectory.isEmpty()) return dataDirectory;
+        return "127.0.0.1";
     }
 
     @Override

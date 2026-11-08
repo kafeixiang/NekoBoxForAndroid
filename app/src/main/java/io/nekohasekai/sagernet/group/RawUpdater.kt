@@ -18,6 +18,7 @@ import io.nekohasekai.sagernet.fmt.snell.parseClashSnell
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.tailscale.parseTailcatOutbound
 import io.nekohasekai.sagernet.fmt.tailscale.parseTailscaleEndpoint
+import io.nekohasekai.sagernet.fmt.tor.parseTorOutbound
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
 import io.nekohasekai.sagernet.fmt.openconnect.looksLikeOpenConnectConfig
 import io.nekohasekai.sagernet.fmt.openconnect.parseOpenConnectConfig
@@ -881,6 +882,11 @@ object RawUpdater : GroupUpdater() {
 
                         "tailcat" -> {
                             val bean = parseTailcatOutbound(proxy)
+                            proxies.add(bean)
+                        }
+
+                        "tor" -> {
+                            val bean = parseTorOutbound(proxy)
                             proxies.add(bean)
                         }
 

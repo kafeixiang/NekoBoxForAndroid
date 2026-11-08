@@ -80,6 +80,9 @@ import io.nekohasekai.sagernet.fmt.tailscale.parseTailscaleEndpoint
 import io.nekohasekai.sagernet.fmt.tailscale.toUri
 import io.nekohasekai.sagernet.fmt.tor.TorBean
 import io.nekohasekai.sagernet.fmt.tor.buildSingBoxOutboundTorBean
+import io.nekohasekai.sagernet.fmt.tor.parseTor
+import io.nekohasekai.sagernet.fmt.tor.parseTorOutbound
+import io.nekohasekai.sagernet.fmt.tor.toUri
 import io.nekohasekai.sagernet.fmt.trusttunnel.TrustTunnelBean
 import io.nekohasekai.sagernet.fmt.trusttunnel.buildSingBoxOutboundTrustTunnelBean
 import org.junit.Assert.*
@@ -1475,12 +1478,78 @@ class ProtocolValidityTest {
             executablePath = "/system/bin/tor"
             dataDirectory = "/data/data/io.nekohasekai.sagernet/tor"
             extraArgs = "--quiet"
+            torrc = "ClientOnly 1\nSafeLogging 1"
         }
         val outbound = buildSingBoxOutboundTorBean(bean)
         assertEquals("tor", outbound.type)
         assertEquals("/system/bin/tor", outbound.executable_path)
         assertEquals("/data/data/io.nekohasekai.sagernet/tor", outbound.data_directory)
         assertEquals(listOf("--quiet"), outbound.extra_args)
+        assertNotNull(outbound.torrc)
+        assertEquals("1", outbound.torrc?.get("ClientOnly"))
+        assertEquals("1", outbound.torrc?.get("SafeLogging"))
+    }
+
+    @Test
+    fun testTorUriRoundtripAndParsing() {
+        val original = TorBean().apply {
+            name = "MyTorNode"
+            executablePath = "/opt/homebrew/bin/tor"
+            dataDirectory = "/tmp/tor_data"
+            extraArgs = "--quiet\n--hush"
+            torrc = "ClientOnly 1\nSafeLogging 1"
+        }
+
+        // Test NPE safety with null fields in Kryo clone
+        val nullBean = TorBean()
+        val clonedNull = nullBean.clone()
+        assertNotNull(clonedNull)
+
+        // Test Kryo serialization roundtrip
+        val cloned = original.clone()
+        assertEquals(original.executablePath, cloned.executablePath)
+        assertEquals(original.dataDirectory, cloned.dataDirectory)
+        assertEquals(original.extraArgs, cloned.extraArgs)
+        assertEquals(original.torrc, cloned.torrc)
+
+        // Test toUri and parseTor
+        val uri = original.toUri()
+        assertTrue(uri.startsWith("tor://"))
+        val parsed = parseTor(uri)
+        assertEquals(original.executablePath, parsed.executablePath)
+        assertEquals(original.dataDirectory, parsed.dataDirectory)
+        assertEquals(original.extraArgs, parsed.extraArgs)
+        assertEquals(original.torrc, parsed.torrc)
+        assertEquals(original.name, parsed.name)
+
+        // Test Formats.parseProxies
+        val parsedList = runBlocking { io.nekohasekai.sagernet.ktx.parseProxies(uri) }
+        assertEquals(1, parsedList.size)
+        assertTrue(parsedList[0] is TorBean)
+        val fromSub = parsedList[0] as TorBean
+        assertEquals(original.executablePath, fromSub.executablePath)
+        assertEquals(original.dataDirectory, fromSub.dataDirectory)
+
+        // Test parseTorOutbound from Map
+        val map = mapOf<String, Any?>(
+            "tag" to "tor-outbound",
+            "executable_path" to "/system/bin/tor",
+            "data_directory" to "/data/tor",
+            "extra_args" to listOf("--quiet", "--log", "notice"),
+            "torrc" to mapOf("AvoidDiskWrites" to "1", "CircuitBuildTimeout" to "30")
+        )
+        val fromMap = parseTorOutbound(map)
+        assertEquals("tor-outbound", fromMap.name)
+        assertEquals("/system/bin/tor", fromMap.executablePath)
+        assertEquals("/data/tor", fromMap.dataDirectory)
+        assertEquals("--quiet\n--log\nnotice", fromMap.extraArgs)
+        assertTrue(fromMap.torrc.contains("AvoidDiskWrites 1"))
+
+        // Test ProxyEntity integration
+        val entity = ProxyEntity().apply { putBean(original) }
+        assertEquals(ProxyEntity.TYPE_TOR, entity.type)
+        assertTrue(entity.haveStandardLink())
+        assertEquals(uri, entity.toStdLink())
     }
 
     @Test

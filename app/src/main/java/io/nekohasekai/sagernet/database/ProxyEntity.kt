@@ -35,6 +35,7 @@ import io.nekohasekai.sagernet.fmt.tailscale.TailscaleBean
 import io.nekohasekai.sagernet.fmt.tailscale.TailcatBean
 import io.nekohasekai.sagernet.fmt.tailscale.toUri
 import io.nekohasekai.sagernet.fmt.tor.TorBean
+import io.nekohasekai.sagernet.fmt.tor.toUri
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.socks.toUri
 import io.nekohasekai.sagernet.fmt.ssh.SSHBean
@@ -333,7 +334,7 @@ data class ProxyEntity(
             is OpenConnectBean -> true
             is TailscaleBean -> true
             is TailcatBean -> true
-            is TorBean -> false
+            is TorBean -> true
             else -> true
         }
     }
@@ -360,6 +361,7 @@ data class ProxyEntity(
             is OpenConnectBean -> toUri()
             is TailscaleBean -> toUri()
             is TailcatBean -> toUri()
+            is TorBean -> toUri()
             is NekoBean -> ""
             else -> toUniversalLink()
         }
