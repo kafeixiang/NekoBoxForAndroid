@@ -25,30 +25,47 @@ fun parseHysteria1(url: String): HysteriaBean {
         serverPorts = link.port.toString()
         name = link.fragment
 
-        link.queryParameter("mport")?.also {
+        (link.queryParameter("mport") ?: link.queryParameter("ports"))?.also {
             serverPorts = it
         }
-        link.queryParameter("peer")?.also {
+        (link.queryParameter("peer") ?: link.queryParameter("sni") ?: link.queryParameter("server_name"))?.also {
             sni = it
         }
-        link.queryParameter("auth")?.takeIf { it.isNotBlank() }?.also {
+        (link.queryParameter("auth") ?: link.queryParameter("auth_str") ?: link.queryParameter("auth-str") ?: link.queryParameter("password"))?.takeIf { it.isNotBlank() }?.also {
             authPayloadType = HysteriaBean.TYPE_STRING
             authPayload = it
         }
-        link.queryParameter("insecure")?.also {
+        (link.queryParameter("insecure") ?: link.queryParameter("allowInsecure") ?: link.queryParameter("skip-cert-verify"))?.also {
             allowInsecure = it == "1" || it == "true"
         }
-        link.queryParameter("upmbps")?.also {
-            uploadMbps = it.toIntOrNull() ?: uploadMbps
+        (link.queryParameter("upmbps") ?: link.queryParameter("up_mbps") ?: link.queryParameter("up"))?.also {
+            uploadMbps = it.substringBefore(" ").toIntOrNull() ?: uploadMbps
         }
-        link.queryParameter("downmbps")?.also {
-            downloadMbps = it.toIntOrNull() ?: downloadMbps
+        (link.queryParameter("downmbps") ?: link.queryParameter("down_mbps") ?: link.queryParameter("down"))?.also {
+            downloadMbps = it.substringBefore(" ").toIntOrNull() ?: downloadMbps
         }
         link.queryParameter("alpn")?.also {
             if (it != "none") alpn = it
         }
-        link.queryParameter("obfsParam")?.also {
+        (link.queryParameter("obfsParam")
+            ?: link.queryParameter("obfs_param")
+            ?: link.queryParameter("obfs-param")
+            ?: link.queryParameter("obfs-password")
+            ?: link.queryParameter("obfs")?.takeIf { it.lowercase() != "xplus" }
+        )?.also {
             obfuscation = it
+        }
+        (link.queryParameter("hop_interval") ?: link.queryParameter("hop-interval"))?.toIntOrNull()?.also {
+            hopInterval = it
+        }
+        (link.queryParameter("recv_window_conn") ?: link.queryParameter("recv-window-conn"))?.toIntOrNull()?.also {
+            streamReceiveWindow = it
+        }
+        (link.queryParameter("recv_window") ?: link.queryParameter("recv-window"))?.toIntOrNull()?.also {
+            connectionReceiveWindow = it
+        }
+        (link.queryParameter("disable_mtu_discovery") ?: link.queryParameter("disable-mtu-discovery"))?.also {
+            disableMtuDiscovery = it == "1" || it == "true"
         }
         protocol = when (link.queryParameter("protocol")?.lowercase()) {
             "faketcp" -> HysteriaBean.PROTOCOL_FAKETCP
@@ -448,7 +465,17 @@ fun buildSingBoxOutboundHysteriaBean(bean: HysteriaBean): SingBoxOptions.SingBox
                     alpn = bean.alpn.listByLineOrComma()
                 }
                 if (!bean.caText.isNullOrBlank()) {
-                    certificate = bean.caText
+                    val cert = bean.caText.trim()
+                    if (cert.startsWith("sha256:", ignoreCase = true) || cert.startsWith("sha256/", ignoreCase = true)) {
+                        certificate_sha256 = listOf(cert.substring(7).trim())
+                    } else if (cert.length == 64 && cert.all { it in "0123456789abcdefABCDEF" }) {
+                        certificate_sha256 = listOf(cert)
+                    } else {
+                        certificate = bean.caText
+                    }
+                }
+                if (!bean.pinSHA256.isNullOrBlank()) {
+                    certificate_sha256 = bean.pinSHA256.listByLineOrComma()
                 }
                 insecure = bean.allowInsecure == true || (try { DataStore.globalAllowInsecure } catch (_: Throwable) { false })
                 enabled = true

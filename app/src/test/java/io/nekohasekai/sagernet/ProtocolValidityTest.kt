@@ -428,23 +428,98 @@ class ProtocolValidityTest {
 
     @Test
     fun testHysteria1ParsingAndBuilding() {
-        val hy1Link = "hysteria://1.2.3.4:443?peer=hy1.example.com&auth=myauth&upmbps=50&downmbps=100&obfs=hy1obfs#test-hy1"
+        val hy1Link = "hysteria://1.2.3.4:443?peer=hy1.example.com&auth=myauth&upmbps=50&downmbps=100&obfsParam=hy1obfs&mport=443,10000-20000&hop_interval=15&disable_mtu_discovery=1&alpn=h3#test-hy1"
         val hy1Bean = parseHysteria1(hy1Link)
         assertEquals("1.2.3.4", hy1Bean.serverAddress)
-        assertEquals("443", hy1Bean.serverPorts)
+        assertEquals("443,10000-20000", hy1Bean.serverPorts)
         assertEquals("myauth", hy1Bean.authPayload)
         assertEquals("hy1.example.com", hy1Bean.sni)
         assertEquals(50, hy1Bean.uploadMbps)
         assertEquals(100, hy1Bean.downloadMbps)
+        assertEquals("hy1obfs", hy1Bean.obfuscation)
+        assertEquals(15, hy1Bean.hopInterval)
+        assertTrue(hy1Bean.disableMtuDiscovery)
+        assertEquals("h3", hy1Bean.alpn)
         assertEquals("test-hy1", hy1Bean.name)
+        assertTrue(hy1Bean.canUseSingBox())
 
         val hy1Outbound = buildSingBoxOutboundHysteriaBean(hy1Bean) as SingBoxOptions.Outbound_HysteriaOptions
         assertEquals("hysteria", hy1Outbound.type)
         assertEquals("1.2.3.4", hy1Outbound.server)
         assertEquals(443, hy1Outbound.server_port)
+        assertEquals(listOf("443", "10000:20000"), hy1Outbound.server_ports)
+        assertEquals("15s", hy1Outbound.hop_interval)
         assertEquals("myauth", hy1Outbound.auth_str)
         assertEquals(50, hy1Outbound.up_mbps)
         assertEquals(100, hy1Outbound.down_mbps)
+        assertEquals("hy1obfs", hy1Outbound.obfs)
+        assertTrue(hy1Outbound.disable_mtu_discovery)
+        assertNotNull(hy1Outbound.tls)
+        assertEquals("hy1.example.com", hy1Outbound.tls.server_name)
+        assertEquals(listOf("h3"), hy1Outbound.tls.alpn)
+
+        // Test Clash YAML parsing
+        val clashYaml = """
+            proxies:
+              - name: clash-hy1
+                type: hysteria
+                server: 5.6.7.8
+                port: 8443
+                ports: 8443,20000-30000
+                auth-str: clash-secret
+                obfs: clash-obfs
+                sni: clash-hy1.example.org
+                up: 60 Mbps
+                down: 120 Mbps
+                hop-interval: 25
+                recv-window-conn: 65536
+                recv-window: 131072
+                disable-mtu-discovery: true
+                skip-cert-verify: true
+                alpn:
+                  - h3
+        """.trimIndent()
+        val proxies = runBlocking { RawUpdater.parseRaw(clashYaml) }
+        assertNotNull(proxies)
+        assertEquals(1, proxies!!.size)
+        val parsedClash = proxies[0] as HysteriaBean
+        assertEquals(1, parsedClash.protocolVersion)
+        assertEquals("clash-hy1", parsedClash.name)
+        assertEquals("5.6.7.8", parsedClash.serverAddress)
+        assertEquals("8443,20000-30000", parsedClash.serverPorts)
+        assertEquals("clash-secret", parsedClash.authPayload)
+        assertEquals("clash-obfs", parsedClash.obfuscation)
+        assertEquals("clash-hy1.example.org", parsedClash.sni)
+        assertEquals(60, parsedClash.uploadMbps)
+        assertEquals(120, parsedClash.downloadMbps)
+        assertEquals(25, parsedClash.hopInterval)
+        assertTrue(parsedClash.disableMtuDiscovery)
+        assertTrue(parsedClash.allowInsecure)
+
+        val clashOutbound = buildSingBoxOutboundHysteriaBean(parsedClash) as SingBoxOptions.Outbound_HysteriaOptions
+        assertEquals("hysteria", clashOutbound.type)
+        assertEquals("5.6.7.8", clashOutbound.server)
+        assertEquals(8443, clashOutbound.server_port)
+        assertEquals(listOf("8443", "20000:30000"), clashOutbound.server_ports)
+        assertEquals("25s", clashOutbound.hop_interval)
+        assertEquals("clash-secret", clashOutbound.auth_str)
+        assertEquals(60, clashOutbound.up_mbps)
+        assertEquals(120, clashOutbound.down_mbps)
+        assertTrue(clashOutbound.tls.insecure)
+
+        // Test Base64 Auth
+        val hy1Base64Bean = HysteriaBean().apply {
+            initializeDefaultValues()
+            protocolVersion = 1
+            serverAddress = "9.10.11.12"
+            serverPort = 443
+            serverPorts = "443"
+            authPayloadType = HysteriaBean.TYPE_BASE64
+            authPayload = "base64payload=="
+        }
+        val base64Outbound = buildSingBoxOutboundHysteriaBean(hy1Base64Bean) as SingBoxOptions.Outbound_HysteriaOptions
+        assertEquals("base64payload==", base64Outbound.auth)
+        assertNull(base64Outbound.auth_str)
     }
 
     @Test

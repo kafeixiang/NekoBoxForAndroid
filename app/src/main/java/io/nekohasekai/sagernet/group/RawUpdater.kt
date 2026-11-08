@@ -716,31 +716,42 @@ object RawUpdater : GroupUpdater() {
                                     "port" -> bean.serverPorts = opt.value.toString()
                                     "ports" -> hopPorts = opt.value.toString()
 
-                                    "obfs" -> bean.obfuscation = opt.value.toString()
+                                    "obfs", "obfs-password", "obfs-param" -> bean.obfuscation = opt.value.toString()
 
-                                    "auth-str" -> {
+                                    "auth-str", "auth", "password" -> {
                                         bean.authPayloadType = HysteriaBean.TYPE_STRING
                                         bean.authPayload = opt.value.toString()
                                     }
 
-                                    "sni" -> bean.sni = opt.value.toString()
+                                    "sni", "server-name", "peer" -> bean.sni = opt.value.toString()
 
                                     "skip-cert-verify" -> bean.allowInsecure =
                                         opt.value.toString() == "true"
 
-                                    "up" -> bean.uploadMbps =
+                                    "up", "up-mbps" -> bean.uploadMbps =
                                         opt.value.toString().substringBefore(" ").toIntOrNull()
                                             ?: 100
 
-                                    "down" -> bean.downloadMbps =
+                                    "down", "down-mbps" -> bean.downloadMbps =
                                         opt.value.toString().substringBefore(" ").toIntOrNull()
                                             ?: 100
 
-                                    "recv-window-conn" -> bean.connectionReceiveWindow =
-                                        opt.value.toString().toIntOrNull() ?: 0
+                                    "recv-window-conn" -> {
+                                        val v = opt.value.toString().toIntOrNull() ?: 0
+                                        bean.connectionReceiveWindow = v
+                                        bean.streamReceiveWindow = v
+                                    }
 
-                                    "recv-window" -> bean.streamReceiveWindow =
-                                        opt.value.toString().toIntOrNull() ?: 0
+                                    "recv-window" -> {
+                                        val v = opt.value.toString().toIntOrNull() ?: 0
+                                        bean.streamReceiveWindow = v
+                                        bean.connectionReceiveWindow = v
+                                    }
+
+                                    "hop-interval" -> bean.hopInterval =
+                                        opt.value.toString().toIntOrNull() ?: 10
+
+                                    "ca", "ca-str" -> bean.caText = opt.value.toString()
 
                                     "disable-mtu-discovery" -> bean.disableMtuDiscovery =
                                         opt.value.toString() == "true" || opt.value.toString() == "1"
