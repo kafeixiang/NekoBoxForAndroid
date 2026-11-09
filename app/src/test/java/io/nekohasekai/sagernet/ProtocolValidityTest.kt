@@ -72,6 +72,8 @@ import io.nekohasekai.sagernet.fmt.openvpn.buildSingBoxEndpointOpenVPNBean
 import io.nekohasekai.sagernet.fmt.openvpn.parseOpenVPNConfig
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.shadowsocksr.buildSingBoxOutboundShadowsocksRBean
+import io.nekohasekai.sagernet.fmt.shadowsocksr.parseShadowsocksR
+import io.nekohasekai.sagernet.fmt.shadowsocksr.toUri
 import io.nekohasekai.sagernet.fmt.tailscale.TailcatBean
 import io.nekohasekai.sagernet.fmt.tailscale.TailscaleBean
 import io.nekohasekai.sagernet.fmt.tailscale.buildSingBoxEndpointTailscaleBean
@@ -1774,6 +1776,84 @@ class ProtocolValidityTest {
         assertEquals("123", outbound.protocol_param)
         assertEquals("http_simple", outbound.obfs)
         assertEquals("cloudflare.com", outbound.obfs_param)
+
+        // Test toUri round-trip
+        val uri = bean.toUri()
+        assertTrue(uri.startsWith("ssr://"))
+        val reBean = parseShadowsocksR(uri)
+        assertEquals(bean.name, reBean.name)
+        assertEquals(bean.serverAddress, reBean.serverAddress)
+        assertEquals(bean.serverPort, reBean.serverPort)
+        assertEquals(bean.method, reBean.method)
+        assertEquals(bean.password, reBean.password)
+        assertEquals(bean.protocol, reBean.protocol)
+        assertEquals(bean.protocolParam, reBean.protocolParam)
+        assertEquals(bean.obfs, reBean.obfs)
+        assertEquals(bean.obfsParam, reBean.obfsParam)
+
+        // Test Clash YAML parsing of SSR
+        val clashYaml = """
+            proxies:
+              - name: "Clash-SSR"
+                type: ssr
+                server: 5.6.7.8
+                port: 18388
+                cipher: aes-128-cfb
+                password: "clashssrpassword"
+                protocol: auth_aes128_md5
+                protocol-param: "456"
+                obfs: http_simple
+                obfs-param: "apple.com"
+        """.trimIndent()
+        val clashProxies = runBlocking { RawUpdater.parseRaw(clashYaml) }
+        assertNotNull(clashProxies)
+        assertEquals(1, clashProxies!!.size)
+        val clashBean = clashProxies[0] as ShadowsocksRBean
+        assertEquals("Clash-SSR", clashBean.name)
+        assertEquals("5.6.7.8", clashBean.serverAddress)
+        assertEquals(18388, clashBean.serverPort)
+        assertEquals("aes-128-cfb", clashBean.method)
+        assertEquals("clashssrpassword", clashBean.password)
+        assertEquals("auth_aes128_md5", clashBean.protocol)
+        assertEquals("456", clashBean.protocolParam)
+        assertEquals("http_simple", clashBean.obfs)
+        assertEquals("apple.com", clashBean.obfsParam)
+
+        val clashOutbound = buildSingBoxOutboundShadowsocksRBean(clashBean)
+        assertEquals("shadowsocksr", clashOutbound.type)
+        assertEquals("5.6.7.8", clashOutbound.server)
+        assertEquals(18388, clashOutbound.server_port)
+
+        // Test Formats.parseProxies with ssr://
+        val proxiesFromUri = runBlocking { io.nekohasekai.sagernet.ktx.parseProxies(uri) }
+        assertEquals(1, proxiesFromUri.size)
+        val formatBean = proxiesFromUri[0] as ShadowsocksRBean
+        assertEquals(bean.serverAddress, formatBean.serverAddress)
+        assertEquals(bean.serverPort, formatBean.serverPort)
+        assertEquals(bean.password, formatBean.password)
+
+        // Test Outbound_ShadowsocksROptions asMap()
+        val outboundMap = outbound.asMap()
+        assertEquals("shadowsocksr", outboundMap["type"])
+        assertEquals("1.2.3.4", outboundMap["server"])
+        assertEquals(8388L, (outboundMap["server_port"] as Number).toLong())
+        assertEquals("aes-128-cfb", outboundMap["method"])
+        assertEquals("ssrpassword", outboundMap["password"])
+        assertEquals("auth_aes128_md5", outboundMap["protocol"])
+        assertEquals("123", outboundMap["protocol_param"])
+        assertEquals("http_simple", outboundMap["obfs"])
+        assertEquals("cloudflare.com", outboundMap["obfs_param"])
+
+        // Test MyOptions with SSR outbound
+        val fullConfig = SingBoxOptions.MyOptions().apply {
+            outbounds = arrayListOf(outbound)
+        }
+        val fullMap = fullConfig.asMap()
+        val fullOutbounds = fullMap["outbounds"] as List<*>
+        assertEquals(1, fullOutbounds.size)
+        val firstOutbound = fullOutbounds[0] as Map<*, *>
+        assertEquals("shadowsocksr", firstOutbound["type"])
+        assertEquals("1.2.3.4", firstOutbound["server"])
     }
 
     @Test

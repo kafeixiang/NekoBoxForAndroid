@@ -362,20 +362,21 @@ object RawUpdater : GroupUpdater() {
                             })
                         }
 
-                        "ssr" -> {
+                        "ssr", "shadowsocksr" -> {
                             proxies.add(ShadowsocksRBean().apply {
+                                initializeDefaultValues()
                                 for (opt in proxy) {
                                     if (opt.value == null) continue
-                                    when (opt.key) {
+                                    when (opt.key.replace("_", "-")) {
                                         "name" -> name = opt.value.toString()
-                                        "server" -> serverAddress = opt.value as String
-                                        "port" -> serverPort = opt.value.toString().toInt()
-                                        "cipher" -> method = clashCipher(opt.value as String)
+                                        "server" -> serverAddress = opt.value.toString()
+                                        "port" -> serverPort = opt.value.toString().toIntOrNull() ?: 8388
+                                        "cipher", "method" -> method = clashCipher(opt.value.toString())
                                         "password" -> password = opt.value.toString()
-                                        "obfs" -> obfs = opt.value as String
-                                        "protocol" -> protocol = opt.value as String
-                                        "obfs-param" -> obfsParam = opt.value.toString()
-                                        "protocol-param" -> protocolParam = opt.value.toString()
+                                        "obfs" -> obfs = opt.value.toString()
+                                        "protocol" -> protocol = opt.value.toString()
+                                        "obfs-param", "obfsparam" -> obfsParam = opt.value.toString()
+                                        "protocol-param", "protoparam" -> protocolParam = opt.value.toString()
                                     }
                                 }
                             })
