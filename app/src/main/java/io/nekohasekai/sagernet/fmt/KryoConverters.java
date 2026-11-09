@@ -14,6 +14,7 @@ import io.nekohasekai.sagernet.fmt.direct.DirectBean;
 import io.nekohasekai.sagernet.fmt.http.HttpBean;
 import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean;
 import io.nekohasekai.sagernet.fmt.internal.ChainBean;
+import io.nekohasekai.sagernet.fmt.internal.ProxySetBean;
 import io.nekohasekai.sagernet.fmt.masque.MASQUEBean;
 import io.nekohasekai.sagernet.fmt.mieru.MieruBean;
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean;
@@ -195,6 +196,12 @@ public class KryoConverters {
     public static ChainBean chainDeserialize(byte[] bytes) {
         if (JavaUtil.isEmpty(bytes)) return null;
         return deserialize(new ChainBean(), bytes);
+    }
+
+    @TypeConverter
+    public static ProxySetBean proxySetDeserialize(byte[] bytes) {
+        if (JavaUtil.isEmpty(bytes)) return null;
+        return deserialize(new ProxySetBean(), bytes);
     }
 
     @TypeConverter

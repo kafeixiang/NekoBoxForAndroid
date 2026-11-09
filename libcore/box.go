@@ -223,8 +223,24 @@ func (b *BoxInstance) QueryStats(tag, direct string) int64 {
 }
 
 func (b *BoxInstance) SelectOutbound(tag string) bool {
-	if b.selector != nil {
-		return b.selector.SelectOutbound(tag)
+	if b.selector != nil && b.selector.SelectOutbound(tag) {
+		return true
+	}
+	for _, outbound := range b.Outbound().Outbounds() {
+		if selector, ok := outbound.(*group.Selector); ok {
+			if selector.SelectOutbound(tag) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func (b *BoxInstance) SelectOutboundInGroup(groupName, tag string) bool {
+	if outbound, ok := b.Outbound().Outbound(groupName); ok {
+		if selector, ok := outbound.(*group.Selector); ok {
+			return selector.SelectOutbound(tag)
+		}
 	}
 	return false
 }

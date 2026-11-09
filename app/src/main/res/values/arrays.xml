@@ -1074,4 +1074,15 @@
         <item>fallback</item>
     </string-array>
 
+    <string-array name="proxy_set_management">
+        <item>@string/action_selector</item>
+        <item>@string/action_urltest</item>
+        <item>@string/action_balancer</item>
+    </string-array>
+
+    <string-array name="proxy_set_type">
+        <item>@string/list</item>
+        <item>@string/menu_group</item>
+    </string-array>
+
 </resources>

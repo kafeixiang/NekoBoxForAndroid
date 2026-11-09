@@ -917,4 +917,15 @@
     <string name="hysteria_realm_port_mapping_timeout">Port Mapping Timeout (s)</string>
     <string name="hysteria_realm_port_mapping_lifetime">Port Mapping Lease Lifetime (s)</string>
 
+    <string name="action_selector" translatable="false">Selector</string>
+    <string name="action_urltest" translatable="false">URLTest</string>
+    <string name="action_balancer" translatable="false">Balancer</string>
+    <string name="management">Management</string>
+    <string name="proxy_set">Proxy Set</string>
+    <string name="proxy_set_settings">Proxy Set Settings</string>
+    <string name="interrupt_exist_connections">Interrupt Exist Connections</string>
+    <string name="urltest_interval">URLTest Interval</string>
+    <string name="idle_timeout">IDLE Timeout</string>
+    <string name="urltest_tolerance">Tolerance</string>
+
 </resources>

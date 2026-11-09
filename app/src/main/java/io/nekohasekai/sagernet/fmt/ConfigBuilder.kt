@@ -11,6 +11,9 @@ import io.nekohasekai.sagernet.fmt.ConfigBuildResult.IndexEntity
 import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean
 import io.nekohasekai.sagernet.fmt.hysteria.buildSingBoxOutboundHysteriaBean
 import io.nekohasekai.sagernet.fmt.internal.ChainBean
+import io.nekohasekai.sagernet.fmt.internal.ProxySetBean
+import io.nekohasekai.sagernet.fmt.internal.buildSingBoxOutboundProxySetBean
+import io.nekohasekai.sagernet.fmt.internal.resolveMembers
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.buildSingBoxOutboundShadowsocksBean
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
@@ -84,6 +87,7 @@ class ConfigBuildResult(
     var trafficMap: Map<String, List<ProxyEntity>>,
     var profileTagMap: Map<Long, String>,
     val selectorGroupId: Long,
+    var hasGroupBean: Boolean = false,
 ) {
     data class IndexEntity(var chain: LinkedHashMap<Int, ProxyEntity>)
 }
@@ -124,6 +128,20 @@ fun buildConfig(
             }
             return beanList.asReversed()
         }
+        if (bean is ProxySetBean) {
+            val memberEntities = bean.resolveMembers(id)
+            val beanList = mutableListOf<ProxyEntity>()
+            for (item in memberEntities) {
+                if (item.id == id) continue
+                when (item.type) {
+                    ProxyEntity.TYPE_PROXY_SET -> continue
+                    ProxyEntity.TYPE_CHAIN -> continue
+                }
+                beanList.add(item)
+            }
+            beanList.add(this)
+            return beanList
+        }
         return mutableListOf(this)
     }
 
@@ -144,10 +162,14 @@ fun buildConfig(
         val landingProxy = thisGroup?.landingProxy?.let { SagerDatabase.proxyDao.getById(it) }
         val list = resolveChainInternal()
         if (frontProxy != null) {
-            list.add(frontProxy)
+            if (type != ProxyEntity.TYPE_PROXY_SET) {
+                list.add(frontProxy)
+            }
         }
         if (landingProxy != null) {
-            list.add(0, landingProxy)
+            if (type != ProxyEntity.TYPE_PROXY_SET) {
+                list.add(0, landingProxy)
+            }
         }
         return list
     }
@@ -381,6 +403,27 @@ fun buildConfig(
             val chainTag = "c-$chainId"
             var muxApplied = false
 
+            val isProxySet = entity.type == ProxyEntity.TYPE_PROXY_SET
+            val readableNames = if (isProxySet) {
+                mutableSetOf<String>()
+            } else {
+                null
+            }
+
+            fun addReadableName(name: String): String {
+                if (readableNames == null) return name
+                if (readableNames.add(name)) {
+                    return name
+                }
+                var count = 0
+                var newName = "$name-$count"
+                while (!readableNames.add(newName)) {
+                    count++
+                    newName = "$name-$count"
+                }
+                return newName
+            }
+
             profileList.forEachIndexed { index, proxyEntity ->
                 val bean = proxyEntity.requireBean()
 
@@ -388,43 +431,53 @@ fun buildConfig(
                 // profile2 (in) (global)   tag g-(id)
                 // profile1                 tag (chainTag)-(id)
                 // profile0 (out)           tag (chainTag)-(id) / single: "proxy"
-                var tagOut = "$chainTag-${proxyEntity.id}"
+                var tagOut = if (
+                    chainId == 0L &&
+                    ((isProxySet && index == profileList.lastIndex) || (!isProxySet && index == 0))
+                ) {
+                    TAG_PROXY
+                } else if (isProxySet) {
+                    addReadableName(proxyEntity.displayName())
+                } else {
+                    "$chainTag-${proxyEntity.id}"
+                }
 
                 // needGlobal: can only contain one?
                 var needGlobal = false
 
-                // first profile set as global
-                if (index == profileList.lastIndex) {
+                // first profile set as global (not for proxy set)
+                if (!isProxySet && index == profileList.lastIndex) {
                     needGlobal = true
                     tagOut = "g-" + proxyEntity.id
                     bypassDNSBeans += proxyEntity.requireBean()
                 }
 
-                // last profile set as "proxy"
-                if (chainId == 0L && index == 0) {
-                    tagOut = TAG_PROXY
-                }
-
                 // selector human readable name
-                if (buildSelector && index == 0) {
+                if (buildSelector && index == 0 && !isProxySet) {
                     tagOut = selectorName(bean.displayName())
                 }
 
 
                 // chain rules
-                if (index > 0) {
-                    // chain route/proxy rules
-                    if (pastEntity!!.needExternal()) {
-                        route.rules.add(Rule_DefaultOptions().apply {
-                            inbound = listOf(pastInboundTag)
-                            outbound = tagOut
-                        })
+                if (!isProxySet) {
+                    if (index > 0) {
+                        // chain route/proxy rules
+                        if (pastEntity!!.needExternal()) {
+                            route.rules.add(Rule_DefaultOptions().apply {
+                                inbound = listOf(pastInboundTag)
+                                outbound = tagOut
+                            })
+                        } else {
+                            pastOutbound._hack_config_map["detour"] = tagOut
+                        }
                     } else {
-                        pastOutbound._hack_config_map["detour"] = tagOut
+                        // index == 0 means last profile in chain / not chain
+                        chainTagOut = tagOut
                     }
                 } else {
-                    // index == 0 means last profile in chain / not chain
-                    chainTagOut = tagOut
+                    if (index == profileList.lastIndex) {
+                        chainTagOut = tagOut
+                    }
                 }
 
                 // now tagOut is determined
@@ -530,6 +583,11 @@ fun buildConfig(
                         is TorBean ->
                             buildSingBoxOutboundTorBean(bean)
 
+                        is ProxySetBean -> {
+                            val tags = readableNames!!.toList().filterNot { it == tagOut }
+                            buildSingBoxOutboundProxySetBean(bean, tags)
+                        }
+
                         else -> throw IllegalStateException("can't reach")
                     }
 
@@ -545,69 +603,72 @@ fun buildConfig(
 
                 // internal & external
                 currentOutbound.apply {
-                    // udp over tcp
-                    try {
-                        val sUoT = bean.javaClass.getField("sUoT").get(bean)
-                        val isSSWithShadowTLS = bean is ShadowsocksBean && (bean.plugin.startsWith("shadow-tls") || bean.plugin.startsWith("shadowtls"))
-                        if ((sUoT is Boolean && sUoT) || isSSWithShadowTLS) {
-                            val uotVer = try {
-                                bean.javaClass.getField("sUoTVersion").get(bean) as? Int ?: 2
-                            } catch (_: Exception) {
-                                2
+                    if (bean !is ProxySetBean) {
+                        // udp over tcp
+                        try {
+                            val sUoT = bean.javaClass.getField("sUoT").get(bean)
+                            val isSSWithShadowTLS = bean is ShadowsocksBean && (bean.plugin.startsWith("shadow-tls") || bean.plugin.startsWith("shadowtls"))
+                            if ((sUoT is Boolean && sUoT) || isSSWithShadowTLS) {
+                                val uotVer = try {
+                                    bean.javaClass.getField("sUoTVersion").get(bean) as? Int ?: 2
+                                } catch (_: Exception) {
+                                    2
+                                }
+                                _hack_config_map["udp_over_tcp"] = mapOf("enabled" to true, "version" to uotVer)
                             }
-                            _hack_config_map["udp_over_tcp"] = mapOf("enabled" to true, "version" to uotVer)
+                        } catch (_: Exception) {
                         }
-                    } catch (_: Exception) {
-                    }
 
-                    // domain_resolver
-                    pastEntity?.requireBean()?.apply {
-                        if (!serverAddress.isNullOrBlank() && !serverAddress.isIpAddress()) {
-                            domainListDNSDirectForce.add("full:$serverAddress")
-                        }
-                        if (this is HysteriaBean && enableRealm == true) {
-                            if (!realmServerURL.isNullOrBlank()) {
-                                try {
-                                    val host = java.net.URI(realmServerURL).host
-                                    if (!host.isNullOrBlank() && !host.isIpAddress()) {
-                                        domainListDNSDirectForce.add("full:$host")
-                                    }
-                                } catch (_: Exception) {}
+                        // domain_resolver
+                        pastEntity?.requireBean()?.apply {
+                            if (!serverAddress.isNullOrBlank() && !serverAddress.isIpAddress()) {
+                                domainListDNSDirectForce.add("full:$serverAddress")
                             }
-                            realmStunServers?.listByLineOrComma()?.forEach { stun ->
-                                val stunHost = stun.substringBefore(":")
-                                if (stunHost.isNotBlank() && !stunHost.isIpAddress()) {
-                                    domainListDNSDirectForce.add("full:$stunHost")
+                            if (this is HysteriaBean && enableRealm == true) {
+                                if (!realmServerURL.isNullOrBlank()) {
+                                    try {
+                                        val host = java.net.URI(realmServerURL).host
+                                        if (!host.isNullOrBlank() && !host.isIpAddress()) {
+                                            domainListDNSDirectForce.add("full:$host")
+                                        }
+                                    } catch (_: Exception) {}
+                                }
+                                realmStunServers?.listByLineOrComma()?.forEach { stun ->
+                                    val stunHost = stun.substringBefore(":")
+                                    if (stunHost.isNotBlank() && !stunHost.isIpAddress()) {
+                                        domainListDNSDirectForce.add("full:$stunHost")
+                                    }
                                 }
                             }
                         }
-                    }
-                    if (!forTest && defaultServerDomainStrategy.isNotBlank()) {
-                        _hack_config_map["domain_resolver"] = mapOf(
-                            "server" to "dns-direct",
-                            "strategy" to defaultServerDomainStrategy
-                        )
+                        if (!forTest && defaultServerDomainStrategy.isNotBlank()) {
+                            _hack_config_map["domain_resolver"] = mapOf(
+                                "server" to "dns-direct",
+                                "strategy" to defaultServerDomainStrategy
+                            )
+                        }
+
+                        if (DataStore.tcpMultiPath) {
+                            _hack_config_map["tcp_multi_path"] = true
+                        }
+                        if (DataStore.udpFragment) {
+                            _hack_config_map["udp_fragment"] = true
+                        }
+                        if (DataStore.tcpFastOpen) {
+                            _hack_config_map["tcp_fast_open"] = true
+                        }
                     }
 
                     _hack_config_map["tag"] = tagOut
-
-                    if (DataStore.tcpMultiPath) {
-                        _hack_config_map["tcp_multi_path"] = true
-                    }
-                    if (DataStore.udpFragment) {
-                        _hack_config_map["udp_fragment"] = true
-                    }
-                    if (DataStore.tcpFastOpen) {
-                        _hack_config_map["tcp_fast_open"] = true
-                    }
-
                     _hack_custom_config = bean.customOutboundJson
                 }
 
                 // External proxy need a dokodemo-door inbound to forward the traffic
                 // For external proxy software, their traffic must goes to v2ray-core to use protected fd.
-                bean.finalAddress = bean.serverAddress
-                bean.finalPort = bean.serverPort
+                if (bean !is ProxySetBean) {
+                    bean.finalAddress = bean.serverAddress
+                    bean.finalPort = bean.serverPort
+                }
                 if (bean.canMapping() && proxyEntity.needExternal()) {
                     // With ss protect, don't use mapping
                     var needExternal = true
@@ -706,6 +767,13 @@ fun buildConfig(
                     chainOutbounds.add(shadowtlsOutbound)
                     pastOutbound = shadowtlsOutbound
                 }
+            }
+
+            if (entity.type == ProxyEntity.TYPE_PROXY_SET) {
+                outbounds.add(
+                    outbounds.size - profileList.size,
+                    outbounds.removeAt(outbounds.lastIndex),
+                )
             }
 
             trafficMap[chainTagOut] = chainTrafficSet.toList()
@@ -1142,7 +1210,8 @@ fun buildConfig(
             proxy.id,
             trafficMap,
             tagMap,
-            if (buildSelector) group.id else -1L
+            if (buildSelector) group.id else -1L,
+            proxy.type == ProxyEntity.TYPE_PROXY_SET
         )
     }
 

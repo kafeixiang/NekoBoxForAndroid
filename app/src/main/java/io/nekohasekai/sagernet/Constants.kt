@@ -153,6 +153,17 @@ object Key {
     const val SERVER_HYSTERIA_REALM_PORT_MAPPING_TIMEOUT = "serverHysteriaRealmPortMappingTimeout"
     const val SERVER_HYSTERIA_REALM_PORT_MAPPING_LIFETIME = "serverHysteriaRealmPortMappingLifetime"
 
+    const val SERVER_MANAGEMENT = "serverManagement"
+    const val SERVER_INTERRUPT_EXIST_CONNECTIONS = "serverInterruptExistConnections"
+    const val SERVER_TEST_URL = "serverTestURL"
+    const val SERVER_TEST_INTERVAL = "serverTestInterval"
+    const val SERVER_IDLE_TIMEOUT = "serverIdleTimeout"
+    const val SERVER_TOLERANCE = "serverTolerance"
+    const val SERVER_TYPE = "serverType"
+    const val SERVER_GROUP = "serverGroup"
+    const val SERVER_GROUP_FILTER_NOT_REGEX = "serverGroupFilterNotRegex"
+    const val SERVER_PROXIES = "serverProxies"
+
     const val ROUTE_NAME = "routeName"
     const val ROUTE_DOMAIN = "routeDomain"
     const val ROUTE_IP = "routeIP"

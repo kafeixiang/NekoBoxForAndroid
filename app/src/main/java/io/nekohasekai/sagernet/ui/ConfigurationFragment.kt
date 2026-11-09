@@ -82,6 +82,7 @@ import io.nekohasekai.sagernet.ktx.startFilesForResult
 import io.nekohasekai.sagernet.ktx.tryToShow
 import io.nekohasekai.sagernet.plugin.PluginManager
 import io.nekohasekai.sagernet.ui.profile.ChainSettingsActivity
+import io.nekohasekai.sagernet.ui.profile.ProxySetSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.DirectSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.HttpSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.HysteriaSettingsActivity
@@ -635,6 +636,10 @@ class ConfigurationFragment @JvmOverloads constructor(
 
             R.id.action_new_chain -> {
                 startActivity(Intent(requireActivity(), ChainSettingsActivity::class.java))
+            }
+
+            R.id.action_new_proxy_set -> {
+                startActivity(Intent(requireActivity(), ProxySetSettingsActivity::class.java))
             }
 
             R.id.action_update_subscription -> {
@@ -2003,7 +2008,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                 }
                 shareLayout.setOnClickListener {
                     val proxyEntity = entity
-                    if (!select && proxyEntity.type != ProxyEntity.TYPE_CHAIN) {
+                    if (!select && proxyEntity.type != ProxyEntity.TYPE_CHAIN && proxyEntity.type != ProxyEntity.TYPE_PROXY_SET) {
                         showShareMenu(it, proxyEntity)
                     }
                 }
@@ -2178,7 +2183,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                     profileStatus.text = if (msg != err) msg else getString(R.string.unavailable)
                 }
 
-                val selectOrChain = select || proxyEntity.type == ProxyEntity.TYPE_CHAIN
+                val selectOrChain = select || proxyEntity.type == ProxyEntity.TYPE_CHAIN || proxyEntity.type == ProxyEntity.TYPE_PROXY_SET
                 val isDoubleColumn = DataStore.groupLayoutMode == 1
 
                 if (isDoubleColumn) {
@@ -2206,7 +2211,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                 removeButton.isEnabled = !started
                 applySelected(selected)
 
-                if (!(select || proxyEntity.type == ProxyEntity.TYPE_CHAIN)) {
+                if (!(select || proxyEntity.type == ProxyEntity.TYPE_CHAIN || proxyEntity.type == ProxyEntity.TYPE_PROXY_SET)) {
                     shareLayer.setBackgroundColor(Color.TRANSPARENT)
                     shareButton.setImageResource(R.drawable.ic_social_share)
                     shareButton.setColorFilter(Color.GRAY)

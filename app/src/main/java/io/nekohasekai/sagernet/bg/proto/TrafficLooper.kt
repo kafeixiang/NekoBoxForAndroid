@@ -114,14 +114,14 @@ class TrafficLooper
                             tx = ent.tx,
                             rxBase = ent.rx,
                             txBase = ent.tx,
-                            ignore = proxy.config.selectorGroupId >= 0L,
+                            ignore = proxy.config.selectorGroupId >= 0L || proxy.config.hasGroupBean,
                         )
                         idMap[ent.id] = item
                         tagMap[tag] = item
                         Logs.d("traffic count $tag to ${ent.id}")
                     }
                 }
-                if (proxy.config.selectorGroupId >= 0L) {
+                if (proxy.config.selectorGroupId >= 0L || proxy.config.hasGroupBean) {
                     selectMain(proxy.config.mainEntId)
                 }
                 //

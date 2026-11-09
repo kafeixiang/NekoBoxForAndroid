@@ -5073,6 +5073,8 @@ public class SingBoxOptions {
         @SerializedName("default")
         public String default_;
 
+        public Boolean interrupt_exist_connections;
+
     }
 
     public static class Outbound_URLTestOptions extends Outbound {
@@ -5088,6 +5090,16 @@ public class SingBoxOptions {
         public Long idle_timeout;
 
         public Boolean interrupt_exist_connections;
+
+    }
+
+    public static class Outbound_BalancerOptions extends Outbound {
+
+        public List<String> outbounds;
+
+        public String strategy;
+
+        public String interval;
 
     }
 

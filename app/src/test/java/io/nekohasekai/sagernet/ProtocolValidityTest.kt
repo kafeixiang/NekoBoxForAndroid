@@ -90,6 +90,9 @@ import io.nekohasekai.sagernet.fmt.tor.parseTorOutbound
 import io.nekohasekai.sagernet.fmt.tor.toUri
 import io.nekohasekai.sagernet.fmt.trusttunnel.TrustTunnelBean
 import io.nekohasekai.sagernet.fmt.trusttunnel.buildSingBoxOutboundTrustTunnelBean
+import io.nekohasekai.sagernet.fmt.KryoConverters
+import io.nekohasekai.sagernet.fmt.internal.ProxySetBean
+import io.nekohasekai.sagernet.fmt.internal.buildSingBoxOutboundProxySetBean
 import org.junit.Assert.*
 import org.junit.Test
 
@@ -1993,5 +1996,165 @@ class ProtocolValidityTest {
         assertEquals("custom-type", ob1!!["type"])
         assertEquals(123L, (ob1["param"] as? Number)?.toLong())
         assertEquals("yes", ob1["injected"])
+    }
+
+    @Test
+    fun testProxySetBeanSerializationAndDefaults() {
+        val bean = ProxySetBean().apply {
+            name = "MyProxySet"
+            management = ProxySetBean.MANAGEMENT_URLTEST
+            type = ProxySetBean.TYPE_LIST
+            proxies = arrayListOf(101L, 102L, 103L)
+            interruptExistConnections = true
+            testURL = "https://www.google.com/generate_204"
+            testInterval = "5m"
+            testIdleTimeout = "10m"
+            testTolerance = 100
+        }
+
+        // Display type
+        assertEquals("URLTest", bean.displayType())
+        assertEquals("MyProxySet", bean.displayName())
+
+        // Default values
+        val defaultBean = ProxySetBean().apply { initializeDefaultValues() }
+        assertEquals(ProxySetBean.MANAGEMENT_SELECTOR, defaultBean.management)
+        assertEquals(ProxySetBean.TYPE_LIST, defaultBean.type)
+        assertEquals(false, defaultBean.interruptExistConnections)
+        assertEquals(50, defaultBean.testTolerance)
+        assertTrue(defaultBean.displayName().startsWith("Selector "))
+
+        // Clone
+        val cloned = bean.clone()
+        assertEquals(bean.name, cloned.name)
+        assertEquals(bean.management, cloned.management)
+        assertEquals(bean.type, cloned.type)
+        assertEquals(bean.proxies, cloned.proxies)
+        assertEquals(bean.interruptExistConnections, cloned.interruptExistConnections)
+        assertEquals(bean.testURL, cloned.testURL)
+        assertEquals(bean.testInterval, cloned.testInterval)
+        assertEquals(bean.testIdleTimeout, cloned.testIdleTimeout)
+        assertEquals(bean.testTolerance, cloned.testTolerance)
+
+        // Kryo serialization roundtrip for TYPE_LIST
+        val bytesList = KryoConverters.serialize(bean)
+        val deserializedList = KryoConverters.proxySetDeserialize(bytesList)
+        assertEquals(bean.name, deserializedList.name)
+        assertEquals(bean.management, deserializedList.management)
+        assertEquals(bean.type, deserializedList.type)
+        assertEquals(bean.proxies, deserializedList.proxies)
+        assertEquals(bean.interruptExistConnections, deserializedList.interruptExistConnections)
+        assertEquals(bean.testURL, deserializedList.testURL)
+        assertEquals(bean.testInterval, deserializedList.testInterval)
+        assertEquals(bean.testIdleTimeout, deserializedList.testIdleTimeout)
+        assertEquals(bean.testTolerance, deserializedList.testTolerance)
+
+        // Kryo serialization roundtrip for TYPE_GROUP
+        val groupBean = ProxySetBean().apply {
+            name = "GroupProxySet"
+            management = ProxySetBean.MANAGEMENT_BALANCER
+            type = ProxySetBean.TYPE_GROUP
+            groupId = 55L
+            groupFilterNotRegex = ".*(expire|traffic).*"
+        }
+        assertEquals("Balancer", groupBean.displayType())
+        val bytesGroup = KryoConverters.serialize(groupBean)
+        val deserializedGroup = KryoConverters.proxySetDeserialize(bytesGroup)
+        assertEquals(ProxySetBean.MANAGEMENT_BALANCER, deserializedGroup.management)
+        assertEquals(ProxySetBean.TYPE_GROUP, deserializedGroup.type)
+        assertEquals(55L, deserializedGroup.groupId)
+        assertEquals(".*(expire|traffic).*", deserializedGroup.groupFilterNotRegex)
+    }
+
+    @Test
+    fun testProxySetBeanOutboundBuilding() {
+        val memberOutbounds = listOf("node-hk-1", "node-jp-2", "node-us-3")
+
+        // 1. Selector
+        val selectorBean = ProxySetBean().apply {
+            management = ProxySetBean.MANAGEMENT_SELECTOR
+            interruptExistConnections = true
+        }
+        val selectorOutbound = buildSingBoxOutboundProxySetBean(selectorBean, memberOutbounds)
+        assertTrue(selectorOutbound is SingBoxOptions.Outbound_SelectorOptions)
+        val sel = selectorOutbound as SingBoxOptions.Outbound_SelectorOptions
+        assertEquals("selector", sel.type)
+        assertEquals(memberOutbounds, sel.outbounds)
+        assertEquals(true, sel.interrupt_exist_connections)
+
+        // 2. URLTest
+        val urlTestBean = ProxySetBean().apply {
+            management = ProxySetBean.MANAGEMENT_URLTEST
+            testURL = "https://cp.cloudflare.com/generate_204"
+            testInterval = "2m"
+            testIdleTimeout = "4m"
+            testTolerance = 80
+            interruptExistConnections = true
+        }
+        val urlTestOutbound = buildSingBoxOutboundProxySetBean(urlTestBean, memberOutbounds)
+        assertTrue(urlTestOutbound is SingBoxOptions.Outbound_URLTestOptions)
+        val ut = urlTestOutbound as SingBoxOptions.Outbound_URLTestOptions
+        assertEquals("urltest", ut.type)
+        assertEquals(memberOutbounds, ut.outbounds)
+        assertEquals("https://cp.cloudflare.com/generate_204", ut.url)
+        assertEquals("2m", ut._hack_config_map["interval"])
+        assertEquals("4m", ut._hack_config_map["idle_timeout"])
+        assertEquals(80, ut.tolerance)
+        assertEquals(true, ut.interrupt_exist_connections)
+
+        // 3. Balancer
+        val balancerBean = ProxySetBean().apply {
+            management = ProxySetBean.MANAGEMENT_BALANCER
+        }
+        val balancerOutbound = buildSingBoxOutboundProxySetBean(balancerBean, memberOutbounds)
+        assertTrue(balancerOutbound is SingBoxOptions.Outbound_BalancerOptions)
+        val bal = balancerOutbound as SingBoxOptions.Outbound_BalancerOptions
+        assertEquals("balancer", bal.type)
+        assertEquals(memberOutbounds, bal.outbounds)
+    }
+
+    @Test
+    fun testProxySetEntityIntegration() {
+        val bean = ProxySetBean().apply {
+            name = "Test Selector Set"
+            management = ProxySetBean.MANAGEMENT_SELECTOR
+            type = ProxySetBean.TYPE_LIST
+            proxies = arrayListOf(1L, 2L)
+        }
+
+        val entity = ProxyEntity().apply {
+            putBean(bean)
+        }
+
+        assertEquals(ProxyEntity.TYPE_PROXY_SET, entity.type)
+        assertEquals("Selector", entity.displayType())
+        assertFalse(entity.haveLink())
+        assertFalse(entity.haveStandardLink())
+
+        val retrievedBean = entity.requireBean()
+        assertTrue(retrievedBean is ProxySetBean)
+        assertEquals(ProxySetBean.MANAGEMENT_SELECTOR, (retrievedBean as ProxySetBean).management)
+        assertEquals(arrayListOf(1L, 2L), retrievedBean.proxies)
+
+        // Update management type to Balancer and test displayType
+        retrievedBean.management = ProxySetBean.MANAGEMENT_BALANCER
+        entity.putBean(retrievedBean)
+        assertEquals("Balancer", entity.displayType())
+    }
+
+    @Test
+    fun testProxySetGroupFilterRegex() {
+        val regexStr = ".*(expire|expired|流量耗尽).*"
+        val regex = Regex(regexStr)
+
+        val candidateNames = listOf(
+            "香港01-BGP",
+            "日本02-高速 [expire 2026]",
+            "新加坡03 [流量耗尽]",
+            "美国04-专线"
+        )
+
+        val filtered = candidateNames.filterNot { regex.containsMatchIn(it) }
+        assertEquals(listOf("香港01-BGP", "美国04-专线"), filtered)
     }
 }

@@ -20,6 +20,7 @@ import io.nekohasekai.sagernet.ktx.parsePort
 import io.nekohasekai.sagernet.ktx.string
 import io.nekohasekai.sagernet.ktx.stringToInt
 import io.nekohasekai.sagernet.ktx.stringToIntIfExists
+import io.nekohasekai.sagernet.ktx.stringToLong
 import moe.matsuri.nb4a.TempDatabase
 
 object DataStore : OnPreferenceDataStoreChangeListener {
@@ -285,6 +286,17 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverConfig by profileCacheStore.string(Key.SERVER_CONFIG)
     var serverCustom by profileCacheStore.string(Key.SERVER_CUSTOM)
     var serverCustomOutbound by profileCacheStore.string(Key.SERVER_CUSTOM_OUTBOUND)
+
+    var serverManagement by profileCacheStore.stringToInt(Key.SERVER_MANAGEMENT)
+    var serverInterruptExistConnections by profileCacheStore.boolean(Key.SERVER_INTERRUPT_EXIST_CONNECTIONS) { true }
+    var serverTestURL by profileCacheStore.string(Key.SERVER_TEST_URL) { CONNECTION_TEST_URL }
+    var serverTestInterval by profileCacheStore.string(Key.SERVER_TEST_INTERVAL) { "3m" }
+    var serverIdleTimeout by profileCacheStore.string(Key.SERVER_IDLE_TIMEOUT) { "30m" }
+    var serverTolerance by profileCacheStore.stringToInt(Key.SERVER_TOLERANCE) { 50 }
+    var serverType by profileCacheStore.stringToInt(Key.SERVER_TYPE)
+    var serverGroup by profileCacheStore.stringToLong(Key.SERVER_GROUP)
+    var serverGroupFilterNotRegex by profileCacheStore.string(Key.SERVER_GROUP_FILTER_NOT_REGEX)
+    var serverProxies by profileCacheStore.string(Key.SERVER_PROXIES)
 
     var groupName by profileCacheStore.string(Key.GROUP_NAME)
     var groupType by profileCacheStore.stringToInt(Key.GROUP_TYPE)
