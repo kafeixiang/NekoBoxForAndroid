@@ -75,6 +75,15 @@ func TestPluginRegistration(t *testing.T) {
 				}
 			]
 		}`,
+		`{
+			"outbounds": [
+				{
+					"type": "balancer",
+					"tag": "balancer-out",
+					"outbounds": ["direct"]
+				}
+			]
+		}`,
 	}
 
 	for _, cfg := range configs {
