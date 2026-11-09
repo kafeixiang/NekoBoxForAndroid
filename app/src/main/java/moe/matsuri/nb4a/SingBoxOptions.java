@@ -3,19 +3,21 @@ package moe.matsuri.nb4a;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 import com.google.gson.ToNumberPolicy;
 import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import moe.matsuri.nb4a.utils.JavaUtil;
 import moe.matsuri.nb4a.utils.Util;
 
 public class SingBoxOptions {
@@ -23,7 +25,7 @@ public class SingBoxOptions {
     // base
 
     private static final Gson gsonSingbox = new GsonBuilder()
-            .registerTypeHierarchyAdapter(SingBoxOption.class, new SingBoxOptionSerializer())
+            .registerTypeAdapterFactory(new SingBoxOptionAdapterFactory())
             .setPrettyPrinting()
             .setNumberToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE)
             .setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE)
@@ -57,7 +59,10 @@ public class SingBoxOptions {
         }
 
         public Map<String, Object> getBasicMap() {
-            Map<String, Object> map = gsonSingbox.fromJson(config, Map.class);
+            Map<String, Object> map = null;
+            if (config != null && !config.isBlank()) {
+                map = JavaUtil.gson.fromJson(config, Map.class);
+            }
             if (map == null) {
                 map = new HashMap<>();
             }
@@ -65,33 +70,67 @@ public class SingBoxOptions {
         }
     }
 
-    // 自定义序列化器
-    public static class SingBoxOptionSerializer implements JsonSerializer<SingBoxOption> {
+    // 自定义适配器工厂
+    public static class SingBoxOptionAdapterFactory implements TypeAdapterFactory {
         @Override
-        public JsonElement serialize(SingBoxOption src, Type typeOfSrc, JsonSerializationContext context) {
-            // 拿到原始的 delegate（默认序列化器）
-            TypeAdapter<?> delegate = gsonSingbox.getDelegateAdapter(
-                    new TypeAdapterFactory() {
-                        @Override
-                        public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
-                            return null; // 返回 null，表示只作为“跳过当前自定义”的 marker
+        public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
+            if (!SingBoxOption.class.isAssignableFrom(type.getRawType())) {
+                return null;
+            }
+            final TypeAdapter<T> delegate = gson.getDelegateAdapter(this, type);
+            return new TypeAdapter<T>() {
+                @Override
+                public void write(JsonWriter out, T value) throws IOException {
+                    if (value == null) {
+                        out.nullValue();
+                        return;
+                    }
+                    if (value.getClass() != type.getRawType()) {
+                        @SuppressWarnings("unchecked")
+                        TypeAdapter<T> runtimeAdapter = (TypeAdapter<T>) gson.getAdapter(TypeToken.get(value.getClass()));
+                        runtimeAdapter.write(out, value);
+                        return;
+                    }
+                    SingBoxOption opt = (SingBoxOption) value;
+                    boolean hasHackMap = opt._hack_config_map != null && !opt._hack_config_map.isEmpty();
+                    boolean hasHackCustom = opt._hack_custom_config != null && !opt._hack_custom_config.isBlank();
+                    boolean isCustom = opt instanceof CustomSingBoxOption;
+
+                    if (!hasHackMap && !hasHackCustom && !isCustom) {
+                        delegate.write(out, value);
+                        return;
+                    }
+
+                    Map<String, Object> map;
+                    if (isCustom) {
+                        map = ((CustomSingBoxOption) opt).getBasicMap();
+                    } else {
+                        JsonElement tree = delegate.toJsonTree(value);
+                        if (tree.isJsonObject()) {
+                            map = JavaUtil.gson.fromJson(tree, Map.class);
+                        } else {
+                            gson.getAdapter(JsonElement.class).write(out, tree);
+                            return;
                         }
-                    },
-                    TypeToken.get(src.getClass())
-            );
-            Map<String, Object> map;
-            if (src instanceof CustomSingBoxOption) {
-                map = ((CustomSingBoxOption) src).getBasicMap();
-            } else {
-                map = gsonSingbox.fromJson(((TypeAdapter<SingBoxOption>) delegate).toJson(src), Map.class);
-            }
-            if (src._hack_config_map != null && !src._hack_config_map.isEmpty()) {
-                Util.INSTANCE.mergeMap(map, src._hack_config_map);
-            }
-            if (src._hack_custom_config != null && !src._hack_custom_config.isBlank()) {
-                Util.INSTANCE.mergeJSON(map, src._hack_custom_config);
-            }
-            return gsonSingbox.toJsonTree(map);
+                    }
+                    if (map == null) {
+                        map = new HashMap<>();
+                    }
+                    if (hasHackMap) {
+                        Util.INSTANCE.mergeMap(map, opt._hack_config_map);
+                    }
+                    if (hasHackCustom) {
+                        Util.INSTANCE.mergeJSON(map, opt._hack_custom_config);
+                    }
+                    JsonElement finalTree = JavaUtil.gson.toJsonTree(map);
+                    gson.getAdapter(JsonElement.class).write(out, finalTree);
+                }
+
+                @Override
+                public T read(JsonReader in) throws IOException {
+                    return delegate.read(in);
+                }
+            };
         }
     }
 

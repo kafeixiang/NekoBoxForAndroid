@@ -1939,4 +1939,59 @@ class ProtocolValidityTest {
         assertTrue(uri.contains("zero_rtt=true"))
         assertTrue(uri.contains("sunny_quic=true"))
     }
+
+    @Test
+    fun testSingBoxOptionsAsMap() {
+        val cfg = SingBoxOptions.MyOptions()
+        val vless = SingBoxOptions.Outbound_VLESSOptions().apply {
+            type = "vless"
+            server = "1.2.3.4"
+            server_port = 443
+            uuid = "test-uuid"
+            _hack_config_map["tag"] = "vless-out"
+            _hack_config_map["packet_encoding"] = "xudp"
+            _hack_custom_config = "{\"custom_key\": \"custom_value\"}"
+        }
+        val customOpt = SingBoxOptions.CustomSingBoxOption("{\"type\":\"custom-type\",\"param\":123}").apply {
+            _hack_config_map["injected"] = "yes"
+        }
+        cfg.outbounds = arrayListOf(vless, customOpt)
+        cfg._hack_config_map["log"] = mapOf("level" to "debug")
+        cfg._hack_custom_config = "{\"experimental\": {\"clash_api\": {\"external_controller\": \"127.0.0.1:9090\"}}}"
+
+        val map = cfg.asMap()
+        assertNotNull(map)
+
+        // Verify root hacks
+        val logMap = map["log"] as? Map<*, *>
+        assertNotNull(logMap)
+        assertEquals("debug", logMap!!["level"])
+
+        val expMap = map["experimental"] as? Map<*, *>
+        assertNotNull(expMap)
+        val clashMap = expMap!!["clash_api"] as? Map<*, *>
+        assertNotNull(clashMap)
+        assertEquals("127.0.0.1:9090", clashMap!!["external_controller"])
+
+        // Verify outbounds
+        val outbounds = map["outbounds"] as? List<*>
+        assertNotNull(outbounds)
+        assertEquals(2, outbounds!!.size)
+
+        val ob0 = outbounds[0] as? Map<*, *>
+        assertNotNull(ob0)
+        assertEquals("vless", ob0!!["type"])
+        assertEquals("1.2.3.4", ob0["server"])
+        assertEquals(443L, (ob0["server_port"] as? Number)?.toLong())
+        assertEquals("test-uuid", ob0["uuid"])
+        assertEquals("vless-out", ob0["tag"])
+        assertEquals("xudp", ob0["packet_encoding"])
+        assertEquals("custom_value", ob0["custom_key"])
+
+        val ob1 = outbounds[1] as? Map<*, *>
+        assertNotNull(ob1)
+        assertEquals("custom-type", ob1!!["type"])
+        assertEquals(123L, (ob1["param"] as? Number)?.toLong())
+        assertEquals("yes", ob1["injected"])
+    }
 }
