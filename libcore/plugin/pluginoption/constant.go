@@ -5,4 +5,5 @@ const (
 	TypeJuicity     = "juicity"
 	TypeTrustTunnel = "trusttunnel"
 	TypeShadowQUIC  = "shadowquic"
+	TypeBalancer    = "balancer"
 )

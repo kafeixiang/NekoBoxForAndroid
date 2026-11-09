@@ -3,6 +3,7 @@ package plugin
 import (
 	"github.com/sagernet/sing-box/adapter/outbound"
 
+	"libcore/plugin/balancer"
 	"libcore/plugin/juicity"
 	"libcore/plugin/shadowquic"
 	"libcore/plugin/trusttunnel"
@@ -11,6 +12,7 @@ import (
 // RegisterPlugins registers bridged outbound protocols into the sing-box outbound registry.
 // This allows adding and extending protocols seamlessly without modifying sing-box upstream code.
 func RegisterPlugins(registry *outbound.Registry) {
+	balancer.RegisterOutbound(registry)
 	juicity.RegisterOutbound(registry)
 	shadowquic.RegisterOutbound(registry)
 	trusttunnel.RegisterOutbound(registry)
