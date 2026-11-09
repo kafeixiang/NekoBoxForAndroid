@@ -2157,4 +2157,20 @@ class ProtocolValidityTest {
         val filtered = candidateNames.filterNot { regex.containsMatchIn(it) }
         assertEquals(listOf("香港01-BGP", "美国04-专线"), filtered)
     }
+
+    @Test
+    fun testBalancerOutboundBuilding() {
+        val balancerBean = ProxySetBean().apply {
+            name = "Test Balancer"
+            management = ProxySetBean.MANAGEMENT_BALANCER
+            testInterval = "5s"
+        }
+        val outbounds = listOf("node-1", "node-2")
+        val balancerOutbound = buildSingBoxOutboundProxySetBean(balancerBean, outbounds)
+        assertTrue(balancerOutbound is SingBoxOptions.Outbound_BalancerOptions)
+        val bal = balancerOutbound as SingBoxOptions.Outbound_BalancerOptions
+        assertEquals("balancer", bal.type)
+        assertEquals(outbounds, bal.outbounds)
+        assertEquals("5s", bal._hack_config_map["interval"])
+    }
 }

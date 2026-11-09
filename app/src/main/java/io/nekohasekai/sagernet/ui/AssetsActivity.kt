@@ -273,9 +273,12 @@ class AssetsActivity : ThemedActivity() {
     )
 
     suspend fun updateAsset(file: File, versionFile: File, localVersion: String) {
+        if (DataStore.rulesProvider == 4) {
+            return updateCustomAsset(file, versionFile)
+        }
         var fileName = file.name
 
-        val ruleProvider = rulesProviders[DataStore.rulesProvider]
+        val ruleProvider = rulesProviders.getOrNull(DataStore.rulesProvider) ?: rulesProviders[0]
         val repo = ruleProvider.repoByFileName[fileName]
 
         val client = Libcore.newHttpClient().apply {
@@ -329,6 +332,40 @@ class AssetsActivity : ThemedActivity() {
             }
         } finally {
             client.close()
+        }
+    }
+
+    suspend fun updateCustomAsset(file: File, versionFile: File) {
+        val fileName = file.name
+        val url: String = if (fileName == "geoip.db") {
+            DataStore.rulesGeoipUrl
+        } else if (fileName == "geosite.db") {
+            DataStore.rulesGeositeUrl
+        } else {
+            return
+        }
+        val client = Libcore.newHttpClient().apply {
+            modernTLS()
+            keepAlive()
+            trySocks5(DataStore.mixedPort)
+        }
+        try {
+            val response = client.newRequest().apply {
+                setURL(url)
+            }.execute()
+            val cacheFile = File(file.parentFile, fileName + ".tmp")
+            cacheFile.parentFile?.mkdirs()
+            response.writeTo(cacheFile.canonicalPath)
+            cacheFile.renameTo(file)
+            adapter.reloadAssets()
+            onMainDispatcher {
+                snackbar(R.string.route_asset_updated).show()
+            }
+        } finally {
+            client.close()
+            if (versionFile.isFile) {
+                versionFile.delete()
+            }
         }
     }
 

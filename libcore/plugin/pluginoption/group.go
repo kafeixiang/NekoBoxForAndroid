@@ -7,4 +7,5 @@ import (
 type BalancerOutboundOptions struct {
 	Outbounds []string           `json:"outbounds" reference:"outbound"`
 	Interval  badoption.Duration `json:"interval,omitempty"`
+	Strategy  string             `json:"strategy,omitempty"`
 }

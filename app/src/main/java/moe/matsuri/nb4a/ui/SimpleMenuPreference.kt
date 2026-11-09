@@ -21,6 +21,7 @@ import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import androidx.preference.DropDownPreference
@@ -49,6 +50,20 @@ open class SimpleMenuPreference
         val mSpinner = holder.itemView.findViewById<Spinner>(R.id.spinner)
         mSpinner.layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT
         mSpinner.setPopupBackgroundResource(R.drawable.bg_spinner_dropdown)
+        mSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val values = entryValues
+                if (position >= 0 && values != null && position < values.size) {
+                    val v = values[position].toString()
+                    if (v != this@SimpleMenuPreference.value && callChangeListener(v)) {
+                        this@SimpleMenuPreference.value = v
+                    }
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+        }
     }
 
     override fun createAdapter(): ArrayAdapter<CharSequence?> {

@@ -656,6 +656,8 @@
     <string name="auto_switch_timeout_summary">Automatically switch to the next configuration if timeout occurs</string>
     <string name="auto_switch_timeout_duration">Timeout Duration (seconds)</string>
     <string name="custom_rules_provider">Custom</string>
+    <string name="rules_geosite_url">geosite URL</string>
+    <string name="rules_geoip_url">geoip URL</string>
 
     <!-- Snell Protocol -->
     <string name="action_snell">Snell</string>

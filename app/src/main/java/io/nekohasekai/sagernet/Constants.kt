@@ -48,6 +48,8 @@ object Key {
     const val NETWORK_CHANGE_RESET_CONNECTIONS = "networkChangeResetConnections"
     const val WAKE_RESET_CONNECTIONS = "wakeResetConnections"
     const val RULES_PROVIDER = "rulesProvider"
+    const val RULES_GEOSITE_URL = "rulesGeositeUrl"
+    const val RULES_GEOIP_URL = "rulesGeoipUrl"
     const val LOG_LEVEL = "logLevel"
     const val LOG_BUF_SIZE = "logBufSize"
     const val MTU = "mtu"

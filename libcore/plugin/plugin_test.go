@@ -80,6 +80,7 @@ func TestPluginRegistration(t *testing.T) {
 				{
 					"type": "balancer",
 					"tag": "balancer-out",
+					"strategy": "leastPing",
 					"outbounds": ["direct"]
 				}
 			]
