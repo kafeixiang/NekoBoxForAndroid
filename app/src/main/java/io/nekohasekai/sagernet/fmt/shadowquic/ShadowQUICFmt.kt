@@ -18,20 +18,20 @@ fun parseShadowQUIC(url: String): ShadowQUICBean {
     return ShadowQUICBean().apply {
         initializeDefaultValues()
         if (!link.fragment.isNullOrEmpty()) {
-            name = link.fragment!!.unUrlSafe()
+            name = link.fragment!!
         } else {
             name = link.queryParameter("tag").orEmpty()
         }
         if (link.username.isNotEmpty()) {
-            username = link.username.unUrlSafe()
+            username = link.username
         }
         if (link.password.isNotEmpty()) {
-            password = link.password.unUrlSafe()
+            password = link.password
         }
         serverAddress = link.host
         serverPort = if (link.port > 0) link.port else 443
         (link.queryParameter("sni") ?: link.queryParameter("server_name") ?: link.queryParameter("server-name"))?.let {
-            sni = it.unUrlSafe()
+            sni = it
         }
         val udpMode = link.queryParameter("udp_over_stream")
             ?: link.queryParameter("udp-over-stream")
@@ -46,7 +46,7 @@ fun parseShadowQUIC(url: String): ShadowQUICBean {
             }
         }
         (link.queryParameter("congestion") ?: link.queryParameter("congestion_control") ?: link.queryParameter("congestion-control") ?: link.queryParameter("congestion-controller"))?.let {
-            congestionControl = it.unUrlSafe()
+            congestionControl = it
         }
         val zeroRttParam = link.queryParameter("zero_rtt")
             ?: link.queryParameter("zero-rtt")
@@ -60,7 +60,7 @@ fun parseShadowQUIC(url: String): ShadowQUICBean {
             }
         }
         link.queryParameter("alpn")?.let {
-            alpn = it.unUrlSafe()
+            alpn = it
         }
         val sunnyParam = link.queryParameter("sunny_quic")
             ?: link.queryParameter("sunny-quic")

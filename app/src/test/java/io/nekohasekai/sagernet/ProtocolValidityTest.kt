@@ -2173,4 +2173,63 @@ class ProtocolValidityTest {
         assertEquals(outbounds, bal.outbounds)
         assertEquals("5s", bal._hack_config_map["interval"])
     }
+
+    @Test
+    fun testUriPlusPreservationAndClashKcpSnellV6() = runBlocking {
+        val plusKey = "abc+def/ghi+jkl="
+        val tcUri = TailcatBean().apply {
+            name = "TC+Node"
+            privateKey = plusKey
+            serverPublicKey = "pub+key/123="
+            preSharedKey = "psk+456="
+        }.toUri()
+        val parsedTc = parseTailcat(tcUri)
+        assertEquals(plusKey, parsedTc.privateKey)
+        assertEquals("pub+key/123=", parsedTc.serverPublicKey)
+        assertEquals("psk+456=", parsedTc.preSharedKey)
+        assertEquals("TC+Node", parsedTc.name)
+
+        val mqUri = MASQUEBean().apply {
+            name = "MQ+Node"
+            serverAddress = "1.2.3.4"
+            serverPort = 443
+            username = "u+1"
+            password = "p+2"
+            path = "/a+b"
+        }.toUri()
+        val parsedMq = parseMASQUE(mqUri)
+        assertEquals("u+1", parsedMq.username)
+        assertEquals("p+2", parsedMq.password)
+        assertEquals("/a+b", parsedMq.path)
+        assertEquals("MQ+Node", parsedMq.name)
+
+        val snellV6Yaml = """
+            proxies:
+              - name: "Snell-V6"
+                type: snell
+                server: 1.2.3.4
+                port: 21018
+                psk: test-psk
+                version: 6
+              - name: "VMess-mKCP"
+                type: vmess
+                server: 1.2.3.4
+                port: 21007
+                uuid: 11111111-2222-3333-4444-555555555555
+                alterId: 0
+                cipher: auto
+                network: kcp
+                kcp-opts:
+                  header-type: wechat-video
+                  seed: kcp-test-seed
+        """.trimIndent()
+        val parsed = RawUpdater.parseRaw(snellV6Yaml)!!
+        assertEquals(2, parsed.size)
+        val snell = parsed[0] as io.nekohasekai.sagernet.fmt.snell.SnellBean
+        assertEquals(6, snell.version)
+        val vmess = parsed[1] as io.nekohasekai.sagernet.fmt.v2ray.VMessBean
+        assertEquals("kcp", vmess.type)
+        assertEquals("wechat-video", vmess.headerType)
+        assertEquals("kcp-test-seed", vmess.mKcpSeed)
+    }
 }

@@ -105,7 +105,7 @@ func NewSingBoxInstance(config string, localTransport LocalDNSTransport) (b *Box
 		nekoboxAndroidCertificateProviderRegistry(),
 	)
 	ctx = service.ContextWithDefaultRegistry(ctx)
-	service.MustRegister[adapter.PlatformInterface](ctx, boxPlatformInterfaceInstance)
+	service.MustRegister[adapter.PlatformInterface](ctx, &boxPlatformInterfaceWrapper{})
 
 	// parse options
 	var options option.Options

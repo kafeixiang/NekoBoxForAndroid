@@ -82,6 +82,7 @@ class SagerNet : Application(),
             Theme.apply(this)
             Theme.applyNightTheme()
             runOnDefaultDispatcher {
+                DefaultNetworkListener.syncInterfaceToLibcore(connectivity.activeNetwork)
                 DefaultNetworkListener.start(this) {
                     underlyingNetwork = it
                 }

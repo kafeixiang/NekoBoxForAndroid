@@ -21,13 +21,18 @@ import (
 	N "github.com/sagernet/sing/common/network"
 )
 
-var boxPlatformInterfaceInstance adapter.PlatformInterface = &boxPlatformInterfaceWrapper{}
-
-type boxPlatformInterfaceWrapper struct{}
+type boxPlatformInterfaceWrapper struct {
+	networkManager adapter.NetworkManager
+	monitor        *platformDefaultInterfaceMonitor
+}
 
 var _ adapter.PlatformInterface = (*boxPlatformInterfaceWrapper)(nil)
 
 func (w *boxPlatformInterfaceWrapper) Initialize(networkManager adapter.NetworkManager) error {
+	w.networkManager = networkManager
+	if w.monitor != nil {
+		w.monitor.setNetworkManager(networkManager)
+	}
 	return nil
 }
 
@@ -79,15 +84,16 @@ func (w *boxPlatformInterfaceWrapper) UsePlatformDefaultInterfaceMonitor() bool 
 }
 
 func (w *boxPlatformInterfaceWrapper) CreateDefaultInterfaceMonitor(l logger.Logger) tun.DefaultInterfaceMonitor {
-	return &interfaceMonitorStub{}
+	w.monitor = newPlatformDefaultInterfaceMonitor(w.networkManager, l)
+	return w.monitor
 }
 
 func (w *boxPlatformInterfaceWrapper) UsePlatformNetworkInterfaces() bool {
-	return false
+	return true
 }
 
 func (w *boxPlatformInterfaceWrapper) NetworkInterfaces() ([]adapter.NetworkInterface, error) {
-	return nil, os.ErrInvalid
+	return currentNetworkInterfacesCopy(), nil
 }
 
 func (w *boxPlatformInterfaceWrapper) UnderNetworkExtension() bool {
@@ -163,7 +169,7 @@ func (w *boxPlatformInterfaceWrapper) FindConnectionOwner(request *adapter.FindC
 }
 
 func (w *boxPlatformInterfaceWrapper) UsePlatformWIFIMonitor() bool {
-	return false
+	return true
 }
 
 func (w *boxPlatformInterfaceWrapper) UsePlatformNotification() bool {

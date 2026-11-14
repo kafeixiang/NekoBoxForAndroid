@@ -2,7 +2,6 @@ package io.nekohasekai.sagernet.fmt.masque
 
 import io.nekohasekai.sagernet.ktx.blankAsNull
 import io.nekohasekai.sagernet.ktx.isIpAddressV6
-import io.nekohasekai.sagernet.ktx.unUrlSafe
 import io.nekohasekai.sagernet.ktx.urlSafe
 import moe.matsuri.nb4a.SingBoxOptions
 import moe.matsuri.nb4a.utils.listByLineOrComma
@@ -16,11 +15,11 @@ fun parseMASQUE(url: String): MASQUEBean {
         initializeDefaultValues()
         serverAddress = link.host
         serverPort = link.port
-        if (link.username.isNotEmpty()) username = link.username.unUrlSafe()
-        if (link.password.isNotEmpty()) password = link.password.unUrlSafe()
-        if (!link.fragment.isNullOrEmpty()) name = link.fragment!!.unUrlSafe()
+        if (link.username.isNotEmpty()) username = link.username
+        if (link.password.isNotEmpty()) password = link.password
+        if (!link.fragment.isNullOrEmpty()) name = link.fragment!!
 
-        link.queryParameter("path")?.let { path = it.unUrlSafe() }
+        link.queryParameter("path")?.let { path = it }
         link.queryParameter("version")?.toIntOrNull()?.let {
             if (it in 1..3) httpVersion = it
         }
@@ -31,9 +30,9 @@ fun parseMASQUE(url: String): MASQUEBean {
             enableTLS = it != "false" && it != "0"
         }
         (link.queryParameter("sni") ?: link.queryParameter("serverName"))?.let {
-            serverName = it.unUrlSafe()
+            serverName = it
         }
-        link.queryParameter("alpn")?.let { alpn = it.unUrlSafe() }
+        link.queryParameter("alpn")?.let { alpn = it }
         (link.queryParameter("allowInsecure") ?: link.queryParameter("allow_insecure") ?: link.queryParameter("insecure"))?.let {
             allowInsecure = it == "true" || it == "1"
         }
@@ -41,7 +40,7 @@ fun parseMASQUE(url: String): MASQUEBean {
             disableSNI = it == "true" || it == "1"
         }
         (link.queryParameter("utls") ?: link.queryParameter("fp"))?.let {
-            utlsFingerprint = it.unUrlSafe()
+            utlsFingerprint = it
         }
         link.queryParameter("mtu")?.toIntOrNull()?.let {
             if (it > 0) mtu = it

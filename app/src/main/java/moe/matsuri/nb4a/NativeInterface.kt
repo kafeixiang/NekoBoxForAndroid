@@ -69,10 +69,25 @@ class NativeInterface : BoxPlatformInterface, NB4AInterface {
 
     // TODO: 'getter for connectionInfo: WifiInfo!' is deprecated
     override fun wifiState(): String {
-        val wifiManager =
-            app.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
-        val connectionInfo = wifiManager.connectionInfo
-        return "${connectionInfo.ssid},${connectionInfo.bssid}"
+        return try {
+            val wifiManager =
+                app.applicationContext.getSystemService(Context.WIFI_SERVICE) as? WifiManager
+                    ?: return ","
+            @Suppress("DEPRECATION")
+            val connectionInfo = wifiManager.connectionInfo ?: return ","
+            val rawSsid = connectionInfo.ssid ?: ""
+            val ssid = if (rawSsid == "<unknown ssid>") {
+                ""
+            } else {
+                rawSsid.removeSurrounding("\"")
+            }
+            val rawBssid = connectionInfo.bssid ?: ""
+            val bssid = if (rawBssid == "02:00:00:00:00:00") "" else rawBssid
+            "$ssid,$bssid"
+        } catch (_: Exception) {
+            // Never let a Java exception escape across JNI on non-error Go callback.
+            ","
+        }
     }
 
     // nb4a interface

@@ -27,20 +27,20 @@ fun parseOpenConnect(url: String): OpenConnectBean {
         server = "${link.host}:${link.port}"
         serverAddress = link.host
         serverPort = link.port
-        if (link.username.isNotEmpty()) username = link.username.unUrlSafe()
-        if (link.password.isNotEmpty()) password = link.password.unUrlSafe()
-        if (!link.fragment.isNullOrEmpty()) name = link.fragment!!.unUrlSafe()
+        if (link.username.isNotEmpty()) username = link.username
+        if (link.password.isNotEmpty()) password = link.password
+        if (!link.fragment.isNullOrEmpty()) name = link.fragment!!
 
-        link.queryParameter("flavor")?.let { flavor = it.unUrlSafe() }
-        (link.queryParameter("authgroup") ?: link.queryParameter("group"))?.let { authGroup = it.unUrlSafe() }
+        link.queryParameter("flavor")?.let { flavor = it }
+        (link.queryParameter("authgroup") ?: link.queryParameter("group"))?.let { authGroup = it }
         (link.queryParameter("allowInsecureCrypto") ?: link.queryParameter("allow_insecure_crypto"))?.let {
             allowInsecureCrypto = it == "true" || it == "1"
         }
         (link.queryParameter("insecure") ?: link.queryParameter("allowInsecure") ?: link.queryParameter("allow_insecure"))?.let {
             tlsInsecure = it == "true" || it == "1"
         }
-        (link.queryParameter("sni") ?: link.queryParameter("serverName"))?.let { tlsServerName = it.unUrlSafe() }
-        (link.queryParameter("fingerprint") ?: link.queryParameter("fp"))?.let { tlsPeerFingerprint = it.unUrlSafe() }
+        (link.queryParameter("sni") ?: link.queryParameter("serverName"))?.let { tlsServerName = it }
+        (link.queryParameter("fingerprint") ?: link.queryParameter("fp"))?.let { tlsPeerFingerprint = it }
         parseServerAddress()
     }
 }

@@ -375,6 +375,7 @@ class BaseService {
         var upstreamInterfaceName: String?
 
         suspend fun preInit() {
+            DefaultNetworkListener.syncInterfaceToLibcore(SagerNet.connectivity.activeNetwork)
             DefaultNetworkListener.start(this) {
                 SagerNet.connectivity.getLinkProperties(it)?.also { link ->
                     SagerNet.underlyingNetwork = it

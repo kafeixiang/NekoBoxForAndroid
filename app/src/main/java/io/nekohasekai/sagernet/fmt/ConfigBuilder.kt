@@ -1180,7 +1180,14 @@ fun buildConfig(
             endpointTypes.contains(it._hack_config_map["type"])
         }
         if (epList.isNotEmpty()) {
-            if (!forTest && buildSelector) {
+            if (forTest) {
+                for (ep in epList) {
+                    val epType = (ep as? Outbound)?.type ?: ep._hack_config_map["type"] as? String
+                    if (epType == "masque-client") {
+                        ep._hack_config_map["on_demand"] = true
+                    }
+                }
+            } else if (buildSelector) {
                 val activeTag = tagMap[proxy.id]
                 for (ep in epList) {
                     val epTag = (ep as? Outbound)?.tag ?: ep._hack_config_map["tag"] as? String

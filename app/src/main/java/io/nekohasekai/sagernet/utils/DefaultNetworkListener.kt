@@ -15,9 +15,41 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.actor
 import kotlinx.coroutines.runBlocking
+import libcore.Libcore
 import java.net.UnknownHostException
 
 object DefaultNetworkListener {
+    fun syncInterfaceToLibcore(network: Network?) {
+        try {
+            if (network == null) {
+                Libcore.updateDefaultInterface("", -1, 1500, 3, false, false, "")
+                return
+            }
+            val link = SagerNet.connectivity.getLinkProperties(network) ?: return
+            val caps = SagerNet.connectivity.getNetworkCapabilities(network)
+            val ifName = link.interfaceName ?: return
+            val ifIndex = try {
+                java.net.NetworkInterface.getByName(ifName)?.index ?: 1
+            } catch (_: Exception) {
+                1
+            }
+            val mtu = if (link.mtu > 0) link.mtu else 1500
+            val netType = when {
+                caps == null -> 3
+                caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> 0
+                caps.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> 1
+                caps.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> 2
+                else -> 3
+            }
+            val expensive = caps != null && !caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED)
+            val addrs = link.linkAddresses.joinToString(",") {
+                "${it.address.hostAddress}/${it.prefixLength}"
+            }
+            Libcore.updateDefaultInterface(ifName, ifIndex, mtu, netType, expensive, false, addrs)
+        } catch (e: Exception) {
+            Logs.w(e)
+        }
+    }
     private sealed class NetworkMessage {
         class Start(val key: Any, val listener: (Network?) -> Unit) : NetworkMessage()
         class Get : NetworkMessage() {
@@ -56,17 +88,22 @@ object DefaultNetworkListener {
 
             is NetworkMessage.Put -> {
                 network = message.network
+                syncInterfaceToLibcore(network)
                 pendingRequests.forEach { it.response.complete(message.network) }
                 pendingRequests.clear()
                 listeners.values.forEach { it(network) }
             }
-            is NetworkMessage.Update -> if (network == message.network) listeners.values.forEach {
-                it(
-                    network
-                )
+            is NetworkMessage.Update -> if (network == message.network) {
+                syncInterfaceToLibcore(network)
+                listeners.values.forEach {
+                    it(
+                        network
+                    )
+                }
             }
             is NetworkMessage.Lost -> if (network == message.network) {
                 network = null
+                syncInterfaceToLibcore(null)
                 listeners.values.forEach { it(null) }
             }
         }

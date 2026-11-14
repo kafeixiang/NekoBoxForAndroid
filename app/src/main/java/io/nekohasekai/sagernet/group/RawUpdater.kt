@@ -468,7 +468,7 @@ object RawUpdater : GroupUpdater() {
                                     "network" -> {
                                         when (opt.value) {
                                             "h2", "http" -> bean.type = "http"
-                                            "ws", "grpc" -> bean.type = opt.value as String
+                                            "ws", "grpc", "kcp" -> bean.type = opt.value as String
                                             "xhttp" -> if (bean.isVLESS) bean.type = "xhttp"
                                         }
                                     }
@@ -543,6 +543,24 @@ object RawUpdater : GroupUpdater() {
                                                 "grpc-service-name" -> bean.path =
                                                     grpcOpt.value?.toString()
                                             }
+                                        }
+                                    }
+
+                                    "kcp-opts" -> (opt.value as? Map<String, Any?>)?.also { kcpOpts ->
+                                        kcpOpts["header-type"]?.toString()?.let {
+                                            bean.headerType = it
+                                        }
+                                        kcpOpts["seed"]?.toString()?.let {
+                                            bean.mKcpSeed = it
+                                        }
+                                        kcpOpts["mtu"]?.toString()?.toIntOrNull()?.let {
+                                            bean.kcpMtu = it
+                                        }
+                                        kcpOpts["tti"]?.toString()?.toIntOrNull()?.let {
+                                            bean.kcpTti = it
+                                        }
+                                        (kcpOpts["cwnd-multiplier"] ?: kcpOpts["cwnd"])?.toString()?.toIntOrNull()?.let {
+                                            bean.kcpCwndMultiplier = it
                                         }
                                     }
 

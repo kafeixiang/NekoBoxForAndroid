@@ -22,7 +22,7 @@ fun parseNaive(link: String): NaiveBean {
         password = url.password
         sni = url.queryParameter("sni")
         certificates = url.queryParameter("cert")
-        extraHeaders = url.queryParameter("extra-headers")?.unUrlSafe()?.replace("\r\n", "\n")
+        extraHeaders = url.queryParameter("extra-headers")?.replace("\r\n", "\n")
         insecureConcurrency = url.queryParameter("insecure-concurrency")?.toIntOrNull()
         name = url.fragment
         initializeDefaultValues()

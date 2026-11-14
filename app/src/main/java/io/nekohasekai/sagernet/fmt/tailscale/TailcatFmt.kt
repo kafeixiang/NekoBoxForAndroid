@@ -3,7 +3,6 @@ package io.nekohasekai.sagernet.fmt.tailscale
 import io.nekohasekai.sagernet.ktx.blankAsNull
 import io.nekohasekai.sagernet.ktx.linkBuilder
 import io.nekohasekai.sagernet.ktx.toLink
-import io.nekohasekai.sagernet.ktx.unUrlSafe
 import io.nekohasekai.sagernet.ktx.urlSafe
 import moe.matsuri.nb4a.SingBoxOptions
 import moe.matsuri.nb4a.utils.listByLineOrComma
@@ -73,39 +72,39 @@ fun parseTailcat(url: String): TailcatBean {
     return TailcatBean().apply {
         initializeDefaultValues()
         if (link.username.isNotEmpty()) {
-            privateKey = link.username.unUrlSafe()
+            privateKey = link.username
         }
         if (!link.fragment.isNullOrEmpty()) {
-            name = link.fragment!!.unUrlSafe()
+            name = link.fragment!!
         }
 
         (link.queryParameter("public_key")
             ?: link.queryParameter("server_public_key")
             ?: link.queryParameter("server-public-key")
             ?: link.queryParameter("serverPublicKey"))?.let {
-            serverPublicKey = it.unUrlSafe()
+            serverPublicKey = it
         }
         (link.queryParameter("disco_key")
             ?: link.queryParameter("server_disco_key")
             ?: link.queryParameter("server-disco-key")
             ?: link.queryParameter("serverDiscoKey"))?.let {
-            serverDiscoKey = it.unUrlSafe()
+            serverDiscoKey = it
         }
         (link.queryParameter("psk")
             ?: link.queryParameter("pre_shared_key")
             ?: link.queryParameter("pre-shared-key")
             ?: link.queryParameter("preSharedKey"))?.let {
-            preSharedKey = it.unUrlSafe()
+            preSharedKey = it
         }
         (link.queryParameter("private_key")
             ?: link.queryParameter("private-key")
             ?: link.queryParameter("privateKey"))?.let {
-            privateKey = it.unUrlSafe()
+            privateKey = it
         }
         (link.queryParameter("derp_map_url")
             ?: link.queryParameter("derp-map-url")
             ?: link.queryParameter("derpMapURL"))?.let {
-            derpMapURL = it.unUrlSafe()
+            derpMapURL = it
         }
         (link.queryParameter("derp_region")
             ?: link.queryParameter("derp-region")
@@ -117,7 +116,7 @@ fun parseTailcat(url: String): TailcatBean {
             ?: link.queryParameter("derp_server")
             ?: link.queryParameter("derp-server")
             ?: link.queryParameter("derpServers"))?.let {
-            derpServers = it.unUrlSafe().replace(",", "\n")
+            derpServers = it.replace(",", "\n")
         }
         if (serverPublicKey.isNullOrBlank() && link.host != "tailcat.local") {
             serverPublicKey = link.host

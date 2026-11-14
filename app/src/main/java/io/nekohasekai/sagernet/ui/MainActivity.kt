@@ -97,6 +97,19 @@ class MainActivity : ThemedActivity(),
         binding.stats.setOnClickListener { if (DataStore.serviceState.connected) binding.stats.testConnection() }
 
         setContentView(binding.root)
+        if (savedInstanceState != null) {
+            val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment_holder)
+            if (currentFragment !is ConfigurationFragment && !DataStore.showBottomBar) {
+                binding.stats.allowShow = false
+                binding.stats.performHide()
+                binding.stats.post {
+                    if (!binding.stats.allowShow) {
+                        binding.stats.performHide()
+                    }
+                }
+                binding.fab.hide()
+            }
+        }
         changeState(BaseService.State.Idle)
         connection.connect(this, this)
         DataStore.configurationStore.registerChangeListener(this)
@@ -455,6 +468,7 @@ class MainActivity : ThemedActivity(),
 
     override fun onDestroy() {
         super.onDestroy()
+        MessageStore.clearActivity(this)
         GroupManager.userInterface = null
         DataStore.configurationStore.unregisterChangeListener(this)
         connection.disconnect(this)

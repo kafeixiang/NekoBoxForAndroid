@@ -79,29 +79,29 @@ fun parseTailscale(url: String): TailscaleBean {
     return TailscaleBean().apply {
         initializeDefaultValues()
         if (link.username.isNotEmpty()) {
-            authKey = link.username.unUrlSafe()
+            authKey = link.username
         }
         val hostPort = if (link.port != 443 && link.port > 0) "${link.host}:${link.port}" else link.host
         controlURL = "https://$hostPort"
 
         if (!link.fragment.isNullOrEmpty()) {
-            name = link.fragment!!.unUrlSafe()
+            name = link.fragment!!
         }
 
-        (link.queryParameter("auth_key") ?: link.queryParameter("authKey"))?.let { authKey = it.unUrlSafe() }
-        (link.queryParameter("control_url") ?: link.queryParameter("controlURL"))?.let { controlURL = it.unUrlSafe() }
-        link.queryParameter("hostname")?.let { hostname = it.unUrlSafe() }
-        link.queryParameter("exit_node")?.let { exitNode = it.unUrlSafe() }
+        (link.queryParameter("auth_key") ?: link.queryParameter("authKey"))?.let { authKey = it }
+        (link.queryParameter("control_url") ?: link.queryParameter("controlURL"))?.let { controlURL = it }
+        link.queryParameter("hostname")?.let { hostname = it }
+        link.queryParameter("exit_node")?.let { exitNode = it }
         link.queryParameter("ephemeral")?.let { ephemeral = it == "true" || it == "1" }
         link.queryParameter("accept_routes")?.let { acceptRoutes = it == "true" || it == "1" }
         link.queryParameter("exit_node_allow_lan_access")?.let { exitNodeAllowLANAccess = it == "true" || it == "1" }
-        link.queryParameter("advertise_routes")?.let { advertiseRoutes = it.unUrlSafe() }
+        link.queryParameter("advertise_routes")?.let { advertiseRoutes = it }
         link.queryParameter("advertise_exit_node")?.let { advertiseExitNode = it == "true" || it == "1" }
-        link.queryParameter("advertise_tags")?.let { advertiseTags = it.unUrlSafe() }
+        link.queryParameter("advertise_tags")?.let { advertiseTags = it }
         (link.queryParameter("listen_port") ?: link.queryParameter("port"))?.toIntOrNull()?.let { listenPort = it }
         link.queryParameter("ssh_server")?.let { sshServer = it == "true" || it == "1" }
         link.queryParameter("advertise_fake_dns_routes")?.let { advertiseFakeDNSRoutes = it == "true" || it == "1" }
-        (link.queryParameter("state_directory") ?: link.queryParameter("state_dir"))?.let { stateDirectory = it.unUrlSafe() }
+        (link.queryParameter("state_directory") ?: link.queryParameter("state_dir"))?.let { stateDirectory = it }
     }
 }
 

@@ -60,20 +60,20 @@ fun parseTor(url: String): TorBean {
     return TorBean().apply {
         initializeDefaultValues()
         if (!link.fragment.isNullOrEmpty()) {
-            name = link.fragment!!.unUrlSafe()
+            name = link.fragment!!
         }
 
         (link.queryParameter("executable_path") ?: link.queryParameter("exe") ?: link.queryParameter("bin"))?.let {
-            executablePath = it.unUrlSafe()
+            executablePath = it
         }
         (link.queryParameter("data_directory") ?: link.queryParameter("data_dir"))?.let {
-            dataDirectory = it.unUrlSafe()
+            dataDirectory = it
         }
         (link.queryParameter("extra_args") ?: link.queryParameter("args"))?.let {
-            extraArgs = it.unUrlSafe().replace(",", "\n")
+            extraArgs = it.replace(",", "\n")
         }
         link.queryParameter("torrc")?.let {
-            torrc = it.unUrlSafe()
+            torrc = it
         }
     }
 }

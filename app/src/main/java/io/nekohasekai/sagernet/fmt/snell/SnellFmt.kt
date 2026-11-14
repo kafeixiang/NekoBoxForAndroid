@@ -1,7 +1,6 @@
 package io.nekohasekai.sagernet.fmt.snell
 
 import io.nekohasekai.sagernet.ktx.urlSafe
-import io.nekohasekai.sagernet.ktx.unUrlSafe
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 // URI 格式: snell://base64(psk)@server:port?version=6&userkey=base64(userkey)&mode=default&reuse=true&network=tcp#name
@@ -13,13 +12,13 @@ fun parseSnell(url: String): SnellBean {
         initializeDefaultValues()
         serverAddress = link.host
         serverPort = link.port
-        psk = link.username.unUrlSafe()
+        psk = link.username
         name = link.fragment ?: ""
 
         link.queryParameter("version")?.toIntOrNull()?.let {
             version = it.coerceIn(1, 6)
         }
-        link.queryParameter("userkey")?.let { userKey = it.unUrlSafe() }
+        link.queryParameter("userkey")?.let { userKey = it }
         link.queryParameter("obfs-mode")?.let { obfsMode = it }
         link.queryParameter("obfs-host")?.let { obfsHost = it }
         link.queryParameter("reuse")?.let { reuse = it.toBoolean() }
@@ -65,7 +64,7 @@ fun parseClashSnell(proxy: Map<String, Any?>): SnellBean {
         serverPort = (proxy["port"] as? Number)?.toInt() ?: 443
         psk = proxy["psk"] as? String ?: ""
 
-        version = ((proxy["version"] as? Number)?.toInt() ?: 4).coerceIn(1, 5)
+        version = ((proxy["version"] as? Number)?.toInt() ?: 4).coerceIn(1, 6)
 
         reuse = proxy["reuse"] as? Boolean ?: false
 
