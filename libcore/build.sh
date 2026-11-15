@@ -72,7 +72,10 @@ other_aars = sys.argv[2:]
 with zipfile.ZipFile("libcore.aar", "w", zipfile.ZIP_DEFLATED) as out_zip:
     with zipfile.ZipFile(primary_aar, "r") as z1:
         for item in z1.infolist():
-            out_zip.writestr(item, z1.read(item.filename))
+            data = z1.read(item.filename)
+            if item.filename == "AndroidManifest.xml":
+                data = data.decode("utf-8").replace('android:minSdkVersion="24"', 'android:minSdkVersion="21"').encode("utf-8")
+            out_zip.writestr(item, data)
     for aar in other_aars:
         with zipfile.ZipFile(aar, "r") as z:
             for item in z.infolist():
