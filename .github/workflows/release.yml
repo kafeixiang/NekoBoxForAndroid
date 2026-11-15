@@ -45,10 +45,16 @@ jobs:
       - name: Set up Swap Space
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
-          sudo fallocate -l 10G /swapfile
-          sudo chmod 600 /swapfile
-          sudo mkswap /swapfile
-          sudo swapon /swapfile
+          sudo swapoff -a 2>/dev/null || true
+          SWAP_PATH="/mnt/swapfile"
+          if [ ! -d "/mnt" ]; then
+            SWAP_PATH="/swapfile"
+          fi
+          sudo rm -f "$SWAP_PATH" /swapfile 2>/dev/null || true
+          sudo fallocate -l 10G "$SWAP_PATH" 2>/dev/null || sudo dd if=/dev/zero of="$SWAP_PATH" bs=1M count=10240
+          sudo chmod 600 "$SWAP_PATH"
+          sudo mkswap "$SWAP_PATH"
+          sudo swapon "$SWAP_PATH"
           free -h
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
