@@ -1182,10 +1182,7 @@ fun buildConfig(
         if (epList.isNotEmpty()) {
             if (forTest) {
                 for (ep in epList) {
-                    val epType = (ep as? Outbound)?.type ?: ep._hack_config_map["type"] as? String
-                    if (epType == "masque-client") {
-                        ep._hack_config_map["on_demand"] = true
-                    }
+                    ep._hack_config_map["on_demand"] = true
                 }
             } else if (buildSelector) {
                 val activeTag = tagMap[proxy.id]

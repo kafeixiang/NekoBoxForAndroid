@@ -4303,6 +4303,7 @@ public class SingBoxOptions {
         public Boolean redirect_gateway;
         public Integer mtu;
         public OpenVPNOutboundTLSOptions tls;
+        public Boolean on_demand;
     }
 
     public static class OpenConnectFormEntryOptions extends SingBoxOption {
@@ -4338,6 +4339,7 @@ public class SingBoxOptions {
         public Boolean allow_insecure_crypto;
         public List<OpenConnectFormEntryOptions> form_entries;
         public OpenConnectTLSOptions tls;
+        public Boolean on_demand;
     }
 
     public static class TailscaleSSHServerOptions extends SingBoxOption {
@@ -4360,6 +4362,7 @@ public class SingBoxOptions {
         public Integer listen_port;
         public String taildrop_directory;
         public TailscaleSSHServerOptions ssh_server;
+        public Boolean on_demand;
     }
 
     public static class Service_OOMKillerOptions extends SingBoxOption {

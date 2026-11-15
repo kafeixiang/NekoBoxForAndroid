@@ -33,6 +33,9 @@ data class VmessQRCode(
     var sni: String = "",
     var alpn: String = "",
     var fp: String = "",
+    var allowInsecure: Any? = null,
+    var insecure: Any? = null,
+    var skipCertVerify: Any? = null,
 )
 
 fun StandardV2RayBean.isTLS(): Boolean {
@@ -417,6 +420,15 @@ fun parseV2RayN(link: String): VMessBean {
             if (bean.sni.isNullOrBlank()) bean.sni = bean.host
             if (vmessQRCode.alpn != "none") bean.alpn = vmessQRCode.alpn
             bean.utlsFingerprint = vmessQRCode.fp
+            val allowInsecureVal = when (val a = vmessQRCode.allowInsecure ?: vmessQRCode.insecure ?: vmessQRCode.skipCertVerify) {
+                is Boolean -> a
+                is String -> a.equals("true", ignoreCase = true) || a == "1"
+                is Number -> a.toInt() != 0
+                else -> false
+            }
+            if (allowInsecureVal) {
+                bean.allowInsecure = true
+            }
         }
     }
 
@@ -491,6 +503,9 @@ fun VMessBean.toV2rayN(): String {
         sni = bean.sni
         alpn = bean.alpn.replace("\n", ",")
         fp = bean.utlsFingerprint
+        if (bean.allowInsecure == true) {
+            allowInsecure = true
+        }
     }.let {
         NGUtil.encode(Gson().toJson(it))
     }
