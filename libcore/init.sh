@@ -3,6 +3,11 @@
 chmod -R 777 .build 2>/dev/null
 rm -rf .build 2>/dev/null
 
+export CGO_CFLAGS_ALLOW=".*"
+export CGO_CPPFLAGS_ALLOW=".*"
+export CGO_CXXFLAGS_ALLOW=".*"
+export CGO_LDFLAGS_ALLOW=".*"
+
 if [ -z "$GOPATH" ]; then
     GOPATH=$(go env GOPATH)
 fi
@@ -20,6 +25,13 @@ s = s.replace("cmd.Stdout = os.Stdout\n\t\tcmd.Stderr = os.Stderr", "cmd.Stdout 
 s = s.replace("return fmt.Errorf(\"%s failed: %v%s\", strings.Join(cmd.Args, \" \"), err, buf)", "return fmt.Errorf(\"%s failed: %v\\n--- COMMAND OUTPUT ---\\n%s\\n--- END OUTPUT ---\", strings.Join(cmd.Args, \" \"), err, buf)")
 with open(path, "w") as f:
     f.write(s)
+
+path_env = "cmd/gomobile/env.go"
+with open(path_env, "r") as f:
+    s_env = f.read()
+s_env = s_env.replace("\"CGO_ENABLED=1\",", "\"CGO_ENABLED=1\",\n\t\t\t\t\"CGO_CFLAGS_ALLOW=.*\",\n\t\t\t\t\"CGO_CPPFLAGS_ALLOW=.*\",\n\t\t\t\t\"CGO_CXXFLAGS_ALLOW=.*\",\n\t\t\t\t\"CGO_LDFLAGS_ALLOW=.*\",")
+with open(path_env, "w") as f:
+    f.write(s_env)
 '
     pushd cmd
     pushd gomobile

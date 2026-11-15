@@ -23,6 +23,11 @@ jobs:
   libcore:
     name: Native Build (LibCore)
     runs-on: ubuntu-latest
+    env:
+      CGO_CFLAGS_ALLOW: ".*"
+      CGO_CPPFLAGS_ALLOW: ".*"
+      CGO_CXXFLAGS_ALLOW: ".*"
+      CGO_LDFLAGS_ALLOW: ".*"
     steps:
       - name: Checkout
         uses: actions/checkout@v4

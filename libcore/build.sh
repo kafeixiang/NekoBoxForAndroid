@@ -39,6 +39,10 @@ else
 fi
 
 export GOBIND=gobind-matsuri
+export CGO_CFLAGS_ALLOW=".*"
+export CGO_CPPFLAGS_ALLOW=".*"
+export CGO_CXXFLAGS_ALLOW=".*"
+export CGO_LDFLAGS_ALLOW=".*"
 
 # Build each ABI sequentially to avoid runner memory exhaustion and linker concurrency failures on CI
 TARGETS=("android/arm64" "android/arm" "android/amd64" "android/386")
@@ -50,7 +54,7 @@ for target in "${TARGETS[@]}"; do
   echo ">> [$(date +'%T')] Building $target -> $out_aar..."
   free -h 2>/dev/null || true
   df -h / /mnt 2>/dev/null || true
-  "$GOPATH"/bin/gomobile-matsuri bind -x -v -target "$target" -androidapi 24 -cache "$(realpath $BUILD)" -trimpath -ldflags="-s -w -X 'github.com/sagernet/sing-box/constant.Version=${box_version}'" -tags='with_conntrack,with_gvisor,with_quic,with_wireguard,with_utls,with_clash_api,with_openvpn,with_openconnect,with_tailscale,with_acme,with_naive_outbound' -o "$out_aar" . || exit 1
+  "$GOPATH"/bin/gomobile-matsuri bind -v -target "$target" -androidapi 24 -cache "$(realpath $BUILD)" -trimpath -ldflags="-s -w -X 'github.com/sagernet/sing-box/constant.Version=${box_version}'" -tags='with_conntrack,with_gvisor,with_quic,with_wireguard,with_utls,with_clash_api,with_openvpn,with_openconnect,with_tailscale,with_acme,with_naive_outbound' -o "$out_aar" . || exit 1
   rm -f "$BUILD/libcore-${arch}-sources.jar" libcore-sources.jar 2>/dev/null || true
   AARS+=("$out_aar")
 done

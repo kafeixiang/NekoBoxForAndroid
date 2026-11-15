@@ -1,5 +1,10 @@
 #!/bin/bash
 
+export CGO_CFLAGS_ALLOW=".*"
+export CGO_CPPFLAGS_ALLOW=".*"
+export CGO_CXXFLAGS_ALLOW=".*"
+export CGO_LDFLAGS_ALLOW=".*"
+
 source buildScript/init/env_ndk.sh
 
 if [[ "$OSTYPE" =~ ^darwin ]]; then
