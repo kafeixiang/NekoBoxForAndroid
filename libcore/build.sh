@@ -47,8 +47,10 @@ AARS=()
 for target in "${TARGETS[@]}"; do
   arch="${target#android/}"
   out_aar="$BUILD/libcore-${arch}.aar"
-  echo ">> Building $target -> $out_aar..."
-  "$GOPATH"/bin/gomobile-matsuri bind -v -target "$target" -androidapi 24 -cache "$(realpath $BUILD)" -trimpath -ldflags="-s -w -X 'github.com/sagernet/sing-box/constant.Version=${box_version}'" -tags='with_conntrack,with_gvisor,with_quic,with_wireguard,with_utls,with_clash_api,with_openvpn,with_openconnect,with_tailscale,with_acme,with_naive_outbound' -o "$out_aar" . || exit 1
+  echo ">> [$(date +'%T')] Building $target -> $out_aar..."
+  free -h 2>/dev/null || true
+  df -h / /mnt 2>/dev/null || true
+  "$GOPATH"/bin/gomobile-matsuri bind -x -v -target "$target" -androidapi 24 -cache "$(realpath $BUILD)" -trimpath -ldflags="-s -w -X 'github.com/sagernet/sing-box/constant.Version=${box_version}'" -tags='with_conntrack,with_gvisor,with_quic,with_wireguard,with_utls,with_clash_api,with_openvpn,with_openconnect,with_tailscale,with_acme,with_naive_outbound' -o "$out_aar" . || exit 1
   rm -f "$BUILD/libcore-${arch}-sources.jar" libcore-sources.jar 2>/dev/null || true
   AARS+=("$out_aar")
 done

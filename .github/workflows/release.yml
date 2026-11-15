@@ -56,6 +56,7 @@ jobs:
           sudo mkswap "$SWAP_PATH"
           sudo swapon "$SWAP_PATH"
           free -h
+          df -h
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
         run: ./run lib core
