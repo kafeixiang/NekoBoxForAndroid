@@ -6,4 +6,5 @@ const (
 	TypeTrustTunnel = "trusttunnel"
 	TypeShadowQUIC  = "shadowquic"
 	TypeBalancer    = "balancer"
+	TypeTrojanGo    = "trojan-go"
 )

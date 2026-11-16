@@ -85,6 +85,33 @@ func TestPluginRegistration(t *testing.T) {
 				}
 			]
 		}`,
+		`{
+			"outbounds": [
+				{
+					"type": "trojan-go",
+					"tag": "trojango-out",
+					"server": "127.0.0.1",
+					"server_port": 443,
+					"password": "pass",
+					"tls": {
+						"enabled": true
+					},
+					"transport": {
+						"type": "ws",
+						"path": "/ws"
+					},
+					"mux": {
+						"enabled": true,
+						"concurrency": 8
+					},
+					"shadowsocks": {
+						"enabled": true,
+						"method": "aes-128-gcm",
+						"password": "sspass"
+					}
+				}
+			]
+		}`,
 	}
 
 	for _, cfg := range configs {

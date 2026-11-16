@@ -88,6 +88,11 @@ public class TrojanGoBean extends AbstractBean {
     // ---
 
     public Boolean allowInsecure;
+    public Boolean mux;
+    public Integer muxConcurrency;
+    public String fingerprint;
+    public String alpn;
+    public Boolean tcpFastOpen;
 
     @Override
     public void initializeDefaultValues() {
@@ -101,11 +106,16 @@ public class TrojanGoBean extends AbstractBean {
         if (JavaUtil.isNullOrBlank(encryption)) encryption = "none";
         if (plugin == null) plugin = "";
         if (allowInsecure == null) allowInsecure = false;
+        if (mux == null) mux = false;
+        if (muxConcurrency == null) muxConcurrency = 8;
+        if (fingerprint == null) fingerprint = "";
+        if (alpn == null) alpn = "";
+        if (tcpFastOpen == null) tcpFastOpen = false;
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(1);
+        output.writeInt(2);
         super.serialize(output);
         output.writeString(password);
         output.writeString(sni);
@@ -121,6 +131,11 @@ public class TrojanGoBean extends AbstractBean {
         output.writeString(encryption);
         output.writeString(plugin);
         output.writeBoolean(allowInsecure);
+        output.writeBoolean(mux != null && mux);
+        output.writeInt(muxConcurrency != null ? muxConcurrency : 8);
+        output.writeString(fingerprint != null ? fingerprint : "");
+        output.writeString(alpn != null ? alpn : "");
+        output.writeBoolean(tcpFastOpen != null && tcpFastOpen);
     }
 
     @Override
@@ -143,6 +158,13 @@ public class TrojanGoBean extends AbstractBean {
         plugin = input.readString();
         if (version >= 1) {
             allowInsecure = input.readBoolean();
+        }
+        if (version >= 2) {
+            mux = input.readBoolean();
+            muxConcurrency = input.readInt();
+            fingerprint = input.readString();
+            alpn = input.readString();
+            tcpFastOpen = input.readBoolean();
         }
     }
 

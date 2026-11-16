@@ -429,7 +429,6 @@ data class ProxyEntity(
 
     fun needExternal(): Boolean {
         return when (type) {
-            TYPE_TROJAN_GO -> true
             TYPE_MIERU -> !mieruBean!!.canUseSingBox()
             TYPE_NAIVE -> !naiveBean!!.canUseSingBox()
             TYPE_HYSTERIA -> !hysteriaBean!!.canUseSingBox()
