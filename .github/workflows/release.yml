@@ -28,6 +28,8 @@ jobs:
       CGO_CPPFLAGS_ALLOW: ".*"
       CGO_CXXFLAGS_ALLOW: ".*"
       CGO_LDFLAGS_ALLOW: ".*"
+      GOPROXY: "https://proxy.golang.org,direct"
+      GOSUMDB: "sum.golang.org"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -52,6 +54,7 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: ^1.25
+          cache-dependency-path: libcore/go.sum
       - name: Set up Swap Space
         if: steps.cache.outputs.cache-hit != 'true'
         run: |

@@ -43,6 +43,8 @@ export CGO_CFLAGS_ALLOW=".*"
 export CGO_CPPFLAGS_ALLOW=".*"
 export CGO_CXXFLAGS_ALLOW=".*"
 export CGO_LDFLAGS_ALLOW=".*"
+export GOPROXY="${GOPROXY:-https://proxy.golang.org,direct}"
+export GOSUMDB="${GOSUMDB:-sum.golang.org}"
 
 # Build each ABI sequentially to avoid runner memory exhaustion and linker concurrency failures on CI
 TARGETS=("android/arm64" "android/arm" "android/amd64" "android/386")
