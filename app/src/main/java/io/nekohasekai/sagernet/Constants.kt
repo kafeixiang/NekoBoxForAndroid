@@ -104,6 +104,7 @@ object Key {
     const val SERVER_ENCRYPTION = "serverEncryption"
     const val SERVER_ALPN = "serverALPN"
     const val SERVER_CERTIFICATES = "serverCertificates"
+    const val SERVER_UTLS_FINGERPRINT = "serverUtlsFingerprint"
     const val SERVER_MTU = "serverMTU"
 
     const val SERVER_CONFIG = "serverConfig"

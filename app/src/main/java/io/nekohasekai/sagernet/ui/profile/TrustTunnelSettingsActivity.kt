@@ -24,6 +24,7 @@ class TrustTunnelSettingsActivity : ProfileSettingsActivity<TrustTunnelBean>() {
         DataStore.serverHealthCheck = healthCheck ?: false
         DataStore.serverALPN = alpn
         DataStore.serverCertificates = certificates
+        DataStore.serverUtlsFingerprint = utlsFingerprint ?: ""
         DataStore.serverAllowInsecure = allowInsecure ?: false
     }
 
@@ -38,6 +39,7 @@ class TrustTunnelSettingsActivity : ProfileSettingsActivity<TrustTunnelBean>() {
         healthCheck = DataStore.serverHealthCheck
         alpn = DataStore.serverALPN
         certificates = DataStore.serverCertificates
+        utlsFingerprint = DataStore.serverUtlsFingerprint
         allowInsecure = DataStore.serverAllowInsecure
     }
 

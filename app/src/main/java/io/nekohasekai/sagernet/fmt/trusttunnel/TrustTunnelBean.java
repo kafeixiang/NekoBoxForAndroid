@@ -23,6 +23,7 @@ public class TrustTunnelBean extends AbstractBean {
     public String certificateSha256;
     public String certPublicKeySha256;
     public String alpn;
+    public String utlsFingerprint;
 
     @Override
     public void initializeDefaultValues() {
@@ -38,12 +39,13 @@ public class TrustTunnelBean extends AbstractBean {
         if (certificateSha256 == null) certificateSha256 = "";
         if (certPublicKeySha256 == null) certPublicKeySha256 = "";
         if (alpn == null) alpn = "";
+        if (utlsFingerprint == null) utlsFingerprint = "";
         if (serverPort == null || serverPort == 0) serverPort = 443;
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(1);
+        output.writeInt(2);
         super.serialize(output);
         output.writeString(username);
         output.writeString(password);
@@ -56,6 +58,7 @@ public class TrustTunnelBean extends AbstractBean {
         output.writeString(certificateSha256);
         output.writeString(certPublicKeySha256);
         output.writeString(alpn);
+        output.writeString(utlsFingerprint);
     }
 
     @Override
@@ -73,6 +76,11 @@ public class TrustTunnelBean extends AbstractBean {
         certificateSha256 = input.readString();
         certPublicKeySha256 = input.readString();
         alpn = input.readString();
+        if (version >= 2) {
+            utlsFingerprint = input.readString();
+        } else {
+            utlsFingerprint = "";
+        }
     }
 
     @Override

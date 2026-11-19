@@ -64,6 +64,7 @@ internal data class TrustTunnelLink(
     val skipVerification: Boolean = false,
     val certificate: ByteString = ByteString.EMPTY,
     val http3: Boolean = false,
+    val tlsProfile: String = "",
     val name: String = "",
 ) {
     init {
@@ -87,6 +88,7 @@ internal data class TrustTunnelLink(
         if (skipVerification) records.writeRecord(TAG_SKIP_VERIFICATION, byteArrayOf(1))
         if (certificate.size > 0) records.writeRecord(TAG_CERTIFICATE, certificate.toByteArray())
         if (http3) records.writeRecord(TAG_UPSTREAM_PROTOCOL, byteArrayOf(UPSTREAM_HTTP3))
+        if (tlsProfile.isNotEmpty()) records.writeRecord(TAG_TLS_PROFILE, tlsProfile)
         if (name.isNotEmpty()) records.writeRecord(TAG_NAME, name)
         val encoded = records.readByteString().base64Url().trimEnd('=')
         return "$SCHEME_PREFIX?$encoded"
@@ -108,6 +110,7 @@ internal data class TrustTunnelLink(
         private const val TAG_NAME = 0x0CL
         private const val TAG_SUBSCRIPTION_URL = 0x0EL
         private const val TAG_CLIENT_RANDOM_AUTH_KEY = 0x0FL
+        private const val TAG_TLS_PROFILE = 0x10L
 
         private const val VERSION_WRITTEN = 1L
         private const val VERSION_MAX_SUPPORTED = 2L
@@ -134,6 +137,7 @@ internal data class TrustTunnelLink(
             var skipVerification = false
             var certificate = ByteString.EMPTY
             var http3 = false
+            var tlsProfile = ""
             var name = ""
             var subscriptionUrl: String? = null
             try {
@@ -188,6 +192,10 @@ internal data class TrustTunnelLink(
                             value.strictUtf8(tag).decodeHex()
                         }
 
+                        TAG_TLS_PROFILE -> {
+                            tlsProfile = value.strictUtf8(tag)
+                        }
+
                         else -> Unit
                     }
                 }
@@ -206,6 +214,7 @@ internal data class TrustTunnelLink(
                 skipVerification = skipVerification,
                 certificate = certificate,
                 http3 = http3,
+                tlsProfile = tlsProfile,
                 name = name,
             )
         }

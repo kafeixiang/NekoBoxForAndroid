@@ -18,21 +18,24 @@ fun parseTrustTunnel(link: String): TrustTunnelBean {
         allowInsecure = url.skipVerification
         certificates = if (url.certificate.size > 0) certificateChainToPem(url.certificate) else ""
         quic = url.http3
+        utlsFingerprint = url.tlsProfile.toUtlsFingerprint()
         name = url.name
     }
 }
 
 fun TrustTunnelBean.toUri(): String {
+    val host = sni?.takeIf { it.isNotBlank() } ?: serverAddress
     return TrustTunnelLink(
-        hostname = sni.ifEmpty { serverAddress },
+        hostname = host,
         addresses = listOf(joinAddress(serverAddress, serverPort)),
-        customSni = sni,
-        username = username,
-        password = password,
-        skipVerification = allowInsecure,
-        certificate = certificates.takeIf { it.isNotBlank() }?.let(::pemToCertificateChain) ?: ByteString.EMPTY,
-        http3 = quic,
-        name = name,
+        customSni = sni ?: "",
+        username = username ?: "",
+        password = password ?: "",
+        skipVerification = allowInsecure == true,
+        certificate = certificates?.takeIf { it.isNotBlank() }?.let(::pemToCertificateChain) ?: ByteString.EMPTY,
+        http3 = quic == true,
+        tlsProfile = utlsFingerprint?.toTlsProfile() ?: "",
+        name = name ?: "",
     ).build()
 }
 
@@ -63,6 +66,41 @@ fun buildSingBoxOutboundTrustTunnelBean(bean: TrustTunnelBean): Outbound_TrustTu
             if (!bean.certificates.isNullOrBlank()) {
                 certificate = bean.certificates
             }
+            if (!bean.utlsFingerprint.isNullOrBlank()) {
+                utls = SingBoxOptions.OutboundUTLSOptions().apply {
+                    enabled = true
+                    fingerprint = bean.utlsFingerprint
+                }
+            }
         }
     }
+}
+
+private const val TLS_PROFILE_CHROME_CANARY = "chrome_canary"
+private const val TLS_PROFILE_OKHTTP = "okhttp"
+
+private const val FINGERPRINT_CHROME = "chrome"
+private const val FINGERPRINT_SAFARI = "safari"
+private const val FINGERPRINT_FIREFOX = "firefox"
+private const val FINGERPRINT_ANDROID = "android"
+
+private fun String.toUtlsFingerprint(): String = when (this) {
+    FINGERPRINT_CHROME,
+    FINGERPRINT_SAFARI,
+    FINGERPRINT_FIREFOX,
+        -> this
+
+    TLS_PROFILE_CHROME_CANARY -> FINGERPRINT_CHROME
+    TLS_PROFILE_OKHTTP -> FINGERPRINT_ANDROID
+    else -> ""
+}
+
+private fun String.toTlsProfile(): String = when (this) {
+    FINGERPRINT_CHROME,
+    FINGERPRINT_SAFARI,
+    FINGERPRINT_FIREFOX,
+        -> this
+
+    FINGERPRINT_ANDROID -> TLS_PROFILE_OKHTTP
+    else -> ""
 }

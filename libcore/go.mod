@@ -22,7 +22,7 @@ require (
 	github.com/sagernet/sing-shadowsocks v0.2.9-0.20260929204512-65740e0f0e3e
 	github.com/sagernet/smux v1.5.50-sing-box-mod.1
 	github.com/stretchr/testify v1.12.1
-	github.com/xchacha20-poly1305/sing-trusttunnel v0.3.3-0.20260928134000-daacc8079caf
+	github.com/xchacha20-poly1305/sing-trusttunnel v0.4.0-beta.0
 	golang.org/x/crypto v0.58.0
 )
 

@@ -90,6 +90,8 @@ import io.nekohasekai.sagernet.fmt.tor.parseTorOutbound
 import io.nekohasekai.sagernet.fmt.tor.toUri
 import io.nekohasekai.sagernet.fmt.trusttunnel.TrustTunnelBean
 import io.nekohasekai.sagernet.fmt.trusttunnel.buildSingBoxOutboundTrustTunnelBean
+import io.nekohasekai.sagernet.fmt.trusttunnel.parseTrustTunnel
+import io.nekohasekai.sagernet.fmt.trusttunnel.toUri
 import io.nekohasekai.sagernet.fmt.KryoConverters
 import io.nekohasekai.sagernet.fmt.internal.ProxySetBean
 import io.nekohasekai.sagernet.fmt.internal.buildSingBoxOutboundProxySetBean
@@ -1202,6 +1204,7 @@ class ProtocolValidityTest {
     @Test
     fun testTrustTunnelParsingAndBuilding() {
         val bean = TrustTunnelBean().apply {
+            initializeDefaultValues()
             name = "test-trusttunnel"
             serverAddress = "1.2.3.4"
             serverPort = 443
@@ -1221,6 +1224,88 @@ class ProtocolValidityTest {
         assertEquals("ttpassword", outbound.password)
         assertEquals(true, outbound.quic)
         assertEquals("tt.example.com", outbound.tls?.server_name)
+        assertNull(outbound.tls?.utls)
+
+        // Test Outbound with uTLS
+        bean.utlsFingerprint = "chrome"
+        val outboundWithUtls = buildSingBoxOutboundTrustTunnelBean(bean)
+        assertNotNull(outboundWithUtls.tls?.utls)
+        assertEquals(true, outboundWithUtls.tls?.utls?.enabled)
+        assertEquals("chrome", outboundWithUtls.tls?.utls?.fingerprint)
+
+        // Test toUri and parse roundtrip
+        val testFingerprints = mapOf(
+            "chrome" to "chrome",
+            "safari" to "safari",
+            "firefox" to "firefox",
+            "android" to "android",
+            "edge" to "",
+            "360" to "",
+            "qq" to "",
+            "random" to "",
+            "randomized" to "",
+            "" to "",
+        )
+        for ((fp, expectedParsedFp) in testFingerprints) {
+            bean.utlsFingerprint = fp
+            val uri = bean.toUri()
+            val parsedBean = parseTrustTunnel(uri)
+            assertEquals("Testing fingerprint mapping for '$fp'", expectedParsedFp, parsedBean.utlsFingerprint)
+            assertEquals(bean.serverAddress, parsedBean.serverAddress)
+            assertEquals(bean.serverPort, parsedBean.serverPort)
+            assertEquals(bean.username, parsedBean.username)
+            assertEquals(bean.password, parsedBean.password)
+            assertEquals(bean.sni, parsedBean.sni)
+        }
+
+        // Test direct uri with tlsProfile
+        val androidUri = bean.apply { utlsFingerprint = "android" }.toUri()
+        val parsedAndroid = parseTrustTunnel(androidUri)
+        assertEquals("android", parsedAndroid.utlsFingerprint)
+
+        // Test clone & Kryo roundtrip
+        bean.utlsFingerprint = "chrome"
+        val cloned = bean.clone()
+        assertEquals(bean.name, cloned.name)
+        assertEquals(bean.serverAddress, cloned.serverAddress)
+        assertEquals(bean.serverPort, cloned.serverPort)
+        assertEquals(bean.username, cloned.username)
+        assertEquals(bean.password, cloned.password)
+        assertEquals(bean.sni, cloned.sni)
+        assertEquals(bean.utlsFingerprint, cloned.utlsFingerprint)
+        assertEquals(bean, cloned)
+
+        // Test backwards compatibility with Kryo v1 serialized payload
+        val v1Output = com.esotericsoftware.kryo.io.ByteBufferOutput(1024)
+        v1Output.writeInt(1) // version 1
+        v1Output.writeString("1.2.3.4")
+        v1Output.writeInt(443)
+        v1Output.writeString("ttuser")
+        v1Output.writeString("ttpassword")
+        v1Output.writeString("tt.example.com")
+        v1Output.writeBoolean(true) // quic
+        v1Output.writeString("cubic") // quicCongestionControl
+        v1Output.writeBoolean(false) // healthCheck
+        v1Output.writeBoolean(false) // allowInsecure
+        v1Output.writeString("")
+        v1Output.writeString("")
+        v1Output.writeString("")
+        v1Output.writeString("h3")
+        // No utlsFingerprint in v1
+        v1Output.writeInt(1) // extraVersion
+        v1Output.writeString("test-trusttunnel")
+        v1Output.writeString("")
+        v1Output.writeString("")
+
+        val v1Input = com.esotericsoftware.kryo.io.ByteBufferInput(v1Output.toBytes())
+        val restoredV1Bean = TrustTunnelBean()
+        restoredV1Bean.deserializeFromBuffer(v1Input)
+        assertEquals("test-trusttunnel", restoredV1Bean.name)
+        assertEquals("1.2.3.4", restoredV1Bean.serverAddress)
+        assertEquals(443, restoredV1Bean.serverPort)
+        assertEquals("ttuser", restoredV1Bean.username)
+        assertEquals("ttpassword", restoredV1Bean.password)
+        assertEquals("", restoredV1Bean.utlsFingerprint)
     }
 
     @Test
