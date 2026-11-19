@@ -10,7 +10,7 @@ require (
 	github.com/sagernet/quic-go v0.61.0-sing-box-mod.14
 	github.com/sagernet/sing v0.9.7-0.20261110095940-27b73774b240
 	github.com/sagernet/sing-box v1.0.0 // replaced
-	github.com/sagernet/sing-tun v0.9.7-0.20261117045001-6bde9edf784f
+	github.com/sagernet/sing-tun v0.9.7-0.20261119022030-4486c14ba472
 	github.com/ulikunitz/xz v0.5.15
 	golang.org/x/mobile v0.0.0-20231108233038-35478a0c49da
 	golang.org/x/sys v0.49.0
@@ -154,7 +154,7 @@ require (
 	github.com/sagernet/sing-anytls v0.0.0-20260928104022-580984e4d8cb // indirect
 	github.com/sagernet/sing-cloudflared v0.1.4-0.20261108120326-83391fb7b139 // indirect
 	github.com/sagernet/sing-mux v0.3.10-0.20261110064256-375087483ea2 // indirect
-	github.com/sagernet/sing-openconnect v0.1.1-0.20261110063215-cd35f41e8f69 // indirect
+	github.com/sagernet/sing-openconnect v0.1.1-0.20261119021124-31db24231feb // indirect
 	github.com/sagernet/sing-openvpn v0.1.1-0.20261110111939-ad7a6ce7d11b // indirect
 	github.com/sagernet/sing-quic v0.7.2-0.20261114063120-0979e001618d // indirect
 	github.com/sagernet/sing-shadowsocks2 v0.2.2-0.20261110092058-52ade8ab7e95 // indirect
