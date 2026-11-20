@@ -116,10 +116,10 @@ with open(path_build, "w") as f:
     f.write(s_build)
 '
     pushd cmd/gomobile
-    go install -v
+    go install -v || exit 1
     popd
     pushd cmd/gobind
-    go install -v
+    go install -v || exit 1
     popd
     popd
     rm -rf gomobile
@@ -128,4 +128,4 @@ with open(path_build, "w") as f:
     touch "$MARKER"
 fi
 
-GOBIND=gobind-matsuri gomobile-matsuri init
+GOBIND=gobind-matsuri gomobile-matsuri init || exit 1

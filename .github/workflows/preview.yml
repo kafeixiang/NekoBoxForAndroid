@@ -34,7 +34,7 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         uses: actions/setup-go@v5
         with:
-          go-version: ^1.25
+          go-version: '1.26'
           cache-dependency-path: libcore/go.sum
       - name: Set up Swap Space
         if: steps.cache.outputs.cache-hit != 'true'
